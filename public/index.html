@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Forms</title>
+    <link rel = "stylesheet" type = "text/css"  href = "styles.css" />
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="contents">
+      <br/>
+    <header>
+      <h1 id="title"><span style="font-weight:bold">ac</span>countability</h1>
+    </header>
+
+    <div>
+        <form action="/submit" method="post">
+          <input name="user_location_query" list="locations" placeholder="Enter the name of a place on campus">
+          <datalist id="locations">
+            <option value="Arts Center (general)">
+            <option value="A5 classrooms">
+            <option value="A6 classrooms">
+            <option value="D2 Dining Hall">
+            <option value="D1 Dining Hall">
+            <option value="Baraha">
+            <option value="Campus Center lobby">
+            <option value="Library (general)">
+            <option value="Library Cafe">
+            <option value="A2 classrooms">
+            <option value="A3 classrooms">
+            <option value="A4 classrooms">
+            <option value="A5 Engineering Design Studio">
+            <option value="Marketplace">
+            <option value="Arts Center IM Lab">
+            <option value="Convenience Store">
+            <option value="Welcome Center">
+            <option value="Fitness Center">
+            <option value="Swimming pool">
+          </datalist>
+          </input>
+          <button onclick="post" class="gobutton">Go</button>
+        </form>
+      </div>
+      <br/>
+      <div>
+        <a href="./submissionform.html"><button class="makesubmissionbutton">Make a submission</button></a>
+      </div>
+    </div>
+
+    <video autoplay loop muted poster="screenshot.jpg" id="background">
+    <source src="./backgroundvid.mp4" type="video/mp4">
+    </video>
+
+  </body>
+</html>
