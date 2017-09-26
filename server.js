@@ -36,6 +36,12 @@ app.listen(port, function(){
 //this is called a route
 //this specific route is for the endpoint submit
 
+app.get("/dummy",function(request,response,error){
+  console.log('weve got an incoming ajax request');
+  response.send('got job guys');
+  console.log(request);
+});
+
 app.get("/place-query", function (request, response, error){
   console.log('--------------');
   console.log('user queried ', request.query.user_location_query);
