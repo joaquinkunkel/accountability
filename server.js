@@ -13,7 +13,7 @@ function itFailed(data){
 
 //A "success" or "done" function
 function itWorked(data){
-	console.log("Worked!");
+	console.log("Worked !");
 	console.log(data);
 }
 
