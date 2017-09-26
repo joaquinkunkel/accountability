@@ -18,7 +18,9 @@
     </header>
 
     <div>
-        <form action="/submit" method="post">
+        <!-- <form action="/place-query" method="get"> -->
+        <form>
+
           <input name="user_location_query" list="locations" placeholder="Enter the name of a place on campus">
           <datalist id="locations">
             <option value="Arts Center (general)">
@@ -42,7 +44,7 @@
             <option value="Swimming pool">
           </datalist>
           </input>
-          <button onclick="post" class="gobutton">Go</button>
+          <button type="button" id="gobutton" class="gobutton">Go</button>
         </form>
       </div>
       <br/>
@@ -51,9 +53,9 @@
       </div>
     </div>
 
-    <video autoplay loop muted poster="screenshot.jpg" id="background">
+    <video autoplay loop muted id="background">
     <source src="./backgroundvid.mp4" type="video/mp4">
     </video>
-
+    <script src="script.js"></script>
   </body>
 </html>

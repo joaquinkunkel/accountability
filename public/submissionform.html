@@ -18,7 +18,7 @@
         <div class="container-fixed">
           <div class="row">
             <h1 class="col-sm-4" id="logo_text"><span style="font-weight:bold">ac</span>countability</h1>
-            <form class="col-sm-8" id="enter_place" action="/submit" method="POST">
+            <form class="col-sm-8" id="enter_place" action="/place-query" method="GET">
               <input name="user_location_query" list="locations" placeholder="Enter the name of a place on campus">
               <datalist id="locations">
                 <option value="Arts Center (general)">
@@ -65,22 +65,22 @@
 
       </header>
 
-      <form class="submission">
+      <form class="submission" action="/submit" method="POST">
         <h1 id="help_us">Help us inform the rest of the community.</h1>
         <p style="color: black"> By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.</p>
         <input name="user_location" placeholder="Where are you right now?">
         <br/>
-        <label for="cars" style="font-weight: normal">How does the temperature feel?</label>
-        <select name="cars">
-          <option value="hot">Hot</option>
-          <option value="warm">Warm</option>
-          <option value="just_right">Just Right</option>
-          <option value="cool">Cool</option>
-          <option value="cold">Cold</option>
-          <option value="freezing">Freezing</option>
+        <label for="user_temperature" style="font-weight: normal">How does the temperature feel?</label>
+        <select name="user_tamperature">
+          <option value="6">Hot</option>
+          <option value="5">Warm</option>
+          <option value="4">Just Right</option>
+          <option value="3">Cool</option>
+          <option value="2">Cold</option>
+          <option value="1">Freezing</option>
         </select>
         <br/>
-        <a href="./submissionform.html"><button class="submitbutton">Submit</button></a>
+        <button onclick="post" class="submitbutton">Submit</button>
       </form>
     </div>
   </div>

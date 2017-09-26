@@ -3,6 +3,24 @@ var app = express();
 var port = 8000;
 var bp = require('body-parser');
 var fs = require('fs');
+//Define some initial callback functions
+
+//An "error" or "fail" function
+function itFailed(data){
+	console.log("Failed");
+	console.log(data);
+}
+
+//A "success" or "done" function
+function itWorked(data){
+	console.log("Worked!");
+	console.log(data);
+}
+
+//A "completed" or "always" function
+function finished(){
+	console.log("I'm all finished");
+}
 
 app.use(express.static('public'));
 
@@ -18,6 +36,36 @@ app.listen(port, function(){
 //this is called a route
 //this specific route is for the endpoint submit
 
+app.get("/place-query", function (request, response, error){
+  console.log('--------------');
+  console.log('user queried ', request.query.user_location_query);
+
+  //first we read our file that is in the 'data' folder, and our file is called 'users.json'
+  fs.readFile('./data/places.json', function(error, data){
+    var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON (because it's just text)
+
+    var user = {};
+    //then we add our newly registered user to our array called "all users"
+    //(check the users.json file to see that it's the top level array!)
+    var array = whole_file.all_places;
+    user.place = request.query.user_location_query;
+    for(i = 0; i < array.length; i++){
+      if(array[i].name == user.place){
+        console.log("match!");
+        //PUSH THE OBJECT
+        break;
+      }else{
+        console.log("no match");
+      }
+    }
+  });
+
+  //response
+  response.send("hello thanks for searching");
+});
+
+
+
 app.post("/submit", function (request, response, error){
   console.log('input', request.body);
 
@@ -26,8 +74,6 @@ app.post("/submit", function (request, response, error){
 
   console.log('----------');
   console.log('output', user);
-
-  //first we read our file that is in the 'data' folder, and our file is called 'users.json'
 
   fs.readFile('./data/places.json', function(error, data){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON (because it's just text)
@@ -39,28 +85,34 @@ app.post("/submit", function (request, response, error){
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.place){
         console.log("match!");
+        console.log("Information for today: ");
+        var logs = array[i].logs;
+
+        //Saving today's date into a variable
+        var date = new Date();
+        var today = String(date.getMonth() + "_" + date.getDate());
+        console.log("today: ", today);
+
+        //Extract all the temperatures for that given day
+        for(j = 0; j < logs.length; j++){
+          if(logs[j].date == today){
+            console.log("Temperature: ", logs[j].temp);
+          }
+          else{
+            break;
+          }
+        }
         //PUSH THE OBJECT
         break;
+
       }else{
         console.log("no match");
       }
     }
 
-/*
-    whole_file.all_places.push(user);
-
-    //then we write ALL of our data (in the variable 'whole_file')
-    fs.writeFile('./data/users.json', JSON.stringify(whole_file), function(error){
-      if(error){ //hopefully no error?
-        console.log(error);
-      }else{//success message!
-        console.log('success! written new user',user);
-      }
-    });
-    */
   });
 
-  response.send("hello");
+  response.send("thanks for your submission love");
 
   // if(user.already_housed == 'on' || user.likes_cats == 'on' || user.owns_hotplate == 'on'){
   //   response.send('Sorry but you are not eligible for housing here.');
