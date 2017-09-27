@@ -6,6 +6,9 @@ html{
   margin: 0 auto;
 }
 
+rect:hover {
+  fill: yellow;
+}
 #background {
   position: fixed;
   top: 50%;

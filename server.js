@@ -56,7 +56,7 @@ app.get("/place-query", function (request, response, error){
       if(array[i].name == user.place){
         console.log("match!");
         //console.log(array[i].logs);
-        user.logs = array[i].logs[0];
+        user.logs = array[i].logs;
         response.send(JSON.stringify(user));
         //PUSH THE OBJECT
         return false;
