@@ -196,21 +196,6 @@ function visualize(dataset){
 				return h - 8;
 			});
 
-	svg.selectAll("text")
-			.data(logs)
-			.enter()
-			.append("text")
-			.text(function(d, i){
-				return temps[Math.floor(d.temp)];
-			})
-			.attr("x", function(d, i){
-				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
-			})
-			.attr("y", function(d){
-				return h - d.temp*30 - 20;
-			});
-
-
 };
 
 function animateForm(){
