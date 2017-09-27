@@ -22,41 +22,24 @@
               <input name="user_location_query" list="locations" placeholder="Enter the name of a place on campus">
               <datalist id="locations">
                 <option value="Arts Center (general)">
-                <option value="Arts Center 001">
-                <option value="Arts Center 002">
-                <option value="Arts Center 003">
-                <option value="Arts Center 004">
-                <option value="Arts Center 100">
-                <option value="Arts Center 105">
-                <option value="A5 (general)">
-                <option value="A5 001">
-                <option value="A5 002">
-                <option value="A5 003">
-                <option value="A5 006">
-                <option value="A5 100">
-                <option value="A6 (general)">
-                <option value="A6 001">
-                <option value="A6 002">
-                <option value="A6 003">
-                <option value="A6 004">
-                <option value="A6 005">
-                <option value="A6 006">
+                <option value="A5 classrooms">
+                <option value="A6 classrooms">
                 <option value="D2 Dining Hall">
                 <option value="D1 Dining Hall">
                 <option value="Baraha">
-                <option value="Campus Center (general)">
-                <option value="Campus Center E001">
-                <option value="Campus Center E004">
-                <option value="Campus Center E006">
+                <option value="Campus Center lobby">
                 <option value="Library (general)">
-                <option value="Library (study rooms)">
-                <option value="Library W005">
                 <option value="Library Cafe">
-                <option value="A2 Offices">
-                <option value="A3 Offices">
-                <option value="A4 Offices">
-                <option value="A5 Offices">
+                <option value="A2 classrooms">
+                <option value="A3 classrooms">
+                <option value="A4 classrooms">
                 <option value="A5 Engineering Design Studio">
+                <option value="Marketplace">
+                <option value="Arts Center IM Lab">
+                <option value="Convenience Store">
+                <option value="Welcome Center">
+                <option value="Fitness Center">
+                <option value="Swimming pool">
               </datalist>
               </input><br/>
             </form>
@@ -68,7 +51,11 @@
       <form class="submission" action="/submit" method="POST">
         <h1 id="help_us">Help us inform the rest of the community.</h1>
         <p style="color: black"> By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.</p>
-        <input name="user_location" placeholder="Where are you right now?">
+        <!--<input name="user_location" placeholder="Where are you right now?">-->
+        <input name="user_report" list="valid_locations" placeholder="Where are you right now?">
+          <datalist id="valid_locations">
+          </datalist>
+        </input>
         <br/>
         <label for="user_temperature" style="font-weight: normal">How does the temperature feel?</label>
         <select name="user_tamperature">
