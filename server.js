@@ -3,11 +3,7 @@ var app = express();
 var port = 8000;
 var bp = require('body-parser');
 var fs = require('fs');
-<<<<<<< HEAD
-=======
 var sgMail = require('@sendgrid/mail');
-
->>>>>>> be08705d5300c60931726338475be8886563cdbf
 //Define some initial callback functions
 app.use(express.static('public'));
 
@@ -15,8 +11,6 @@ app.use(express.static('public'));
 app.use(bp.urlencoded({ extended: true }));
 // parse application/json
 app.use(bp.json());
-
-<<<<<<< HEAD
 app.listen(port, function(){
   console.log('server started on port',port);
 });
@@ -41,7 +35,6 @@ app.get("/place-query", function (request, response, error){
     //(check the users.json file to see that it's the top level array!)
     var array = whole_file.all_places;
     user.place = request.query.user_location_query;
-=======
 //route for user queries
 app.get("/place-query", function (request, response, error){
   //console.log('user queried ', request.query.user_location_query); 
@@ -55,7 +48,6 @@ app.get("/place-query", function (request, response, error){
     var array = whole_file.all_places; //array of all campus locations and corresponding logs
     
     //match the queried location with the location in the database
->>>>>>> be08705d5300c60931726338475be8886563cdbf
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.place){
         user.logs = array[i].logs; //array of temperature logs, starting with the most recent one
@@ -102,7 +94,6 @@ app.post("/submit", function (request, response, error){
 
   }); //end of read file
 
-<<<<<<< HEAD
   //set up a threshold - if the temperature is below the threshold send an email
   if(user.user_temperature > 3){
     console.log('we really need to do something about it!');
@@ -110,7 +101,6 @@ app.post("/submit", function (request, response, error){
 
   response.send("thanks for your submission love");
 });
-=======
   //set up a threshold - if the temperature is below the threshold (i.e. the user says the space is being either freezing or cold) - send an email
   if(user.user_temperature < 3){
     //console.log('sending an email!');
@@ -137,4 +127,4 @@ app.post("/submit", function (request, response, error){
 app.listen(port, function(){
   console.log('server started on port',port);
 });
->>>>>>> be08705d5300c60931726338475be8886563cdbf
+
