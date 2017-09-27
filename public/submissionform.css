@@ -37,6 +37,7 @@ header {
   text-align: center;
   background: white;
   margin-bottom: 70px;
+  padding-bottom: 8px;
 }
 
 header .row{
@@ -71,6 +72,26 @@ h1 {
   color: black;
   background: white;
 }
+
+.backbutton {
+  color: black;
+  font-weight: bold;
+  background: transparent;
+  margin-top: 0.67em;
+  border: 2px solid black;
+  width: 80px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+  border-radius: 10px;
+  transition: all 0.1s;
+}
+
+.backbutton:hover{
+  color: white;
+  background: black;
+}
+
 
 .submitbutton {
   color: black;
@@ -172,17 +193,13 @@ button {
 }
 
 @media screen and (max-width: 768px){
+
   header{
     display: block;
-    padding-bottom: 30px;
   }
 
   form input{
     margin: 10px auto;
-  }
-
-  header{
-    margin-bottom: 20px;
   }
 
   #enter_place{
@@ -194,6 +211,25 @@ button {
 }
 
 @media screen and (max-width: 550px){
+  .backbutton {
+    color: white;
+    font-weight: bold;
+    background: transparent;
+    margin-top: 0.67em;
+    border: 2px solid white;
+    width: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    border-radius: 10px;
+    transition: all 0.1s;
+  }
+
+  .backbutton:hover{
+    color: black;
+    background: white;
+  }
+
   .content{
     background: white;
   }

@@ -50,7 +50,7 @@ body {
 }
 
 header {
-  margin: 180px auto 0 auto;
+  margin: 0 auto 0 auto;
   font-family: "Avenir", "Verdana", "Helvetica", sans-serif;
   color: white;
   padding: 2rem;
@@ -60,7 +60,7 @@ header {
 }
 
 h1 {
-  font-size: 5.5rem !important;
+  padding-top: 180px;
   color: white;
   font-weight: 100;
   margin: 10px 10px;
@@ -165,10 +165,6 @@ button {
 @media screen and (max-width: 550px){
   #title{
     text-shadow: none;
-  }
-
-  header{
-    margin-top: 160px;
   }
 
   .contents{

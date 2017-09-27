@@ -34,6 +34,7 @@ function visualize(dataset){
 	var logs = [];
 
 	var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
+	var colors = ["", "black", "blue", "rgb(0, 255, 255)", "green", "yellow", "red" ];
 
 	//logs = all_logs.length <= 7 ? all_logs: seven_logs(all_logs);
 	var current_date = new Date();
@@ -46,6 +47,8 @@ function visualize(dataset){
 	var already_added = [];
 	var l = {};
 	var flag = 0;
+	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 	todays_month = current_date.getMonth();
 	todays_day = current_date.getDate();
 
@@ -110,7 +113,7 @@ function visualize(dataset){
 
 
 	var w = $(window).width() <= 500 ? $(window).width() * 0.9 : 500;
-	var h = 100;
+	var h = 200;
 	var barPadding = 1;
 
 	var display = d3.select("body").select(".contents").select(".data_display");
@@ -132,19 +135,18 @@ function visualize(dataset){
 				return(place_name);
 			}
 		})
-		.style("color", "white");
+		.style("margin-top", "60px");
 
 	display.append("p")
 		.text(function(d){
 			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.floor(temp_avg)] + " on average. Data for the past 7 days:");
 		})
-		.style("color", "white");
 
 
 	var svg = display.append("svg")
 										.attr("width", w)
-										.attr("height", h);
-
+										.attr("height", h)
+										.style("margin-top", "30px");
 
 	svg.selectAll("rect")
 			.data(logs)
@@ -154,17 +156,19 @@ function visualize(dataset){
 				return (logs.length-i-1) * (w / logs.length);
 			})
 			.attr("y", function(d, i){
-				return h-d.temp *10;
+				return h-d.temp*30 -25;
 			})
 			.attr("width", function(d, i){
 				return (w / logs.length) - barPadding;
 			})
 			.attr("height", function(d, i){
-				return d.temp *10;
+				return d.temp *30;
 			})
-			.attr("fill", "white")
+			.attr("fill", function(d){
+				return"rgb(" + d.temp*10 + ", " + d.temp*30 + ", " + 255 + ")";
+			})
+			/*
 			.on("mouseover", function(d){
-				//d3.select(this).classed("hover", true);
         div.transition()
             .duration(200)
             .style("opacity", .9);
@@ -176,6 +180,34 @@ function visualize(dataset){
 				div.transition()
 						.duration(200)
 						.style("opacity", 0);
+			})
+			*/;
+	svg.selectAll("text")
+			.data(logs)
+			.enter()
+			.append("text")
+			.text(function(d, i){
+				return months[d.date.split("_")[0]] + " " + d.date.split("_")[1];
+			})
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
+			})
+			.attr("y", function(d){
+				return h - 8;
+			});
+
+	svg.selectAll("text")
+			.data(logs)
+			.enter()
+			.append("text")
+			.text(function(d, i){
+				return temps[Math.floor(d.temp)];
+			})
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
+			})
+			.attr("y", function(d){
+				return h - d.temp*30 - 20;
 			});
 
 
@@ -183,15 +215,17 @@ function visualize(dataset){
 
 function animateForm(){
 
-  $("header").animate({margin: "0 auto"}, {duration: 200});
+  $("h1").animate({"padding-top": "13px"}, {duration: 200});
   $("video").css("visibility", "hidden");
-  $(".contents").css("background", "linear-gradient(to bottom, #0f7fff 0%,#00c7ff 100%)");
-  $("header").attr("class", "row");
-  $("header").css("display", "block");
+  $("header").css("background", "linear-gradient(to bottom, #0f7fff 0%,#00a1ff 100%)");
+	$("header").css("box-shadow", "0px 2px 40px rgba(0, 0, 0, 0.3)");
+	$("header").attr("class", "row");
+	$("header").css("display", "block");
+	$("header").css("padding", "30px auto");
+	$(".contents").css("background", "white");
   $("#title").attr("class", "col-sm-4");
   $("form").attr("class", "col-sm-5");
   $("form").css("margin", "0 5px");
-  $("header").css("padding-bottom", "30px");
   $("h1").css("margin", "0 5px");
   $(".msb").css("margin", ".67em 10px");
   $("header").css("justify-content", "center");
