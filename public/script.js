@@ -1,21 +1,53 @@
-console.log("it works");
-var our_button = document.getElementById("gobutton");
-
+/*var our_button = document.getElementById("gobutton");
 our_button.addEventListener('click', function(){
   console.log("i am clicked");
-  $("header").animate({margin: "0 auto"}, {duration: 200});
-  $("video").css("visibility", "hidden");
-  $(".contents").css("background", "linear-gradient(to bottom, #0f7fff 0%,#00c7ff 100%)");
-  $("header").attr("class", "row");
-  $("header").css("display", "block");
-  $("#title").attr("class", "col-sm-4");
-  $("form").attr("class", "col-sm-5");
-  $("form").css("margin", "0 5px");
-  $("header").css("padding-bottom", "30px");
-  $("h1").css("margin", "0 5px");
-  $(".msb").css("margin", ".67em 10px");
-  $("header").css("justify-content", "center");
+  animateForm();
+  //getPublicData();
+  ajaxCall();
+});*/
 
+var $submit_button = $('#gobutton');
+$submit_button.click(function(){
+	var location_input = $('input[name="user_location_query"]').val();
+	animateForm();
+  	//getJSON();
+  	ajaxCall(location_input);
+});
+
+//An "error" or "fail" function
+function itFailed(data){
+	console.log("Failed");
+	console.log(data);
+}
+
+//A "success" or "done" function
+function itWorked(data){
+	console.log("Worked !");
+
+	var temp_info = JSON.parse(data);
+	console.log(temp_info.logs);
+
+	var htmlString = '';
+	htmlString += '<p> Most recently, people have reported that ' + temp_info.place + ' is level ' + temp_info.logs.temp + ' cold</p>';
+	$(htmlString).appendTo('.data_display');
+}
+
+
+function ajaxCall(query){
+	$.ajax({
+	url: '/place-query',
+	data: {
+		user_location_query: query
+	},
+	type: 'GET',
+	//dataType: 'jsonp',
+	error: itFailed,
+	success: itWorked
+});
+
+};
+
+function getJSON(){
 //Parse the JSON file to import the data into this D3 script
   var data = [];
   d3.json("../data/places_dummy.json", function(error, data) {
@@ -33,36 +65,23 @@ our_button.addEventListener('click', function(){
 
     });
 
-});
+};
 
-//An "error" or "fail" function
-function itFailed(data){
-	console.log("Failed");
-	console.log(data);
-}
+function animateForm(){
 
-//A "success" or "done" function
-function itWorked(data){
-	console.log("Worked !");
-	console.log(data);
+  $("header").animate({margin: "0 auto"}, {duration: 200});
+  $("video").css("visibility", "hidden");
+  $(".contents").css("background", "linear-gradient(to bottom, #0f7fff 0%,#00c7ff 100%)");
+  $("header").attr("class", "row");
+  $("header").css("display", "block");
+  $("#title").attr("class", "col-sm-4");
+  $("form").attr("class", "col-sm-5");
+  $("form").css("margin", "0 5px");
+  $("header").css("padding-bottom", "30px");
+  $("h1").css("margin", "0 5px");
+  $(".msb").css("margin", ".67em 10px");
+  $("header").css("justify-content", "center");
 
-	$(data).appendTo('.data_display');
-}
+};
 
-var $submit_button = $('#gobutton');
-$submit_button.click(function(){
-	var location_input = $('input[name="user_location_query"]').val();
-	//var link_url = '/dummy:' +
 
-		$.ajax({
-		url: '/place-query',
-		data: {
-			user_location_query: location_input
-		},
-		type: 'GET',
-		//dataType: 'jsonp',
-		error: itFailed,
-		success: itWorked
-	});
-
-});
