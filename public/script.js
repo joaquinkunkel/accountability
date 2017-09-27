@@ -1,18 +1,6 @@
-/*var our_button = document.getElementById("gobutton");
-our_button.addEventListener('click', function(){
-  console.log("i am clicked");
-  animateForm();
-  //getPublicData();
-  ajaxCall();
-});*/
 
-var $submit_button = $('#gobutton');
-$submit_button.click(function(){
-	var location_input = $('input[name="user_location_query"]').val();
-	animateForm();
-  	//getJSON();
-  	ajaxCall(location_input);
-});
+
+
 
 //An "error" or "fail" function
 function itFailed(data){
@@ -85,3 +73,24 @@ function animateForm(){
 };
 
 
+
+$(window).on('load',function(){
+	console.log('we are set up!');
+	var $submit_button = $('#gobutton');
+	$submit_button.click(function(){
+		var location_input = $('input[name="user_location_query"]').val();
+		animateForm();
+	  	//getJSON();
+	  	ajaxCall(location_input);
+	});
+});
+
+//old code that we may or may not use
+
+/*var our_button = document.getElementById("gobutton");
+our_button.addEventListener('click', function(){
+  console.log("i am clicked");
+  animateForm();
+  //getPublicData();
+  ajaxCall();
+});*/
