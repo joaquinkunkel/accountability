@@ -35,13 +35,6 @@ app.listen(port, function(){
 
 //this is called a route
 //this specific route is for the endpoint submit
-
-app.get("/dummy",function(request,response,error){
-  console.log('weve got an incoming ajax request');
-  response.send('got job guys');
-  console.log(request.query.user_location_query);
-});
-
 app.get("/place-query", function (request, response, error){
   console.log('--------------');
   console.log('user queried ', request.query.user_location_query);
@@ -82,46 +75,56 @@ app.get("/place-query", function (request, response, error){
 app.post("/submit", function (request, response, error){
   console.log('input', request.body);
 
-  var user = {};
-  user.place = request.body.user_location_query;
+  var user = request.body;
+  var new_log = {};
 
-  console.log('----------');
-  console.log('output', user);
-
-  fs.readFile('./data/places.json', function(error, data){
+  fs.readFile('./data/places_dummy.json', function(error, data){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON (because it's just text)
 
     //then we add our newly registered user to our array called "all users"
     //(check the users.json file to see that it's the top level array!)
     var array = whole_file.all_places;
+    var prev_logs;
 
     for(i = 0; i < array.length; i++){
-      if(array[i].name == user.place){
+      //find the location in the array for which the user wants to place a report
+      if(array[i].name == user.user_location_report){
         console.log("match!");
         console.log("Information for today: ");
-        var logs = array[i].logs;
-
+        
+        prev_logs = array[i].logs;
         //Saving today's date into a variable
         var date = new Date();
         var today = String(date.getMonth() + "_" + date.getDate());
         console.log("today: ", today);
+        new_log.date = today;
+        new_log.temp = user.user_temperature;
 
         //Extract all the temperatures for that given day
-        for(j = 0; j < logs.length; j++){
+        /*for(j = 0; j < logs.length; j++){
           if(logs[j].date == today){
             console.log("Temperature: ", logs[j].temp);
           }
           else{
             break;
           }
-        }
+        }*/
         //PUSH THE OBJECT
+        //console.log(new_log);
+        prev_logs.unshift(new_log);
+        console.log(prev_logs);
         break;
-
-      }else{
-        console.log("no match");
       }
-    }
+    };
+
+        //then we write ALL of our data (in the variable 'whole_file')
+    fs.writeFile('./data/places_dummy.json', JSON.stringify(whole_file), function(error){
+      if(error){ //hopefully no error?
+        console.log(error);
+      }else{//success message!
+        console.log('success! written new report',user);  
+      }
+    });
 
   });
 

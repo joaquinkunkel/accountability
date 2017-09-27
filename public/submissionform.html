@@ -52,13 +52,13 @@
         <h1 id="help_us">Help us inform the rest of the community.</h1>
         <p style="color: black"> By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.</p>
         <!--<input name="user_location" placeholder="Where are you right now?">-->
-        <input name="user_report" list="valid_locations" placeholder="Where are you right now?">
+        <input name="user_location_report" list="valid_locations" placeholder="Where are you right now?">
           <datalist id="valid_locations">
           </datalist>
         </input>
         <br/>
         <label for="user_temperature" style="font-weight: normal">How does the temperature feel?</label>
-        <select name="user_tamperature">
+        <select name="user_temperature">
           <option value="6">Hot</option>
           <option value="5">Warm</option>
           <option value="4">Just Right</option>
@@ -67,7 +67,7 @@
           <option value="1">Freezing</option>
         </select>
         <br/>
-        <button onclick="post" class="submitbutton">Submit</button>
+        <button class="submitbutton">Submit</button>
       </form>
     </div>
   </div>
