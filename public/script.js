@@ -113,7 +113,7 @@ function visualize(dataset){
 
 
 	var w = $(window).width() <= 500 ? $(window).width() * 0.9 : 500;
-	var h = 200;
+	var h = 250;
 	var barPadding = 1;
 
 	var display = d3.select("body").select(".contents").select(".data_display");
@@ -182,10 +182,11 @@ function visualize(dataset){
 						.style("opacity", 0);
 			})
 			*/;
-	svg.selectAll("text")
-			.data(logs)
-			.enter()
-			.append("text")
+	var texts = svg.selectAll("text")
+				.data(logs)
+				.enter();
+
+	texts.append("text")
 			.text(function(d, i){
 				return months[d.date.split("_")[0]] + " " + d.date.split("_")[1];
 			})
@@ -195,6 +196,19 @@ function visualize(dataset){
 			.attr("y", function(d){
 				return h - 8;
 			});
+
+	texts.append("text")
+			.text(function(d, i){
+				return temps[(Math.floor(d.temp))];
+			})
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
+			})
+			.attr("y", function(d){
+				return h - d.temp*30 - 35;
+			})
+			.style("color", "white")
+			.style("font-weight", "bold");
 
 };
 
