@@ -4,7 +4,6 @@ var port = 8000;
 var bp = require('body-parser');
 var fs = require('fs');
 //Define some initial callback functions
-
 app.use(express.static('public'));
 
 // parse application/x-www-form-urlencoded
@@ -16,14 +15,15 @@ app.listen(port, function(){
   console.log('server started on port',port);
 });
 
-//this is called a route
-//this specific route is for the endpoint submit
+//route for user queries
 app.get("/place-query", function (request, response, error){
-  console.log('--------------');
-  console.log('user queried ', request.query.user_location_query);
+  
+  /*console.log('--------------');
+  console.log('user queried ', request.query.user_location_query);*/
 
   //first we read our file that is in the 'data' folder, and our file is called 'users.json'
   fs.readFile('./data/places_dummy.json', function(error, data){
+    if(error){throw error};
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON (because it's just text)
 
     var user = {};
@@ -111,24 +111,10 @@ app.post("/submit", function (request, response, error){
 
   }); //end of read file
 
+  //set up a threshold - if the temperature is below the threshold send an email
   if(user.user_temperature > 3){
     console.log('we really need to do something about it!');
   };
 
   response.send("thanks for your submission love");
-
-  // if(user.already_housed == 'on' || user.likes_cats == 'on' || user.owns_hotplate == 'on'){
-  //   response.send('Sorry but you are not eligible for housing here.');
-  // }else{ // IS IT YES OR NO???
-  //   response.send('Congratulations! You are eligible for housing at NYU Abu Dhabi. You will enjoy life with campus cats and responsible cooking.');
-  // }
-});
-
-
-app.get("/get-users", function(req, res, err){
-  fs.readFile("./data/users.json", function(err, data){
-    var obj = JSON.parse(data);
-
-    res.json(obj);
-  });
 });
