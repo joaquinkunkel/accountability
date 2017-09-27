@@ -162,7 +162,7 @@ button {
 }
 
 @media screen and (max-width: 768px){
-  header .row{
+  header{
     display: block;
     padding-bottom: 30px;
   }
