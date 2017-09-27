@@ -39,7 +39,7 @@ app.listen(port, function(){
 app.get("/dummy",function(request,response,error){
   console.log('weve got an incoming ajax request');
   response.send('got job guys');
-  console.log(request);
+  console.log(request.query.user_location_query);
 });
 
 app.get("/place-query", function (request, response, error){
@@ -47,10 +47,14 @@ app.get("/place-query", function (request, response, error){
   console.log('user queried ', request.query.user_location_query);
 
   //first we read our file that is in the 'data' folder, and our file is called 'users.json'
-  fs.readFile('./data/places.json', function(error, data){
+  fs.readFile('./data/places_dummy.json', function(error, data){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON (because it's just text)
 
     var user = {};
+
+    //response.header('Access-Control-Allow-Origin', "*");
+    //response.writeHead(200, {'Content-Type': 'json'});
+
     //then we add our newly registered user to our array called "all users"
     //(check the users.json file to see that it's the top level array!)
     var array = whole_file.all_places;
@@ -58,8 +62,10 @@ app.get("/place-query", function (request, response, error){
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.place){
         console.log("match!");
+        //console.log(array[i].logs);
+        response.send(JSON.stringify(array[i].logs));
         //PUSH THE OBJECT
-        break;
+        return false;
       }else{
         console.log("no match");
       }
@@ -67,7 +73,7 @@ app.get("/place-query", function (request, response, error){
   });
 
   //response
-  response.send("hello thanks for searching");
+  //response.send("hello thanks for searching");
 });
 
 
