@@ -5,23 +5,6 @@ var bp = require('body-parser');
 var fs = require('fs');
 //Define some initial callback functions
 
-//An "error" or "fail" function
-function itFailed(data){
-	console.log("Failed");
-	console.log(data);
-}
-
-//A "success" or "done" function
-function itWorked(data){
-	console.log("Worked !");
-	console.log(data);
-}
-
-//A "completed" or "always" function
-function finished(){
-	console.log("I'm all finished");
-}
-
 app.use(express.static('public'));
 
 // parse application/x-www-form-urlencoded
@@ -126,7 +109,11 @@ app.post("/submit", function (request, response, error){
       }
     });
 
-  });
+  }); //end of read file
+
+  if(user.user_temperature > 3){
+    console.log('we really need to do something about it!');
+  };
 
   response.send("thanks for your submission love");
 
