@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 {"all_places":[
 {"name":"Arts Center (general)","logs":[{"date":"09_26","temp":1}]},
@@ -27,3 +28,6 @@
 {"name":"Welcome Center","logs":[{"date":"09_26","temp":1}]},
 {"name":"Fitness Center","logs":[{"date":"09_26","temp":1}]},
 {"name":"Swimming pool","logs":[{"date":"09_26","temp":1}]}]}
+=======
+{"all_places":[{"name":"Arts Center (general)","logs":[{"date":"8_27","temp":"1"},{"date":"8_27","temp":"3"},{"date":"09_26","temp":1},{"date":"8_27","temp":"6"},{"date":"8_27","temp":"6"},{"date":"8_27","temp":"6"}]},{"name":"A2 classrooms","logs":[{"date":"09_26","temp":1}]},{"name":"A3 classrooms","logs":[{"date":"09_26","temp":1}]},{"name":"A4 classrooms","logs":[{"date":"09_26","temp":1}]},{"name":"A5 classrooms","logs":[{"date":"09_26","temp":1}]},{"name":"A6 classrooms","logs":[{"date":"09_26","temp":1}]},{"name":"D1 Dining Hall","logs":[{"date":"09_26","temp":1}]},{"name":"D2 Dining Hall","logs":[{"date":"09_26","temp":1}]},{"name":"Baraha","logs":[{"date":"09_26","temp":1}]},{"name":"Campus Center lobby","logs":[{"date":"09_26","temp":1}]},{"name":"Library (general)","logs":[{"date":"09_26","temp":1}]},{"name":"Library Cafe","logs":[{"date":"09_26","temp":1}]},{"name":"A5 Engineering Design Studio","logs":[{"date":"09_26","temp":1}]},{"name":"Marketplace","logs":[{"date":"09_26","temp":1}]},{"name":"Arts Center IM Lab","logs":[{"date":"09_26","temp":1}]},{"name":"Convenience Store","logs":[{"date":"09_26","temp":1}]},{"name":"Welcome Center","logs":[{"date":"09_26","temp":1}]},{"name":"Fitness Center","logs":[{"date":"09_26","temp":1}]},{"name":"Swimming pool","logs":[{"date":"09_26","temp":1}]}]}
+>>>>>>> 309f80d67c41df77d7c837ba8ceee3eef0fb00c8
