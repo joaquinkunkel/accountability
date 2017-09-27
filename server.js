@@ -35,6 +35,7 @@ app.get("/place-query", function (request, response, error){
 
 //route for user reports
 app.post("/submit", function (request, response, error){
+  var location_match = false;
   //console.log('input', request.body);
   var user = request.body; //user object, define it here so you can add to it from different codeblocks
   var new_log = {}; //log object containing user's submit info -- newest log to be added to the database
@@ -48,6 +49,7 @@ app.post("/submit", function (request, response, error){
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.user_location_report){ //find the location in the array for which the user wants to make a temperature report
         //Saving today's date into a variable
+        location_match = true; //we have a match, used later to update the database
         var date = new Date();
         var today = String(date.getMonth() + "_" + date.getDate());
         //fill the newest log object with user report info and push it to the existing log array
@@ -60,18 +62,22 @@ app.post("/submit", function (request, response, error){
     };
 
     //then we write ALL of our data (in the variable 'whole_file')
-    fs.writeFile('./data/places_dummy.json', JSON.stringify(whole_file), function(error){
-      if(error){ //hopefully no error?
-        console.log(error);
-      }else{//success message!
-        console.log('success! written new report',user);
-      }
-    });
+    if(location_match){
+      fs.writeFile('./data/places_dummy.json', JSON.stringify(whole_file), function(error){
+        if(error){ //hopefully no error?
+          console.log(error);
+        }else{//success message!
+          console.log('success! written new report',user);
+        }
+      });
+    }else{
+      console.log('nothing written to the database!');
+    }
 
   }); //end of read file
 
   //set up a threshold - if the temperature is below the threshold (i.e. the user says the space is being either freezing or cold) - send an email
-  if(user.user_temperature < 3){
+  if(user.user_temperature < 3 && location_match){
     //console.log('sending an email!');
     var api_key = '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';
     var recipient = 'nyuad.facilities@nyu.edu';
@@ -87,9 +93,12 @@ app.post("/submit", function (request, response, error){
     html: email_body
     };
     sgMail.send(msg);
-  };
+    response.redirect('after_submission.html');
+  }else{
+    response.redirect('after_invalid_submission.html');
+  }
 
-  response.redirect('after_submission.html'); //redirect to after-submission page
+   //redirect to after-submission page
 });
 
 //start listening on a port
