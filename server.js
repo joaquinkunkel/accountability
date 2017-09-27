@@ -91,7 +91,7 @@ app.post("/submit", function (request, response, error){
       if(array[i].name == user.user_location_report){
         console.log("match!");
         console.log("Information for today: ");
-        
+
         prev_logs = array[i].logs;
         //Saving today's date into a variable
         var date = new Date();
@@ -122,7 +122,7 @@ app.post("/submit", function (request, response, error){
       if(error){ //hopefully no error?
         console.log(error);
       }else{//success message!
-        console.log('success! written new report',user);  
+        console.log('success! written new report',user);
       }
     });
 

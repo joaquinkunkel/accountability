@@ -6,9 +6,20 @@ html{
   margin: 0 auto;
 }
 
-rect:hover {
-  fill: yellow;
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 35px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: black;
+  color: white;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
+
 #background {
   position: fixed;
   top: 50%;

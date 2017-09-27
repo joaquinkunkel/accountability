@@ -35,9 +35,43 @@ function ajaxCall(query){
 function visualize(dataset){
 	var data = JSON.parse(dataset)
 	var place_name = data.place;
-	var logs = data.logs;
+	var all_logs = data.logs;
+	var logs = [];
 
-	console.log(place_name);
+	var temps = ["", "Freezing", "Cold", "Cool", "Just right", "Warm", "Hot"];
+	//Take only 7 elements from all_logs.
+
+	function seven_logs(logs){
+		var my_logs = []
+		for(i = 0; i < 7; i++){
+			my_logs.push(all_logs[i]);
+		}
+		return my_logs;
+	};
+
+	logs = all_logs.length <= 7 ? all_logs: seven_logs(all_logs);
+
+	console.log(logs);
+
+	var current_date = new Date();
+	var temp_avg = 0; //Compute the average temperatures of a place.
+	var temp_count = 0;
+	var split_date = [];
+
+	logs.forEach(function(log){
+		split_date = log.date.split("_");
+		if(current_date.getMonth() == split_date[0] && current_date.getDate() - split_date[1] < 7){
+			console.log(temp_avg);
+			temp_avg += parseInt(log.temp);
+
+			temp_count++;
+		}
+	});
+
+	temp_avg = temp_avg/temp_count;
+
+	//console.log(temp_avg, "   ", temp_count);
+	//console.log(place_name);
 
 	var left_limit = data.logs[data.logs.length-1].date.split("_"); //The oldest date of the place's logs.
 	var right_limit = data.logs[0].date.split("_"); //The most recent date of the place's logs.
@@ -50,10 +84,19 @@ function visualize(dataset){
 
 	var display = d3.select("body").select(".contents").select(".data_display");
 
+	var div = display.append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 	display.append("h2")
 		.text(place_name)
 		.style("color", "white");
 
+	display.append("p")
+		.text(function(d){
+			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.floor(temp_avg)] + " on average.");
+		});
+			/*
 	display.selectAll("p")
 		.data(data.logs)
 		.enter()
@@ -62,6 +105,7 @@ function visualize(dataset){
 			return("Date: " + d.date + "\t" + "Temperature: " + d.temp);
 		})
 		.style("color", "white");
+*/
 
 	var svg = display.append("svg")
 										.attr("width", w)
@@ -85,10 +129,18 @@ function visualize(dataset){
 			})
 			.attr("fill", "white")
 			.on("mouseover", function(d){
-				d3.select(this).classed("hover", true);
+				//d3.select(this).classed("hover", true);
+        div.transition()
+            .duration(200)
+            .style("opacity", .9);
+				div.html(d.date + "<br/>"  + temps[d.temp])
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY - 28) + "px");
 			})
-			.on("mouseover", function(d){
-				d3.select(this).classed("hover", false);
+			.on("mouseout", function(){
+				div.transition()
+						.duration(200)
+						.style("opacity", 0);
 			});
 
 
