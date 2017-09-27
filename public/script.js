@@ -45,6 +45,8 @@ function itFailed(data){
 function itWorked(data){
 	console.log("Worked !");
 	console.log(data);
+
+	$(data).appendTo('.data_display');
 }
 
 var $submit_button = $('#gobutton');
