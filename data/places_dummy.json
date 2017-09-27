@@ -8,7 +8,15 @@
 {"name":"A6 classrooms","logs":[{"date":"09_26","temp":1}]},
 {"name":"D1 Dining Hall","logs":[{"date":"09_26","temp":1}]},
 {"name":"D2 Dining Hall","logs":[{"date":"09_26","temp":1}]},
-{"name":"Baraha","logs":[{"date":"09_26","temp":1}]},
+{"name":"Baraha","logs":[
+  {"date":"09_26","temp":1},
+  {"date":"09_26","temp":5},
+  {"date":"09_26","temp":4},
+  {"date":"09_26","temp":2},
+  {"date":"09_26","temp":3},
+  {"date":"09_26","temp":5},
+  {"date":"09_26","temp":1}
+  ]},
 {"name":"Campus Center lobby","logs":[{"date":"09_26","temp":1}]},
 {"name":"Library (general)","logs":[{"date":"09_26","temp":1}]},
 {"name":"Library Cafe","logs":[{"date":"09_26","temp":1}]},

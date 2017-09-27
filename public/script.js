@@ -1,7 +1,3 @@
-
-
-
-
 //An "error" or "fail" function
 function itFailed(data){
 	console.log("Failed");
@@ -13,11 +9,12 @@ function itWorked(data){
 	console.log("Worked !");
 
 	var temp_info = JSON.parse(data);
-	console.log(temp_info.logs);
+	console.log(temp_info);
+	visualize(data);
 
-	var htmlString = '';
-	htmlString += '<p> Most recently, people have reported that ' + temp_info.place + ' is level ' + temp_info.logs.temp + ' cold</p>';
-	$(htmlString).appendTo('.data_display');
+	//var htmlString = '';
+	//htmlString += '<p> Most recently, people have reported that ' + temp_info.place + ' is level ' + temp_info.logs.temp + ' cold</p>';
+	//$(htmlString).appendTo('.data_display');
 }
 
 
@@ -35,23 +32,65 @@ function ajaxCall(query){
 
 };
 
-function getJSON(){
-//Parse the JSON file to import the data into this D3 script
-  var data = [];
-  d3.json("../data/places_dummy.json", function(error, data) {
+function visualize(dataset){
+	var data = JSON.parse(dataset)
+	var place_name = data.place;
+	var logs = data.logs;
 
-    d3.select("body").select(".contents").select(".data_display").selectAll("h1")
-      .data(data.all_places)
-      .enter()
-      .append("h1")
-      .text(function(d){
-        var input_text = $('input').val();
-        if(input_text == d.name){
-          return d.name + JSON.stringify(d.logs);
-        }
-      });
+	console.log(place_name);
 
-    });
+	var left_limit = data.logs[data.logs.length-1].date.split("_"); //The oldest date of the place's logs.
+	var right_limit = data.logs[0].date.split("_"); //The most recent date of the place's logs.
+
+	var w = $(window).width() <= 500 ? $(window).width() * 0.9 : 500;
+	var h = 100;
+	var barPadding = 1;
+
+	//An array that will store [[date, temp], [date, temp], ...]:
+
+	var display = d3.select("body").select(".contents").select(".data_display");
+
+	display.append("h2")
+		.text(place_name)
+		.style("color", "white");
+
+	display.selectAll("p")
+		.data(data.logs)
+		.enter()
+		.append("p")
+		.text(function(d){
+			return("Date: " + d.date + "\t" + "Temperature: " + d.temp);
+		})
+		.style("color", "white");
+
+	var svg = display.append("svg")
+										.attr("width", w)
+										.attr("height", h);
+
+	svg.selectAll("rect")
+			.data(logs)
+			.enter()
+			.append("rect")
+			.attr("x", function(d, i){
+				return i * (w / logs.length);
+			})
+			.attr("y", function(d, i){
+				return h-d.temp *10;
+			})
+			.attr("width", function(d, i){
+				return (w / logs.length) - barPadding;
+			})
+			.attr("height", function(d, i){
+				return d.temp *10;
+			})
+			.attr("fill", "white")
+			.on("mouseover", function(d){
+				d3.select(this).classed("hover", true);
+			})
+			.on("mouseover", function(d){
+				d3.select(this).classed("hover", false);
+			});
+
 
 };
 
