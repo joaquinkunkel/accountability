@@ -83,18 +83,23 @@ app.post("/submit", function (request, response, error){
           console.log(error);
         }else{//success message!
           console.log('success! written new report',user);
-          response.redirect('after_submission.html');
+          if(user.user_temperature < 3){
+            sendMail();
+            response.redirect('after_submission.html');
+          }else{
+            response.redirect('after_valid_submission.html');
+          }
         }
       });
     }else{
       console.log('nothing written to the database!');
       response.redirect('after_invalid_submission.html');
     }
-
+    
   }); //end of read file
 
   //set up a threshold - if the temperature is below the threshold (i.e. the user says the space is being either freezing or cold) - send an email
-  if(user.user_temperature < 3){
+  function sendMail(){
     //console.log('sending an email!');
     var api_key = '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';
     var recipient = 'nyuad.facilities@nyu.edu';
