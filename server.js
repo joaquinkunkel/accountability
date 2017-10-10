@@ -5,6 +5,13 @@ var bp = require('body-parser');
 var fs = require('fs');
 var sgMail = require('@sendgrid/mail');
 var path = require('path');
+var API_KEY;
+
+fs.readFile('API_KEY.txt','utf-8',function(err,data){
+ if (err) throw err;
+  API_KEY = data.toString();
+  //console.log(API_KEY);
+});
 
 var dataset_path = 'data/places_data.json';
 
