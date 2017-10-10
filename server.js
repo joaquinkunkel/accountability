@@ -10,9 +10,30 @@ var schedule = require('node-schedule');
 var port = 8000;
 var API_KEY;
 var dataset_path = 'data/places_data.json';
+var facilities_reports_empty = 'data/facilities_reports_empty.json';
+var facilities_reports_daily = 'data/facilities_reports_daily.json';
+
+function collect_daily_reports(){
+  fs.readFile(facilities_reports_daily,function(error,data){
+    console.log('parse the data');
+  });
+}
+
+function reset_daily_reports(){
+    fs.readFile(facilities_reports_empty,function(error,data){
+      fs.writeFile(facilities_reports_daily,JSON.stringify(data), function(error){
+        console.log('we are ready to collect reports for a new day!');
+      });
+  });
+}
 
 var j = schedule.scheduleJob('5 23 * * *', function(){
-  console.log('every day at this time, we will check our daily database and write an email to the facilities');
+  //console.log('every day at this time, we will check our daily database and write an email to the facilities');
+
+  //READ IN THE DAILY REPORTS, PROCESS THAT
+
+
+
 
 });
 //load in SendGrid API_KEY
@@ -32,6 +53,7 @@ app.use(bp.json());
 
 //route for user queries
 app.get("/place-query", function (request, response, error){
+
   //console.log('user queried ', request.query.user_location_query); 
   var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks 
   user.place = request.query.user_location_query;
@@ -57,6 +79,7 @@ app.post("/submit", function (request, response, error){
   //get timestamp
   var d = new Date();
   console.log('today is',d.getDate(), ' / ',d.getMonth());
+  console.log(request);
   var location_match = false;
   //console.log('input', request.body);
   var user = request.body; //user object, define it here so you can add to it from different codeblocks
