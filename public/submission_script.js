@@ -83,14 +83,54 @@ function readGPSdata(){
 	});
 };
 
+//Location list array and functions!
+var optionList = [
+  "Arts Center lobby",
+  "D2 dining hall",
+  "D1 dining hall",
+  "Baraha",
+  "Campus Center lobby",
+  "Libary",
+  "Library Cafe",
+  "A2 classrooms",
+  "A5 classrooms",
+  "A6 classrooms",
+  "Engineering Research Building (ERB)",
+  "A5 Engineering Design Studio (EDS)",
+  "Marketplace",
+  "Arts Center - IM Lab",
+  "Convenience Store",
+  "Welcome Center",
+  "Fitness Center",
+  "Swimming pool"
+];
+
+function makeOptionList(){
+  optionList.forEach(function(option){
+    $("datalist").append("<option value='" + option + "'>");
+  });
+};
+
+function isValidLocation(location){
+  for(var i = 0; i < optionList.length; i++){
+    if(optionList[i] == location){
+      return 1;
+    }
+  }
+  return 0;
+}
+
 $(window).on('load',function(){
 	//console.log('submission is good!');
   $("form").animate({"opacity": "1"}, {duration: 500});
 	readGPSdata();
+  makeOptionList();
 });
 
-$(".where").on('input', function(){
-  $(".how").animate({"opacity": "1"}, {duration: 1000});
+$(".user_location_report").on("input", function(){
+  if(isValidLocation($(this).val())){
+    $(".how").animate({"opacity": "1"}, {duration: 1000});
+  }
 });
 
 $(".selector").on('change', function(){

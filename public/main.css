@@ -101,7 +101,7 @@ h1 {
   opacity: 0;
 }
 
-.submitbutton, .yesbutton {
+.submitbutton, .yesbutton, .yescampus, .nocampus {
   color: black;
   font-weight: bold;
   background: transparent;
