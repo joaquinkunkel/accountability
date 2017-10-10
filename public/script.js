@@ -27,70 +27,70 @@ function ajaxCall(query){
 
 };
 
-function visualize(dataset){
-	var data = JSON.parse(dataset)
-	var place_name = data.place;
-	var all_logs = data.logs;
+function createWeeklyLogs(all_logs){
+
 	var logs = [];
-
-	var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
-	var colors = ["", "black", "blue", "rgb(0, 255, 255)", "green", "yellow", "red" ];
-
-	//logs = all_logs.length <= 7 ? all_logs: seven_logs(all_logs);
-	var current_date = new Date();
-	var temp_avg = 0; //Compute the average temperatures of a place.
 	var temp_count = 0;
-	var split_date = [];
-	var day_avg;
 	var temp_count_2 = 0
-	var new_log = {};
 	var already_added = [];
-	var l = {};
-	var flag = 0;
-	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+	var current_date = new Date();
 	todays_month = current_date.getMonth();
 	todays_day = current_date.getDate();
 
 	for(e = 0; e < all_logs.length; e++){
-		flag = 0
 
-		l = all_logs[e];
-		new_log = {};
-		split_date = l.date.split("_");
-		if(todays_month == split_date[0] && todays_day - split_date[1] < 7){
+		var flag = 0
+		var l = all_logs[e];
+		var new_log = {};
+		var split_date = l.date.split("_");
 
+		if(todays_month == split_date[0] && todays_day - split_date[1] < 7){ //Check if the date of l is within past week.
+
+			//Check to see if the log is in already_added (we skip it if it is).
 			for(i = 0; i < already_added.length; i++){
-				if(all_logs[e].date == already_added[i]){
+				if(l.date == already_added[i]){
 					flag = 1;
 					break;
 				}
 			}
 
-			if(!flag){
-
-				//Compute the average of all temperatures for that date.
-				day_avg = 0;
+			if(!flag){ //If it hasn't yet been added
+				//Compute the average of all temperatures for that date. We will add this av day temperature to the graph
+				var day_avg = 0;
 				temp_count_2 = 0;
 				all_logs.forEach(function(my_log){
 					if(my_log.date == l.date){
-						console.log(all_logs[e].date);
+						console.log(l.date);
 						day_avg += parseInt(my_log.temp);
 						temp_count_2++;
 					}
 				});
+
 				day_avg = day_avg/temp_count_2;
 
-				//Add this average to our logs array.
+				//Create a day average log and add it to our logs array.
 				new_log.date = l.date;
 				new_log.temp = day_avg;
 				logs.push(new_log);
-
 				already_added.push(l.date);
 			}
-
 		}
 	}
+	return(logs);
+};
+
+function visualize(dataset){
+
+	var data = JSON.parse(dataset)
+	var place_name = data.place;
+	var all_logs = data.logs;
+	var logs = createWeeklyLogs(all_logs); //We will save weekly, monthly, or yearly logs in this array - depending on the function we call.
+
+
+	//Sets and data used for visualization
+	var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
+	var colors = ["", "black", "blue", "rgb(0, 255, 255)", "green", "yellow", "red" ];
+	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 	function todays_avg(){
 		for(i = 0; i < logs.length; i++){
@@ -105,27 +105,26 @@ function visualize(dataset){
 
 	console.log(logs);
 
-
+	var temp_avg = 0;
 	logs.forEach(function(log){
 		temp_avg += parseInt(log.temp);
 	});
 	temp_avg = temp_avg/logs.length;
 
-
+	//Variables for visualization
 	var w = $(window).width() <= 500 ? $(window).width() * 0.9 : 500;
 	var h = 250;
 	var barPadding = 1;
 
+	//Start visualization
 	var display = d3.select("body").select(".contents").select(".data_display");
 
+	//If there is already a visualization there, remove it to replace with new one.
 	display.selectAll("svg").remove();
 	display.selectAll("h2").remove();
 	display.selectAll("p").remove();
 
-	var div = display.append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
+	//Title, e.g. "Baraha is cold today."
 	display.append("h2")
 		.text(function(d){
 			if(todays_avg()){
@@ -137,12 +136,14 @@ function visualize(dataset){
 		})
 		.style("margin-top", "60px");
 
+	//Subtitle
 	display.append("p")
 		.text(function(d){
 			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.floor(temp_avg)] + " on average. Data for the past 7 days:");
 		})
 
-
+	//Graph
+	//TODO: Add options to switch from weekly, monthly or yearly graphs.
 	var svg = display.append("svg")
 										.attr("width", w)
 										.attr("height", h)
@@ -166,22 +167,8 @@ function visualize(dataset){
 			})
 			.attr("fill", function(d){
 				return"rgb(" + d.temp*10 + ", " + d.temp*30 + ", " + 255 + ")";
-			})
-			/*
-			.on("mouseover", function(d){
-        div.transition()
-            .duration(200)
-            .style("opacity", .9);
-				div.html(d.date + "<br/>"  + temps[d.temp])
-						.style("left", (d3.event.pageX) + "px")
-						.style("top", (d3.event.pageY - 28) + "px");
-			})
-			.on("mouseout", function(){
-				div.transition()
-						.duration(200)
-						.style("opacity", 0);
-			})
-			*/;
+			});
+
 	var texts = svg.selectAll("text")
 				.data(logs)
 				.enter();

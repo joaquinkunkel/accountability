@@ -7,55 +7,48 @@
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Abril+Fatface" rel="stylesheet">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v4.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
     <div class="contents">
-    <header>
-      <h1 id="title"><span style="font-weight:bold">ac</span>countability</h1>
-      <div>
-          <!-- <form action="/place-query" method="get"> -->
-          <form>
-
-            <input name="user_location_query" list="locations" placeholder="Enter a place on campus">
-            <datalist id="locations">
-              <option value="Arts Center (general)">
-              <option value="A5 classrooms">
-              <option value="A6 classrooms">
-              <option value="D2 Dining Hall">
-              <option value="D1 Dining Hall">
-              <option value="Baraha">
-              <option value="Campus Center lobby">
-              <option value="Library (general)">
-              <option value="Library Cafe">
-              <option value="A2 classrooms">
-              <option value="A3 classrooms">
-              <option value="A4 classrooms">
-              <option value="A5 Engineering Design Studio">
-              <option value="Marketplace">
-              <option value="Arts Center IM Lab">
-              <option value="Convenience Store">
-              <option value="Welcome Center">
-              <option value="Fitness Center">
-              <option value="Swimming pool">
-            </datalist>
-            </input>
-            <button type="button" id="gobutton" class="gobutton">Go</button>
-          </form>
-          <a href="./submissionform.html" class="msb"><button class="makesubmissionbutton" onclick="">Make a submission</button></a>
-        </div>
-    </header>
-
-    <div class="data_display"></div>
-  </div>
-
+      <header>
+        <h1 id="title"><span style="font-weight:bold">ac</span><span style="font-weight: 100; opacity: 0.8">countability</span></h1>
+        <div>
+            <!-- <form action="/place-query" method="get"> -->
+            <form>
+              <input name="user_location_query" list="locations" placeholder="Enter a place on campus">
+              <datalist id="locations">
+                <option value="Arts Center (general)">
+                <option value="A5 classrooms">
+                <option value="A6 classrooms">
+                <option value="D2 Dining Hall">
+                <option value="D1 Dining Hall">
+                <option value="Baraha">
+                <option value="Campus Center lobby">
+                <option value="Library (general)">
+                <option value="Library Cafe">
+                <option value="A2 classrooms">
+                <option value="A3 classrooms">
+                <option value="A4 classrooms">
+                <option value="A5 Engineering Design Studio">
+                <option value="Marketplace">
+                <option value="Arts Center IM Lab">
+                <option value="Convenience Store">
+                <option value="Welcome Center">
+                <option value="Fitness Center">
+                <option value="Swimming pool">
+              </datalist>
+              </input>
+              <button type="button" id="gobutton" class="gobutton">Go</button>
+            </form>
+            <a href="./submissionform.html" class="msb"><button class="makesubmissionbutton" onclick="">Make a submission</button></a>
+          </div>
+      </header>
+      <div class="data_display"></div>
     </div>
-
-    <video autoplay loop muted id="background">
-    <source src="./backgroundvid.mp4" type="video/mp4">
-    </video>
     <script src="script.js"></script>
   </body>
 </html>
