@@ -1,19 +1,26 @@
+//dependencies
 var express = require('express');
 var app = express();
-var port = 8000;
 var bp = require('body-parser');
 var fs = require('fs');
 var sgMail = require('@sendgrid/mail');
 var path = require('path');
+var schedule = require('node-schedule');
+//setup variables
+var port = 8000;
 var API_KEY;
+var dataset_path = 'data/places_data.json';
 
+var j = schedule.scheduleJob('5 23 * * *', function(){
+  console.log('every day at this time, we will check our daily database and write an email to the facilities');
+
+});
+//load in SendGrid API_KEY
 fs.readFile('API_KEY.txt','utf-8',function(err,data){
  if (err) throw err;
   API_KEY = data.toString();
   //console.log(API_KEY);
 });
-
-var dataset_path = 'data/places_data.json';
 
 //Define some initial callback functions
 app.use(express.static('public'));
@@ -47,6 +54,9 @@ app.get("/place-query", function (request, response, error){
 
 //route for user reports
 app.post("/submit", function (request, response, error){
+  //get timestamp
+  var d = new Date();
+  console.log('today is',d.getDate(), ' / ',d.getMonth());
   var location_match = false;
   //console.log('input', request.body);
   var user = request.body; //user object, define it here so you can add to it from different codeblocks
