@@ -36,12 +36,13 @@ var j = schedule.scheduleJob('5 23 * * *', function(){
 
 
 });
-//load in SendGrid API_KEY
+/*load in SendGrid API_KEY
 fs.readFile('API_KEY.txt','utf-8',function(err,data){
  if (err) throw err;
   API_KEY = data.toString();
   //console.log(API_KEY);
 });
+*/
 
 //Define some initial callback functions
 app.use(express.static('public'));
@@ -54,16 +55,16 @@ app.use(bp.json());
 //route for user queries
 app.get("/place-query", function (request, response, error){
 
-  //console.log('user queried ', request.query.user_location_query); 
-  var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks 
+  //console.log('user queried ', request.query.user_location_query);
+  var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
   user.place = request.query.user_location_query;
-  
+
   //load in the database
   fs.readFile(dataset_path, function(error, data){
     if(error){throw error};
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
     var array = whole_file.all_places; //array of all campus locations and corresponding logs
-    
+
     //match the queried location with the location in the database
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.place){
@@ -90,7 +91,7 @@ app.post("/submit", function (request, response, error){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
     //then we add our newly registered user to our array called "all users"
     var array = whole_file.all_places;
-  
+
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.user_location_report){ //find the location in the array for which the user wants to make a temperature report
         //Saving today's date into a variable
@@ -113,19 +114,19 @@ app.post("/submit", function (request, response, error){
           console.log(error);
         }else{//success message!
           console.log('success! written new report',user);
-          if(user.user_temperature < 3){
-            sendMail();
-            response.redirect('after_submission.html');
-          }else{
-            response.redirect('after_valid_submission.html');
-          }
+        //  if(user.user_temperature < 3){
+            //sendMail();
+            //response.redirect('after_submission.html');
+          //}else{
+            //response.redirect('after_valid_submission.html');
+          //}
         }
       });
     }else{
       console.log('nothing written to the database!');
       response.redirect('after_invalid_submission.html');
     }
-    
+
   }); //end of read file
 
   //set up a threshold - if the temperature is below the threshold (i.e. the user says the space is being either freezing or cold) - send an email
@@ -134,7 +135,7 @@ app.post("/submit", function (request, response, error){
     var api_key = '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';
     var recipient = 'mk4908@nyu.edu';
     var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
-    var email_body = 'Dear Madam or Sir,<br /><br />a student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />'; 
+    var email_body = 'Dear Madam or Sir,<br /><br />a student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
     email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental pollution.</i>';
 
     sgMail.setApiKey(api_key);

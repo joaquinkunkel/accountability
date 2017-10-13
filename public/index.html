@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <script src="https://d3js.org/d3.v4.js"></script>
   </head>
   <body>
     <div class="form-content">
@@ -19,26 +19,25 @@
             <h1 class="col-sm-11" id="logo_text"><span style="font-weight:bold">ac</span><span style="opacity: 0.5">countability</span></h1>
           </div>
       </header>
-      <h1 id="help_us">Hello.</h1>
-      <p class="description">
-        By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.
-      </p>
+      <div id="heading">
+        <h1 id="help_us">Fetching your location...</h1><span id="infobutton">Why?</span>
+      </div>
+      <p class="description"> </p>
+      <button class="skipbutton">Skip this step</button>
       <form class="submission" action="/submit" method="POST">
         <!--<input name="user_location" placeholder="Where are you right now?">-->
-        <div class="where">
+        <div id="where">
           <label for="user_location_report"><p>Where are you right now?</p></label>
           <br/>
-          <input class="user_location_report" name="user_location_report" list="locations" placeholder="Enter a location">
-            <datalist id="locations">
-            </datalist>
-          </input>
+          <select class="user_location_report" name="user_location_report">
+          </select>
           <br/>
         </div>
-        <div class="how">
+        <div id="how">
           <label for="user_temperature"><p>How does the temperature feel?</p></label>
           <br/>
           <select name="user_temperature" class="selector">
-            <option disabled selected value> Select a temperature</option>
+            <option disabled selected value>Select a temperature</option>
             <option value="6">Hot</option>
             <option value="5">Warm</option>
             <option value="4">Just Right</option>
@@ -56,5 +55,6 @@
     </video>
   </div>
   <script src="submission_script.js"></script>
+  <script src="visualization.js"></script>
   </body>
 </html>
