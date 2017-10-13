@@ -107,15 +107,15 @@ function success(pos) {
 };
 
 	function error(err) {
-    gps_working = 0;
+	  gps_working = 0;
 	  console.warn(`ERROR(${err.code}): ${err.message}`);
 	};
 
 	if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error, options);
-    } else {
-        console.log("Geolocation is not supported by this browser.");
-    }
+	    navigator.geolocation.getCurrentPosition(success, error, options);
+	} else {
+	    console.log("Geolocation is not supported by this browser.");
+	}
 
 }
 

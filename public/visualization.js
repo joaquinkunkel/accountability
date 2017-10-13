@@ -10,15 +10,15 @@ function visualize(data){
 	 //where count is the number of times that temperature appeared on that day.
 	 //"a" is an array of weekly logs
 		var daysLogs = [
-		[1, 0],
-		[2, 0],
-		[3, 0],
-		[4, 0],
+		[6, 0],
 		[5, 0],
-		[6, 0]
+		[4, 0],
+		[3, 0],
+		[2, 0],
+		[1, 0]
 		];
 
-		for(var i = 0; i < a.length; i++){
+		for(var i = a.length - 1; i >= 0; i--){
 			var l = a[i];
 			var split_date = l.date.split("_");
 			if(todays_day == split_date[1] && todays_month == split_date[0]){ //Check if the date of l is within past week.
