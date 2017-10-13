@@ -7,33 +7,32 @@ var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
+
+//require code from other files;
 //setup variables
 var port = 8000;
 var API_KEY;
 var dataset_path = 'data/places_data.json';
-var facilities_reports_empty = 'data/facilities_reports_empty.json';
-var facilities_reports_daily = 'data/facilities_reports_daily.json';
+var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
+var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 
 //cookie variables
 var COOKIE_MAX_AGE = 60000;
 
-function collect_daily_reports(){
-  fs.readFile(facilities_reports_daily,function(error,data){
-    console.log('parse the data');
-  });
+function update_facilities_reports(){
+
 }
 
-function reset_daily_reports(){
+/*function reset_daily_reports(){
     fs.readFile(facilities_reports_empty,function(error,data){
       fs.writeFile(facilities_reports_daily,JSON.stringify(data), function(error){
         console.log('we are ready to collect reports for a new day!');
       });
   });
-}
+}*/
 
 var j = schedule.scheduleJob('5 23 * * *', function(){
   //console.log('every day at this time, we will check our daily database and write an email to the facilities');
-
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
 
 });
@@ -84,7 +83,9 @@ app.get("/delete-cookie",function(req,res,err){
 //route for user reports
 app.post("/submit", function (request, response, error){
 
-  //set up variables
+  /*-----------------------------------------------------------------
+                            SET UP VARIABLES
+  -------------------------------------------------------------------*/
   var user = request.body;
   var user_location = user.user_location_report;
   var location_match = false;
@@ -96,8 +97,9 @@ app.post("/submit", function (request, response, error){
   new_log.date = today;
   new_log.temp = parseInt(user.user_temperature); //++++++++++++++++++++++ string or number????
 
-  //handle cookies
-  //console.log('Pre request cookies: ', request.cookies);
+  /*-----------------------------------------------------------------
+                            HANDLE COOKIES
+  -------------------------------------------------------------------*/
   var location_cookie = request.cookies.reported_locations;
   var new_cookie_value_obj = {};
   new_cookie_value_obj.day = new_log.date;
@@ -137,9 +139,27 @@ app.post("/submit", function (request, response, error){
   console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
+  /*-----------------------------------------------------------------
+                        FACILITIES REQUESTS DATABASE
+  -------------------------------------------------------------------*/
+  fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
+
+    var whole_file = JSON.parse(data);
+    var places_array = whole_file.all_places
+    for(var i = 0; i< places_array.length; i++){
+
+      if(places_array[i].name === user_location){
+        places_array[i].logs.push(new_log.temp);
+      };
+      
+    };
+
+  });
  
 
-  //read in the whole database
+  /*-----------------------------------------------------------------
+                          TEMPERATURE DATABASE
+  -------------------------------------------------------------------*/
   fs.readFile(dataset_path, function(error, data){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
     //then we add our newly registered user to our array called "all users"
