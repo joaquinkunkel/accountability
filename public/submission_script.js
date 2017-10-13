@@ -13,12 +13,15 @@ function itFailed(data){
 //A "success" or "done" function
 function itWorked(data){
 	var temp_info = JSON.parse(data);
-	clearPage();
-	visualize(data);
+	console.log('here is our data \n');
+	console.log(temp_info);
+	preparePage();
+	visualize(temp_info);
 }
 
 
 function ajaxCall(query){
+	console.log('sending ajax call to the server');
 	$.ajax({
 	url: '/place-query',
 	data: {
