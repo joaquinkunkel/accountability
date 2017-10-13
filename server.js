@@ -52,7 +52,7 @@ app.use(bp.json());
 
 
 //route for user queries
-app.get("/place-query", function (request, response, error){
+/*app.get("/place-query", function (request, response, error){
 
   //console.log('user queried ', request.query.user_location_query);
   var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
@@ -72,7 +72,8 @@ app.get("/place-query", function (request, response, error){
       }
     }
   });
-});
+
+});*/
 
 app.get("/delete-cookie",function(req,res,err){
   console.log('deleting cookie');
@@ -144,15 +145,21 @@ app.post("/submit", function (request, response, error){
   -------------------------------------------------------------------*/
   fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
 
-    var whole_file = JSON.parse(data);
-    var places_array = whole_file.all_places
+    var reports = JSON.parse(data);
+    var places_array = reports.all_places;
     for(var i = 0; i< places_array.length; i++){
 
       if(places_array[i].name === user_location){
         places_array[i].logs.push(new_log.temp);
       };
-      
+
     };
+
+    fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(reports),function(error){
+      if(error) throw error;
+      console.log('we have updated the facilities report database!');
+    });
+
 
   });
  
