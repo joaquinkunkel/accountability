@@ -73,10 +73,7 @@ app.get("/place-query", function (request, response, error){
       }
     }
   });
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 });
 
 app.get("/delete-cookie",function(req,res,err){
