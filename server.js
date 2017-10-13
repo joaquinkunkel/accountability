@@ -7,12 +7,14 @@ var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
-//setup variables
+  /*-----------------------------------------------------------------
+                            SET UP VARIABLES
+  -------------------------------------------------------------------*/
 var port = 8000;
 var API_KEY;
 var dataset_path = 'data/places_data.json';
-var facilities_reports_empty = 'data/facilities_reports_empty.json';
-var facilities_reports_daily = 'data/facilities_reports_daily.json';
+var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
+var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 
 //cookie variables
 var COOKIE_MAX_AGE = 60000;
@@ -73,12 +75,17 @@ app.get("/place-query", function (request, response, error){
       }
     }
   });
+
 });
 
 app.get("/delete-cookie",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
+});
+
+app.get("/get-facilities-reports",function(req,res,err){
+
 });
 
 //route for user reports
@@ -96,7 +103,9 @@ app.post("/submit", function (request, response, error){
   new_log.date = today;
   new_log.temp = parseInt(user.user_temperature); //++++++++++++++++++++++ string or number????
 
-  //handle cookies
+    /*-----------------------------------------------------------------
+                            HANDLE COOKIES
+  -------------------------------------------------------------------*/
   //console.log('Pre request cookies: ', request.cookies);
   var location_cookie = request.cookies.reported_locations;
   var new_cookie_value_obj = {};
@@ -137,7 +146,33 @@ app.post("/submit", function (request, response, error){
   console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
+  /*-----------------------------------------------------------------
+                        FACILITIES REQUESTS DATABASE
+  -------------------------------------------------------------------*/
+  fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
 
+    var reports = JSON.parse(data);
+    var places_array = reports.all_places;
+    for(var i = 0; i< places_array.length; i++){
+
+      if(places_array[i].name === user_location){
+        places_array[i].logs.push(new_log.temp);
+      };
+
+    };
+
+    fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(reports),function(error){
+      if(error) throw error;
+      console.log('we have updated the facilities report database!');
+    });
+
+
+  });
+ 
+
+  /*-----------------------------------------------------------------
+                          TEMPERATURE DATABASE
+  -------------------------------------------------------------------*/
 
   //read in the whole database
   fs.readFile(dataset_path, function(error, data){

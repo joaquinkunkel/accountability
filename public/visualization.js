@@ -21,8 +21,9 @@ function visualize(data){
 		for(var i = 0; i < a.length; i++){
 			var l = a[i];
 			var split_date = l.date.split("_");
-			if(todays_day == split_date[1]){ //Check if the date of l is within past week.
-				(daysLogs[l.temp - 1][1])++;
+			if(todays_day == split_date[1] && todays_month == split_date[0]){ //Check if the date of l is within past week.
+				console.log("Adding to daysLogs, date: ", split_date[1], "\ntemperature: ", Math.ceil(l.temp)-1);
+				daysLogs[Math.ceil(l.temp)-1][1] = daysLogs[Math.ceil(l.temp) - 1][1] + 1;
 			}
 		}
 		return daysLogs;
@@ -101,16 +102,16 @@ function visualize(data){
 					return (logs.length-i-1) * (w / logs.length);
 				})
 				.attr("y", function(d, i){
-					return h-(Math.floor(d.temp))*30 -25;
+					return h-(Math.ceil(d.temp))*30 -25;
 				})
 				.attr("width", function(d, i){
 					return (w / logs.length) - barPadding;
 				})
 				.attr("height", function(d, i){
-					return (Math.floor(d.temp)) *30;
+					return (Math.ceil(d.temp)) *30;
 				})
 				.attr("fill", function(d){
-					return colors[Math.floor(d.temp)];
+					return colors[Math.ceil(d.temp)];
 				});
 
 		var texts = svg.selectAll("text")
@@ -130,21 +131,26 @@ function visualize(data){
 
 		texts.append("text")
 				.text(function(d, i){
-					return temps[(Math.floor(d.temp))];
+					return temps[(Math.ceil(d.temp))];
 				})
 				.attr("x", function(d, i){
 					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
 				})
 				.attr("y", function(d){
-					return h - (Math.floor(d.temp))*30 - 35;
+					return h - (Math.ceil(d.temp))*30 - 35;
 				})
-				.style("color", "white")
-				.style("font-weight", "bold");
+				.style("font-weight", "normal")
+				.style("font-size", "1.2rem")
+				.style("opacity", "0.6");;
 	};
 
-	function visualizeDay(logs){
-		var day_data = createDaysLogs(logs);
-		console.log("logs for day: ", day_data[0]);
+	function visualizeDay(){
+		var day_data = createDaysLogs(all_logs);
+
+		var yScale = d3.scaleLinear()
+                     .domain([0, d3.max(day_data, function(d) { return d[1]; })])
+                     .range([0, h - 45]);
+
 		display.selectAll("svg").remove();
 		var svg = display.append("svg")
 											.attr("width", w)
@@ -158,15 +164,15 @@ function visualize(data){
 					return (day_data.length-i-1) * (w / day_data.length);
 				})
 				.attr("y", function(d, i){
-					return h-(d[1])*30 -25; //TODO: make a y-scale for this!!!!
+					return h - yScale(d[1]) - 25;
 				})
 				.attr("width", function(d, i){
 					return (w / day_data.length) - barPadding;
 				})
 				.attr("height", function(d, i){
-					return d[1] *30;
+					return yScale(d[1]);
 				})
-				.attr("fill", function(d){
+				.attr("fill", function(d, i){
 					return colors[i+1];
 				});
 
@@ -179,25 +185,26 @@ function visualize(data){
 					return temps[d[0]];
 				})
 				.attr("x", function(d, i){
-					return (day_data.length-i-1) * (w / day_data.length) + (w / day_data.length)/2 -25;
+					return (day_data.length-i-1) * (w / day_data.length) + (w / day_data.length)/2 -20;
 				})
 				.attr("y", function(d){
 					return h - 8;
 				});
 
-		/*texts.append("text")
+		texts.append("text")
 				.text(function(d, i){
-					return temps[(Math.floor(d.temp))];
+					return d[1] == 1 ? d[1] + " report" : d[1] + " reports";
 				})
 				.attr("x", function(d, i){
-					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
+					return (day_data.length-i-1) * (w / day_data.length) + (w / day_data.length)/2 -30;
 				})
 				.attr("y", function(d){
-					return h - (Math.floor(d.temp))*30 - 35;
+					return h - yScale(d[1]) - 31;
 				})
-				.style("color", "white")
-				.style("font-weight", "bold");
-				*/
+				.style("font-weight", "normal")
+				.style("font-size", "1.2rem")
+				.style("opacity", "0.6");
+
 	};
 
 	function todays_avg(){
@@ -243,27 +250,25 @@ function visualize(data){
 	var display = d3.select("body").select(".sub-body").select(".data_display");
 
 	//Title, e.g. "Baraha is cold today."
-	display.append("h2")
+	display.select(".data_heading").append("h2")
 		.text(function(d){
 			if(todays_avg()){
-				return(place_name + " is " + temps[Math.floor(todays_avg())] + " today.");
+				return(place_name + " is " + temps[Math.ceil(todays_avg())] + " today.");
 			}
 			else{
 				return(place_name);
 			}
 		})
-		.style("margin-top", "60px");
+		.style("margin-top", "50px")
 
 	//Subtitle ("Over the past...")
-	display.append("p")
+	display.select(".data_heading").append("p")
 		.text(function(d){
-			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.floor(temp_avg)] + " on average. Data for the past 7 days:");
+			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.ceil(temp_avg)] + " on average. Data for the past 7 days:");
 		})
-
-	//$("#daily").click(visualizeDay(data));
+	$(".vis_options").append("<button class='choosegraph' id='daily'>Daily</button><button class='choosegraph' id='weekly'>Weekly</button>");
 	$("#weekly").click(function(){visualizeWeek(logs)});
-	$("#daily").click(function(){visualizeDay(logs)});
-
+	$("#daily").click(function(){visualizeDay()});
 	//Graph
 	//TODO: Add options to switch from weekly, monthly or yearly graphs.
 

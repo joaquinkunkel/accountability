@@ -184,7 +184,7 @@ function isValidGPS(location){
 
 function showForm(){
   //makeOptionList();
-  $("#heading").html("<h1 id='help_us'>Hello! Are you cold?</h1><span id='infobutton'>Why?</span>");
+  $("#heading").html("<h1 id='help_us'>Are you cold?</h1><span id='infobutton'>Why?</span>");
   $(".description").html(" ");
   $("#infobutton").click(function(){
 		if($(".description").html() == " ") $(".description").html("By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.");
