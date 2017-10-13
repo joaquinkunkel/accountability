@@ -90,7 +90,7 @@ app.post("/submit", function (request, response, error){
   var location_match = false;
 
   var date = new Date();
-  var today = String(date.getMonth() + "_" + (date.getDate() + 1));
+  var today = String(date.getMonth() + "_" + (date.getDate()));
 
   var new_log = {};
   new_log.date = today;
