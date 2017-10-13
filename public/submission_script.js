@@ -12,8 +12,8 @@ function itFailed(data){
 
 //A "success" or "done" function
 function itWorked(data){
-	console.log("Worked !");
 	var temp_info = JSON.parse(data);
+	clearPage();
 	visualize(data);
 }
 
@@ -182,10 +182,11 @@ function isValidGPS(location){
 function showForm(){
   //makeOptionList();
   $("#heading").html("<h1 id='help_us'>Hello! Are you cold?</h1><span id='infobutton'>Why?</span>");
-  $(".description").html("");
+  $(".description").html(" ");
   $("#infobutton").click(function(){
-    $(".description").html("By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.");
-  })
+		if($(".description").html() == " ") $(".description").html("By filling out this form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.");
+		else $(".description").html(" ");
+	})
   $("form").css("visibility", "visible");
   $("form").animate({"opacity": "1"}, {duration: 500});
   $(".user_location_report").on("change", function(){
@@ -215,8 +216,9 @@ function showForm(){
 $(window).on('load',function(){
   //console.log('hello there');
 	//console.log('submission is good!');
-  $("#infobutton").click(function(){
-    $(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
-  })
+	$("#infobutton").click(function(){
+		if($(".description").html() == " ") $(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
+		else $(".description").html(" ");
+	});
 	readGPSdata();
 });

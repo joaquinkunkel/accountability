@@ -1,3 +1,29 @@
+function clearPage(){
+	d3.select(".before-visualization").remove();
+}
+
+var todays_month = current_date.getMonth();
+var todays_day = current_date.getDate();
+var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
+var colors = ["",
+	"#356fc6", //freezing
+	"#3598c6", //cold
+	"#35c6b5", //cool
+	"#50ef3b", //just right
+	"#f9d13e", //warm
+	"#d66836"  //hot
+];
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+//D3 initialization
+var display = d3.select("body").select(".data_display");
+var svg = display.append("svg")
+									.attr("width", w)
+									.attr("height", h)
+									.style("margin-top", "30px");
+
+
 function createWeeklyLogs(all_logs){
 
 	var logs = [];
@@ -5,8 +31,7 @@ function createWeeklyLogs(all_logs){
 	var temp_count_2 = 0
 	var already_added = [];
 	var current_date = new Date();
-	todays_month = current_date.getMonth();
-	todays_day = current_date.getDate();
+
 
 	for(e = 0; e < all_logs.length; e++){
 
@@ -50,24 +75,91 @@ function createWeeklyLogs(all_logs){
 	return(logs);
 };
 
+function createDaysLogs(a){ //Create an array of today's logs.
+//The array stores subarrays of the form [temperature, count],
+//where count is the number of times that temperature appeared on that day.
+//"a" is an array of weekly logs
+
+var daysLogs = [
+	[1, 0],
+	[2, 0],
+	[3, 0],
+	[4, 0],
+	[5, 0],
+	[6, 0]
+];
+
+	for(var i = 0; i < a.length; i++){
+		var l = a[i];
+		var split_date = l.date.split("_");
+		if(todays_day == split_date[1]){ //Check if the date of l is within past week.
+			(daysLogs[l.temp - 1][1])++;
+	}
+};
+
+function visualizeWeek(logs){
+	svg.selectAll("rect")
+			.data(logs)
+			.enter()
+			.append("rect")
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * (w / logs.length);
+			})
+			.attr("y", function(d, i){
+				return h-(Math.floor(d.temp))*30 -25;
+			})
+			.attr("width", function(d, i){
+				return (w / logs.length) - barPadding;
+			})
+			.attr("height", function(d, i){
+				return (Math.floor(d.temp)) *30;
+			})
+			.attr("fill", function(d){
+				return colors[Math.floor(d.temp)];
+			});
+
+	var texts = svg.selectAll("text")
+				.data(logs)
+				.enter();
+
+	texts.append("text")
+			.text(function(d, i){
+				return months[d.date.split("_")[0]] + " " + d.date.split("_")[1];
+			})
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
+			})
+			.attr("y", function(d){
+				return h - 8;
+			});
+
+	texts.append("text")
+			.text(function(d, i){
+				return temps[(Math.floor(d.temp))];
+			})
+			.attr("x", function(d, i){
+				return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
+			})
+			.attr("y", function(d){
+				return h - (Math.floor(d.temp))*30 - 35;
+			})
+			.style("color", "white")
+			.style("font-weight", "bold");
+}
+
 function visualize(dataset){
 
-	var data = JSON.parse(dataset)
-	var place_name = data.place;
-	var all_logs = data.logs;
+	var data = JSON.parse(dataset) //!!!!
+	var place_name = data.place; //!!!!
+	var all_logs = data.logs; //!!!!
+	console.log(all_logs);
 	var logs = createWeeklyLogs(all_logs); //We will save weekly, monthly, or yearly logs in this array - depending on the function we call.
-
-
-	//Sets and data used for visualization
-	var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
-	var colors = ["", "black", "blue", "rgb(0, 255, 255)", "green", "yellow", "red" ];
-	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 	function todays_avg(){
 		for(i = 0; i < logs.length; i++){
 			split_date = logs[i].date.split("_");
 			console.log(logs[i]);
-			if(split_date[0] == todays_month && split_date[1] == todays_day){
+			if(split_date[1] == todays_day){
 				return logs[i].temp;
 			}
 		}
@@ -87,13 +179,10 @@ function visualize(dataset){
 	var h = 250;
 	var barPadding = 1;
 
-	//Start visualization
-	var display = d3.select("body").select(".contents").select(".data_display");
-
 	//If there is already a visualization there, remove it to replace with new one.
 	display.selectAll("svg").remove();
-	display.selectAll("h2").remove();
-	display.selectAll("p").remove();
+	//display.selectAll("h2").remove();
+	//display.selectAll("p").remove();
 
 	//Title, e.g. "Baraha is cold today."
 	display.append("h2")
@@ -113,59 +202,12 @@ function visualize(dataset){
 			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.floor(temp_avg)] + " on average. Data for the past 7 days:");
 		})
 
+	$("#daily").click(visualizeDay(dataset));
+	$("#weekly").click(visualizeWeek(logs));
+
 	//Graph
 	//TODO: Add options to switch from weekly, monthly or yearly graphs.
-	var svg = display.append("svg")
-										.attr("width", w)
-										.attr("height", h)
-										.style("margin-top", "30px");
 
-	svg.selectAll("rect")
-			.data(logs)
-			.enter()
-			.append("rect")
-			.attr("x", function(d, i){
-				return (logs.length-i-1) * (w / logs.length);
-			})
-			.attr("y", function(d, i){
-				return h-d.temp*30 -25;
-			})
-			.attr("width", function(d, i){
-				return (w / logs.length) - barPadding;
-			})
-			.attr("height", function(d, i){
-				return d.temp *30;
-			})
-			.attr("fill", function(d){
-				return"rgb(" + d.temp*10 + ", " + d.temp*30 + ", " + 255 + ")";
-			});
 
-	var texts = svg.selectAll("text")
-				.data(logs)
-				.enter();
-
-	texts.append("text")
-			.text(function(d, i){
-				return months[d.date.split("_")[0]] + " " + d.date.split("_")[1];
-			})
-			.attr("x", function(d, i){
-				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
-			})
-			.attr("y", function(d){
-				return h - 8;
-			});
-
-	texts.append("text")
-			.text(function(d, i){
-				return temps[(Math.floor(d.temp))];
-			})
-			.attr("x", function(d, i){
-				return (logs.length-i-1) * w/logs.length + w/logs.length/4 - 10;
-			})
-			.attr("y", function(d){
-				return h - d.temp*30 - 35;
-			})
-			.style("color", "white")
-			.style("font-weight", "bold");
 
 };

@@ -12,6 +12,13 @@ body {
   height: 100vh;
 }
 
+.sub-body{
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  max-width: 800px;
+}
+
 #background {
   position: fixed;
   top: 50%;
@@ -102,7 +109,7 @@ h1 {
   opacity: 0;
 }
 
-.submitbutton, .yesbutton, .yescampus, .skipbutton, #infobutton {
+.submitbutton, .yesbutton, .yescampus, .skipbutton {
   color: black;
   font-weight: bold;
   background: transparent;
@@ -114,16 +121,30 @@ h1 {
   transition: all 0.1s;
 }
 
-.submitbutton:hover, .yesbutton:hover, .skipbutton:hover, #infobutton:hover{
+.submitbutton:hover, .yesbutton:hover, .skipbutton:hover{
   color: white;
   background: black;
 }
 
 #infobutton{
+  color: #1098b7;
+  font-weight: bold;
+  background: transparent;
+  padding: 5px;
+  border: 2px solid #1098b7;
+  border-radius: 10px;
+  transition: all 0.1s;
+
   margin: 28px 10px 0 10px;
   font-size: 1.5rem;
   height: 35px;
   opacity: 0.8;
+  cursor: pointer;
+}
+
+#infobutton:hover{
+  color: white;
+  background: #1098b7;
 }
 
 #heading{
@@ -204,6 +225,11 @@ form label{
 
 datalist{
   border-radius: 10px;
+}
+
+.vis_options{
+  display: flex;
+  align-items: center;
 }
 
 @media screen and (max-width: 768px){
