@@ -16,14 +16,18 @@ var TEMPERATURE_LOGS_PATH = 'data/places_data.json';
 var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
 var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 
-//cookie variables
-var COOKIE_MAX_AGE = 60000;
+//load in SendGrid API_KEY
+/*fs.readFile('API_KEY.txt','utf-8',function(err,data){
+  if (err) throw err;
+  API_KEY = data.toString();
+});
+*/
 
 function collect_daily_reports(){
   fs.readFile(facilities_reports_daily,function(error,data){
     console.log('parse the data');
   });
-}
+};
 
 function reset_daily_reports(){
     fs.readFile(facilities_reports_empty,function(error,data){
@@ -31,21 +35,16 @@ function reset_daily_reports(){
         console.log('we are ready to collect reports for a new day!');
       });
   });
-}
+};
 
 var j = schedule.scheduleJob('5 23 * * *', function(){
   //console.log('every day at this time, we will check our daily database and write an email to the facilities');
 
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
 
+
 });
-/*load in SendGrid API_KEY
-fs.readFile('API_KEY.txt','utf-8',function(err,data){
- if (err) throw err;
-  API_KEY = data.toString();
-  //console.log(API_KEY);
-});
-*/
+
 
 app.use(cookieParser());
 app.use(express.static('public'));
@@ -92,7 +91,7 @@ app.get("/delete-cookies",function(req,res,err){
                           API ROUTE
 -------------------------------------------------------------------*/
 app.get("/check-dataset/:dataset",function(req,res,err){
-  var query = req.params.word;
+  var query = req.params.dataset;
   var dataset_path;
 
   if(query === "temperature"){
@@ -124,9 +123,7 @@ app.post("/submit", function (request, response, error){
   new_log.date = today;
   new_log.temp = parseInt(user.user_temperature);
 
-/*-----------------------------------------------------------------
-                            HANDLE COOKIES
--------------------------------------------------------------------*/
+/*------------------------------HANDLE COOKIES-----------------------------------*/
   //console.log('Pre request cookies: ', request.cookies);
   var location_cookie = request.cookies.reported_locations;
   var new_cookie_value_obj = {};
@@ -167,9 +164,7 @@ app.post("/submit", function (request, response, error){
   console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
-  /*-----------------------------------------------------------------
-                        FACILITIES REQUESTS DATABASE
-  -------------------------------------------------------------------*/
+  /*-----------------------------------FACILITIES REQUESTS DATABASE-------------------------------------*/
   fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
 
     var reports = JSON.parse(data);
@@ -191,9 +186,7 @@ app.post("/submit", function (request, response, error){
   });
  
 
-  /*-----------------------------------------------------------------
-                          TEMPERATURE DATABASE
-  -------------------------------------------------------------------*/
+  /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
 
   //read in the whole database
   fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
