@@ -52,7 +52,7 @@ app.use(bp.json());
 
 
 //route for user queries
-/*app.get("/place-query", function (request, response, error){
+app.get("/place-query", function (request, response, error){
 
   //console.log('user queried ', request.query.user_location_query);
   var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
@@ -73,9 +73,15 @@ app.use(bp.json());
     }
   });
 
-});*/
+});
 
 app.get("/delete-cookie",function(req,res,err){
+  console.log('deleting cookie');
+  res.clearCookie('reported_locations');
+  res.send('thanks for deleting cookie!');
+});
+
+app.get("/get-facilities-reports",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
