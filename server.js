@@ -12,7 +12,7 @@ var cookieParser = require('cookie-parser');
   -------------------------------------------------------------------*/
 var port = 8000;
 var API_KEY;
-var dataset_path = 'data/places_data.json';
+var TEMPERATURE_LOGS_PATH = 'data/places_data.json';
 var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
 var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 
@@ -62,7 +62,7 @@ app.get("/place-query", function (request, response, error){
   user.place = request.query.user_location_query;
 
   //load in the database
-  fs.readFile(dataset_path, function(error, data){
+  fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
     if(error){throw error};
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
     var array = whole_file.all_places; //array of all campus locations and corresponding logs
@@ -78,17 +78,38 @@ app.get("/place-query", function (request, response, error){
 
 });
 
-app.get("/delete-cookie",function(req,res,err){
+/*-----------------------------------------------------------------
+          DELETE COOKIES ROUTE (debugging purposes only)
+-------------------------------------------------------------------*/
+app.get("/delete-cookies",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
 });
 
-app.get("/get-facilities-reports",function(req,res,err){
+
+/*-----------------------------------------------------------------
+                          API ROUTE
+-------------------------------------------------------------------*/
+app.get("/check-dataset/:dataset",function(req,res,err){
+  var query = req.params.word;
+  var dataset_path;
+
+  if(query === "temperature"){
+    dataset_path = TEMPERATURE_LOGS_PATH;
+  }else if(query === "facilities"){
+    dataset_path = FACILITIES_REPORTS_PATH;
+  }
+  fs.readFile(dataset_path,function(error,data){
+    var reports = JSON.parse(data);
+    res.json(reports);
+  });
 
 });
 
-//route for user reports
+/*-----------------------------------------------------------------
+                      SUBMITTED REPORTS
+-------------------------------------------------------------------*/
 app.post("/submit", function (request, response, error){
 
   //set up variables
@@ -101,11 +122,11 @@ app.post("/submit", function (request, response, error){
 
   var new_log = {};
   new_log.date = today;
-  new_log.temp = parseInt(user.user_temperature); //++++++++++++++++++++++ string or number????
+  new_log.temp = parseInt(user.user_temperature);
 
-    /*-----------------------------------------------------------------
+/*-----------------------------------------------------------------
                             HANDLE COOKIES
-  -------------------------------------------------------------------*/
+-------------------------------------------------------------------*/
   //console.log('Pre request cookies: ', request.cookies);
   var location_cookie = request.cookies.reported_locations;
   var new_cookie_value_obj = {};
@@ -175,7 +196,7 @@ app.post("/submit", function (request, response, error){
   -------------------------------------------------------------------*/
 
   //read in the whole database
-  fs.readFile(dataset_path, function(error, data){
+  fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
     var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
     //then we add our newly registered user to our array called "all users"
     var array = whole_file.all_places;
@@ -193,7 +214,7 @@ app.post("/submit", function (request, response, error){
 
     //then we write ALL of our data (in the variable 'whole_file')
     if(location_match){
-      fs.writeFile(dataset_path, JSON.stringify(whole_file), function(error){
+      fs.writeFile(TEMPERATURE_LOGS_PATH, JSON.stringify(whole_file), function(error){
         if(error){ //hopefully no error?
           console.log(error);
 
