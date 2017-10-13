@@ -14,6 +14,9 @@ var dataset_path = 'data/places_data.json';
 var facilities_reports_empty = 'data/facilities_reports_empty.json';
 var facilities_reports_daily = 'data/facilities_reports_daily.json';
 
+//cookie variables
+var COOKIE_MAX_AGE = 60000;
+
 function collect_daily_reports(){
   fs.readFile(facilities_reports_daily,function(error,data){
     console.log('parse the data');
@@ -72,28 +75,68 @@ app.get("/place-query", function (request, response, error){
   });
 });
 
+app.get("/delete-cookie",function(req,res,err){
+  console.log('deleting cookie');
+  res.clearCookie('reported_locations');
+  res.send('thanks for deleting cookie!');
+});
+
 //route for user reports
 app.post("/submit", function (request, response, error){
 
   //set up variables
   var user = request.body;
   var user_location = user.user_location_report;
-  var new_log = {};
   var location_match = false;
+  
+  var date = new Date();
+  var today = String(date.getMonth() + "_" + (date.getDate() + 1));
+
+  var new_log = {};
+  new_log.date = today;
+  new_log.temp = parseInt(user.user_temperature); //++++++++++++++++++++++ string or number????
+
   //handle cookies
-  console.log('Cookies: ', request.cookies);
-  var cookie = request.cookies.user_location;
-  if (cookie === undefined)
-  {
+  //console.log('Pre request cookies: ', request.cookies);
+  var location_cookie = request.cookies.reported_locations;
+  var new_cookie_value_obj = {};
+  new_cookie_value_obj.day = new_log.date;
+
+  if (location_cookie === undefined){
     // no: set a new cookie
-    response.cookie(user_location,'active', { maxAge: 120000 });
-    console.log('new', cookie ,' cookie created successfully');
+    console.log('the location cookie does not yet exist, we are creating a new one');
+    new_cookie_value_obj.locations = [user_location];
   } 
-  else
-  {
-    // yes, cookie was already present 
-    console.log('cookie exists', cookie, 'you cannot post to facilities data');
-  }
+  else{
+    //locations cookie exists, update it
+    console.log('location cookie already exists');
+    var prev_cookie_places = cookieParser.JSONCookies(location_cookie.locations);
+    var prev_cookie_date = cookieParser.JSONCookies(location_cookie.day);
+
+    if(prev_cookie_date === new_log.date){
+      console.log('cookie date is still valid');
+
+      if(prev_cookie_places.indexOf(user_location) < 0){
+        //valid day, new place, you can post, write cookie
+        console.log('the user has not reported about the location today, add it to locations array');
+        prev_cookie_places.push(user_location);
+      }else{
+        //same day, but you already posted posted the place, you cannot do it again, no need to rewrite the cookie
+        console.log('the user has already reported about the location today, try again tomorrow');
+      }
+      new_cookie_value_obj.locations = prev_cookie_places;
+
+    }else{
+      console.log('previous cookie date is not valid anymore, time to reset the reported locations array');
+      new_cookie_value_obj.locations = [user_location];
+    };
+  
+  };
+
+  response.cookie('reported_locations',new_cookie_value_obj);
+  console.log(new_cookie_value_obj);
+  console.log('////////////////////////////////////////////// \n');
+
  
 
   //read in the whole database
@@ -106,11 +149,7 @@ app.post("/submit", function (request, response, error){
       if(array[i].name == user.user_location_report){ //find the location in the array for which the user wants to make a temperature report
         //Saving today's date into a variable
         location_match = true; //we have a match, used later to update the database
-        var date = new Date();
-        var today = String(date.getMonth() + "_" + date.getDate());
-        //fill the newest log object with user report info and push it to the existing log array
-        new_log.date = today;
-        new_log.temp = parseInt(user.user_temperature); //++++++++++++++++++++++ string or number????
+
         array[i].logs.unshift(new_log);//push the new log to the beginning of the log array
         //console.log(current_logs);
         break;
@@ -123,7 +162,8 @@ app.post("/submit", function (request, response, error){
         if(error){ //hopefully no error?
           console.log(error);
         }else{//success message!
-          console.log('success! written new report',user);
+          //console.log('success! written new report',user);
+          response.redirect('after_valid_submission.html');
         //  if(user.user_temperature < 3){
             //sendMail();
             //response.redirect('after_submission.html');
@@ -133,7 +173,7 @@ app.post("/submit", function (request, response, error){
         }
       });
     }else{
-      console.log('nothing written to the database!');
+      //console.log('nothing written to the database!');
       response.redirect('after_invalid_submission.html');
     }
 
