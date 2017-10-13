@@ -6,6 +6,7 @@ var fs = require('fs');
 var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
+var cookieParser = require('cookie-parser');
 //setup variables
 var port = 8000;
 var API_KEY;
@@ -30,10 +31,7 @@ function reset_daily_reports(){
 var j = schedule.scheduleJob('5 23 * * *', function(){
   //console.log('every day at this time, we will check our daily database and write an email to the facilities');
 
-  //READ IN THE DAILY REPORTS, PROCESS THAT
-
-
-
+  //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
 
 });
 /*load in SendGrid API_KEY
@@ -44,13 +42,12 @@ fs.readFile('API_KEY.txt','utf-8',function(err,data){
 });
 */
 
-//Define some initial callback functions
+app.use(cookieParser());
 app.use(express.static('public'));
-
 // parse application/x-www-form-urlencoded
 app.use(bp.urlencoded({ extended: true }));
-// parse application/json
 app.use(bp.json());
+
 
 //route for user queries
 app.get("/place-query", function (request, response, error){
@@ -77,14 +74,27 @@ app.get("/place-query", function (request, response, error){
 
 //route for user reports
 app.post("/submit", function (request, response, error){
-  //get timestamp
-  var d = new Date();
-  console.log('today is',d.getDate(), ' / ',d.getMonth());
-  console.log(request);
+
+  //set up variables
+  var user = request.body;
+  var user_location = user.user_location_report;
+  var new_log = {};
   var location_match = false;
-  //console.log('input', request.body);
-  var user = request.body; //user object, define it here so you can add to it from different codeblocks
-  var new_log = {}; //log object containing user's submit info -- newest log to be added to the database
+  //handle cookies
+  console.log('Cookies: ', request.cookies);
+  var cookie = request.cookies.user_location;
+  if (cookie === undefined)
+  {
+    // no: set a new cookie
+    response.cookie(user_location,'active', { maxAge: 120000 });
+    console.log('new', cookie ,' cookie created successfully');
+  } 
+  else
+  {
+    // yes, cookie was already present 
+    console.log('cookie exists', cookie, 'you cannot post to facilities data');
+  }
+ 
 
   //read in the whole database
   fs.readFile(dataset_path, function(error, data){
