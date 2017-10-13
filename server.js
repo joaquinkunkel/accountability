@@ -88,7 +88,7 @@ app.post("/submit", function (request, response, error){
   var user = request.body;
   var user_location = user.user_location_report;
   var location_match = false;
-  
+
   var date = new Date();
   var today = String(date.getMonth() + "_" + (date.getDate() + 1));
 
@@ -106,7 +106,7 @@ app.post("/submit", function (request, response, error){
     // no: set a new cookie
     console.log('the location cookie does not yet exist, we are creating a new one');
     new_cookie_value_obj.locations = [user_location];
-  } 
+  }
   else{
     //locations cookie exists, update it
     console.log('location cookie already exists');
@@ -130,14 +130,14 @@ app.post("/submit", function (request, response, error){
       console.log('previous cookie date is not valid anymore, time to reset the reported locations array');
       new_cookie_value_obj.locations = [user_location];
     };
-  
+
   };
 
   response.cookie('reported_locations',new_cookie_value_obj);
   console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
- 
+
 
   //read in the whole database
   fs.readFile(dataset_path, function(error, data){
@@ -161,9 +161,10 @@ app.post("/submit", function (request, response, error){
       fs.writeFile(dataset_path, JSON.stringify(whole_file), function(error){
         if(error){ //hopefully no error?
           console.log(error);
+
         }else{//success message!
-          //console.log('success! written new report',user);
-          response.redirect('after_valid_submission.html');
+          console.log('success! written new report',user);
+          //response.redirect('after_valid_submission.html');
         //  if(user.user_temperature < 3){
             //sendMail();
             //response.redirect('after_submission.html');
@@ -173,8 +174,8 @@ app.post("/submit", function (request, response, error){
         }
       });
     }else{
-      //console.log('nothing written to the database!');
-      response.redirect('after_invalid_submission.html');
+      console.log('nothing written to the database!');
+      //response.redirect('after_invalid_submission.html');
     }
 
   }); //end of read file
