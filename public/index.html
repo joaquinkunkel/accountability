@@ -12,46 +12,48 @@
     <script src="https://d3js.org/d3.v4.js"></script>
   </head>
   <body>
+    <header class="container-fluid">
+      <div class="row">
+        <h1 id="logo_text"><span style="font-weight:bold">ac</span><span style="opacity: 0.5">countability</span></h1>
+        <a href="about.html" id="aboutlink"><p>About</p></a>
+      </div>
+    </header>
     <div class="form-content">
-      <header class="container-fluid">
-        <div class="row">
-          <h1 id="logo_text"><span style="font-weight:bold">ac</span><span style="opacity: 0.5">countability</span></h1>
-          <a href="about.html" id="aboutlink"><p>About</p></a>
-        </div>
-      </header>
+      <div class="welcome">
+      </div>
       <div class="sub-body">
         <div class="before-visualization">
-        <div id="heading">
-          <h1 id="help_us">Fetching your location...</h1><span id="infobutton">?</span>
-        </div>
-        <p class="description"></p>
-        <div class="post-description"></div>
-        <button class="skipbutton">Skip and see current data</button>
-        <form class="submission" action="/submit" method="POST">
-          <!--<input name="user_location" placeholder="Where are you right now?">-->
-          <div id="where">
-            <label for="user_location_report"><p>Where are you right now?</p></label>
-            <br/>
-            <select class="user_location_report" name="user_location_report">
-            </select>
-            <br/>
+          <div id="heading">
+            <h1 id="help_us">Fetching your location...</h1><span id="infobutton">?</span>
           </div>
-          <div id="how">
-            <label for="user_temperature"><p>How does the temperature feel?</p></label>
-            <br/>
-            <select name="user_temperature" class="selector">
-              <option disabled selected value>Select a temperature</option>
-              <option value="6">Hot</option>
-              <option value="5">Warm</option>
-              <option value="4">Nice</option>
-              <option value="3">Cool</option>
-              <option value="2">Cold</option>
-              <option value="1">Freezing</option>
-            </select>
-            <br/>
-          </div>
-          <div class="submitfield"></div>
-        </form>
+          <p class="description"></p>
+          <div class="post-description"></div>
+          <button class="skipbutton">Skip and see current data</button>
+          <form class="submission" action="/submit" method="POST">
+            <!--<input name="user_location" placeholder="Where are you right now?">-->
+            <div id="where">
+              <label for="user_location_report"><p>Where are you right now?</p></label>
+              <br/>
+              <select class="user_location_report" name="user_location_report">
+              </select>
+              <br/>
+            </div>
+            <div id="how">
+              <label for="user_temperature"><p>How does the temperature feel?</p></label>
+              <br/>
+              <select name="user_temperature" class="selector">
+                <option disabled selected value>Select a temperature</option>
+                <option value="6">Hot</option>
+                <option value="5">Warm</option>
+                <option value="4">Nice</option>
+                <option value="3">Cool</option>
+                <option value="2">Cold</option>
+                <option value="1">Freezing</option>
+              </select>
+              <br/>
+            </div>
+            <div class="submitfield"></div>
+          </form>
         </div>
         <div class="data_display">
           <div class="data_heading">

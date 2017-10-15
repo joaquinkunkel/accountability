@@ -3,6 +3,7 @@ function preparePage(){
 };
 
 function visualize(data){
+	console.log("visualize called");
 	function createDaysLogs(a){
 		//Create an array of today's logs.
 	 //The array stores subarrays of the form [temperature, count],
