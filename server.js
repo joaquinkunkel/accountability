@@ -23,14 +23,10 @@ var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 });
 */
 
-function collect_daily_reports(){
-  fs.readFile(facilities_reports_daily,function(error,data){
-    console.log('parse the data');
-  });
-};
+
 
 function reset_daily_reports(){
-    fs.readFile(facilities_reports_empty,function(error,data){
+    fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
       fs.writeFile(facilities_reports_daily,JSON.stringify(data), function(error){
         console.log('we are ready to collect reports for a new day!');
       });
@@ -41,8 +37,7 @@ var j = schedule.scheduleJob('5 23 * * *', function(){
   //console.log('every day at this time, we will check our daily database and write an email to the facilities');
 
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
-
-
+  collect_daily_reports();
 });
 
 
