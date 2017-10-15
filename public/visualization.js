@@ -86,6 +86,7 @@ function visualize(data){
 	};
 
 	function visualizeWeek(logs){
+		var padding = 25;
 		display.select(".caption").remove();
 		display.append("p")
 			.classed("caption", true)
@@ -107,14 +108,14 @@ function visualize(data){
 					return (logs.length-i-1) * (w / logs.length);
 				})
 				.attr("y", function(d, i){
-					return h - 25;
+					return h - padding;
 				})
 				.attr("width", function(d, i){
 					return (w / logs.length) - barPadding;
 				})
 				.transition().duration(800)
 				.attr("y", function(d, i){
-					return h-(Math.ceil(d.temp))*30 -25;
+					return h-(Math.ceil(d.temp))*30 -padding;
 				})
 				.attr("height", function(d, i){
 					return (Math.ceil(d.temp)) *30;
@@ -158,11 +159,21 @@ function visualize(data){
 	};
 
 	function visualizeDay(){
+		var yPadding = 25;
+		var xPadding = 15;
 		var day_data = createDaysLogs(all_logs);
+
 
 		var yScale = d3.scaleLinear()
                      .domain([0, d3.max(day_data, function(d) { return d[1]; })])
-                     .range([0, h - 45]);
+                     .range([0, h - 2*yPadding]);
+		var yAxisScale = d3.scaleLinear()
+	                   .domain([0, d3.max(day_data, function(d) { return d[1]; })])
+	                   .range([h - 2*yPadding, 0]);
+		var xScale = d3.scaleLinear()
+										.domain([0, 6])
+										.range([0, w]);
+
 		display.select(".caption").remove();
 		display.append("p")
 			.classed("caption", true)
@@ -174,62 +185,50 @@ function visualize(data){
 											.attr("width", w)
 											.attr("height", h)
 											.style("margin-top", "30px");
+
+		var yAxis = d3.axisLeft(yAxisScale)
+                  .ticks(3);
+
+		var xAxis = d3.axisBottom(xScale)
+                  .ticks(6)
+									.tickValues([1, 2, 3, 4, 5, 6])
+									.tickFormat(function(d, i){return temps[i+1]});
+
+
+		svg.append("g")
+		    .attr("class", "axis")
+				.attr("transform", "translate(" + xPadding + "," + yPadding + ")")
+		    .call(yAxis);
+
+		svg.append("g")
+		    .attr("class", "axis")
+				.attr("transform", "translate(" + (-((w -xPadding)/day_data.length - barPadding)/2 + xPadding/2) + "," + (h - yPadding) + ")")
+		    .call(xAxis);
+
 		svg.selectAll("rect")
 				.data(day_data)
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i){
-					return (i) * (w / day_data.length);
+					return (i) * (w / day_data.length) + xPadding;
 				})
 				.attr("y", function(d, i){
-					return h - 25;
+					return h - yPadding;
 				})
 				.attr("width", function(d, i){
-					return (w / day_data.length) - barPadding;
+					return (w -xPadding)/day_data.length - barPadding;
 				})
 				.transition().duration(800)
 				.attr("height", function(d, i){
 					return yScale(d[1]);
 				})
 				.attr("y", function(d, i){
-					return h - yScale(d[1]) - 25;
+					return h - yScale(d[1]) - yPadding;
 				})
 				.attr("fill", function(d, i){
 					return colors[i+1];
 				});
 
-		var texts = svg.selectAll("text")
-					.data(day_data)
-					.enter();
-
-		texts.append("text")
-				.text(function(d, i){
-					return temps[d[0]];
-				})
-				.attr("x", function(d, i){
-					return (day_data.length-i-1) * (w / day_data.length) + (w / day_data.length)/2 -20;
-				})
-				.attr("y", function(d){
-					return h - 8;
-				});
-
-		texts.append("text")
-				.text(function(d, i){
-					return d[1] == 1 ? d[1] + " report" : d[1] + " reports";
-				})
-				.attr("x", function(d, i){
-					return (i) * (w / day_data.length) + (w / day_data.length)/2 -30;
-				})
-				.attr("y", function(d){
-					return h - 31;
-				})
-				.style("font-weight", "normal")
-				.style("font-size", "1.2rem")
-				.style("opacity", "0.6")
-				.transition().duration(800)
-				.attr("y", function(d){
-					return h - yScale(d[1]) - 31;
-				});
 
 	};
 
@@ -276,6 +275,11 @@ function visualize(data){
 	var barPadding = 1;
 	var display = d3.select("body").select(".sub-body").select(".data_display");
 
+	//If we didn't receive the user's location, display a message explaining why they're here.
+	if(skipped == 1){
+		display.select(".data_heading").append("h5")
+			.text("Without your location, we have taken you directly to seeing other users' submissions.")
+		}
 	//If the thank you message is necessary i.e. if the user just posted some info.
 	if(thank_you){
 		display.select(".data_heading").append("h3")

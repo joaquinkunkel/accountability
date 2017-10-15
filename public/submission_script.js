@@ -3,6 +3,8 @@ var distThreshold = 0.08; // in km
 var gps_working;
 var eligible_gps_array = [];
 var thank_you = 0;
+var info_active = 0;
+var skipped = 0;
 /* AJAX */
 
 function itFailed(data){
@@ -90,11 +92,17 @@ function success(pos) {
 	var crd = pos.coords;
 	makeEligiblePlaceArray(crd);
 	console.log(eligible_gps_array);
-	if(eligible_gps_array[0]){
-  	showForm();
-	} else {
-		ajaxCall("Arts Center (general)");
+
+	if(info_active == 1) waitForUser();
+	else{
+		if(eligible_gps_array[0]){
+	  	showForm();
+		} else {
+			skipped = 1;
+			ajaxCall("Arts Center (general)");
+		}
 	}
+
   gps_working = 1;
   console.log("gps working!");
   var htmlString = '<option disabled selected value><p>Select a place</p></option>';
@@ -111,6 +119,7 @@ function success(pos) {
 };
 
 	function error(err) {
+		skipped = 1;
 		ajaxCall("Arts Center (general)");
 	  console.warn(`ERROR(${err.code}): ${err.message}`);
 	};
@@ -146,12 +155,18 @@ function isInList(location){
 	}
 }
 
+function waitForUser(){
+	$("#heading").html("<h1 id='help_us'>Location received.</h1>");
+	$(".gotit").click(function(){
+		showForm();
+	});
+}
 function showForm(){
   //makeOptionList();
-  $("#heading").html("<h1 id='help_us'>Are you cold?</h1><span id='infobutton'>Why?</span>");
+  $("#heading").html("<h1 id='help_us'>Are you cold?</h1><span id='infobutton'>?</span>");
   $(".description").html(" ");
   $("#infobutton").click(function(){
-		if($(".description").html() == " ") $(".description").html("By filling out this two-step form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about their favorite places.");
+		if($(".description").html() == " ") $(".description").html("By filling out this two-step form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about locations on campus. Alternately, you can go directly to see the data others have submitted.");
 		else $(".description").html(" ");
 	})
   $("form").css("visibility", "visible");
@@ -165,7 +180,7 @@ function showForm(){
       $(".submitfield").html("<button class='submitbutton'>Submit</button>");
     }else{
       $(".submitfield")
-      .html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='yesbutton'>Yes, please notify facilities.</button><button class='submitbutton'>No, just submit</button>");
+      .html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='yesbutton' disabled>Notify facilities (coming soon)</button><button class='submitbutton'>No, just submit</button>");
     }
     $(".submitfield").animate({"opacity": "1"}, {duration: 800});
     $(".submitbutton").click(function(){
@@ -188,8 +203,14 @@ $(window).on('load',function(){
 		ajaxCall("Arts Center (general)");
 	});
 	$("#infobutton").click(function(){
-		if($(".description").html() == " ") $(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
-		else $(".description").html(" ");
+		if(info_active == 0){
+			info_active = 1;
+			$(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
+			$(".post-description").html("<button class='gotit'>Contribute to data</button>");
+		}else{
+			info_active = 0;
+		$(".description").html("");
+		}
 	});
 	readGPSdata();
 });
