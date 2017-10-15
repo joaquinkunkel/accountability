@@ -22,8 +22,8 @@ function visualize(data){
 			var l = a[i];
 			var split_date = l.date.split("_");
 			if(todays_day == split_date[1] && todays_month == split_date[0]){ //Check if the date of l is within past week.
-				console.log("Adding to daysLogs, date: ", split_date[1], "\ntemperature: ", Math.ceil(l.temp)-1);
-				daysLogs[Math.ceil(l.temp)-1][1] = daysLogs[Math.ceil(l.temp) - 1][1] + 1;
+				console.log("Adding to daysLogs, date: ", split_date[1], "\ntemperature: ", Math.floor(l.temp)-1);
+				daysLogs[Math.floor(l.temp)-1][1] = daysLogs[Math.floor(l.temp) - 1][1] + 1;
 			}
 		}
 		console.log(daysLogs);
@@ -116,13 +116,13 @@ function visualize(data){
 				})
 				.transition().duration(800)
 				.attr("y", function(d, i){
-					return h-(Math.ceil(d.temp))*30 -padding;
+					return h-(Math.floor(d.temp))*30 -padding;
 				})
 				.attr("height", function(d, i){
-					return (Math.ceil(d.temp)) *30;
+					return (Math.floor(d.temp)) *30;
 				})
 				.attr("fill", function(d){
-					return colors[Math.ceil(d.temp)];
+					return colors[Math.floor(d.temp)];
 				});
 
 		var texts = svg.selectAll("text")
@@ -142,7 +142,7 @@ function visualize(data){
 
 		texts.append("text")
 				.text(function(d, i){
-					return temps[(Math.ceil(d.temp))];
+					return temps[(Math.floor(d.temp))];
 				})
 				.attr("x", function(d, i){
 					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
@@ -155,7 +155,7 @@ function visualize(data){
 				.style("opacity", "0.6")
 				.transition().duration(800)
 				.attr("y", function(d){
-					return h - (Math.ceil(d.temp))*30 - 35;
+					return h - (Math.floor(d.temp))*30 - 35;
 				});
 	};
 
@@ -174,6 +174,9 @@ function visualize(data){
 		var xScale = d3.scaleLinear()
 										.domain([0, 6])
 										.range([0, w]);
+		var xAxisScale = d3.scaleLinear()
+										.domain([0, 6])
+										.range([0, w]);
 
 		display.select(".caption").remove();
 		display.append("p")
@@ -188,17 +191,16 @@ function visualize(data){
 											.style("margin-top", "30px");
 
 		var yAxis = d3.axisLeft(yAxisScale)
-                  .ticks(3);
+                  .ticks(d3.max(day_data, function(d) { return d[1]; }));
 
-		var xAxis = d3.axisBottom(xScale)
-                  .ticks(6)
+		var xAxis = d3.axisBottom(xAxisScale)
 									.tickValues([1, 2, 3, 4, 5, 6])
-									.tickFormat(function(d, i){return temps[i+1]});
+									.tickFormat(function(d, i){return temps[d-1]});
 
-
+		console.log(day_data);
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate(" + xPadding + "," + yPadding + ")")
+				.attr("transform", "translate(" + (xPadding) + "," + yPadding + ")")
 		    .call(yAxis);
 
 		svg.append("g")
@@ -206,12 +208,18 @@ function visualize(data){
 				.attr("transform", "translate(" + (-((w -xPadding)/day_data.length - barPadding)/2 + xPadding/2) + "," + (h - yPadding) + ")")
 		    .call(xAxis);
 
+		svg.selectAll(".tick")
+				.each(function(d){
+					if(d==0){
+						this.remove();
+					}
+				})
 		svg.selectAll("rect")
 				.data(day_data)
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i){
-					return (i) * (w / day_data.length) + xPadding;
+					return (i) * (w / day_data.length) + xPadding + barPadding;
 				})
 				.attr("y", function(d, i){
 					return h - yPadding;
@@ -248,8 +256,8 @@ function visualize(data){
 	var current_date = new Date();
 	var todays_month = current_date.getMonth();
 	var todays_day = current_date.getDate();
-	var temps = ["", "freezing", "cold", "cool", "nice", "warm", "hot"];
-	var colors = ["",
+	var temps = ["freezing", "cold", "cool", "nice", "warm", "hot"];
+	var colors = [
 		"#356fc6", //freezing
 		"#3598c6", //cold
 		"#35c6b5", //cool
@@ -273,7 +281,7 @@ function visualize(data){
 	if($(window).width() <= 550) var w = $(window).width() * 0.8;
 	else var w = 500;
 	var h = 250;
-	var barPadding = 1;
+	var barPadding = 3;
 	var display = d3.select("body").select(".sub-body").select(".data_display");
 
 	//If we didn't receive the user's location, display a message explaining why they're here.
@@ -310,7 +318,7 @@ function visualize(data){
 		.text(function(d){
 			var verb =  place_name.endsWith("s") ? " are " : " is ";
 			if(todays_avg()){
-				return("The " + place_name + verb + temps[Math.ceil(todays_avg())] + " today.");
+				return("The " + place_name + verb + temps[Math.floor(todays_avg())] + " today.");
 			}
 			else{
 				return(place_name);
@@ -326,7 +334,7 @@ function visualize(data){
 			if(!thank_you && place_name == "Arts Center (general)"){
 				text_string+="The Arts Center has the reputation of being the coldest place on this campus due to unnecessary levels of air conditioning. ";
 			}
-			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.ceil(temp_avg)] + "' on average."
+			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.floor(temp_avg)] + "' on average."
 			return(text_string);
 		});
 

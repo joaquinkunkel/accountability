@@ -164,9 +164,9 @@ function waitForUser(){
 }
 function showForm(){
 	//makeOptionList();
-	$("#heading").html("<h1 id='help_us'>Are you cold?</h1><span id='infobutton'>?</span>");
+	$("#heading").html("<h1 id='help_us'>Are you cold?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
 	$(".description").html(" ");
-	$("#infobutton").click(function(){
+	$("#areyoucoldinfo").click(function(){
 		if($(".description").html() == " ") $(".description").html("By filling out this two-step form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about locations on campus. Alternately, you can go directly to see the data others have submitted.");
 		else $(".description").html(" ");
 	})
@@ -204,7 +204,7 @@ function homeScreen() {
 		console.log("calling ajax on arts center lobby");
 		ajaxCall("Arts Center (general)");
 	});
-	$("#infobutton").click(function(){
+	$("#locationinfo").click(function(){
 		if(info_active == 0){
 			info_active = 1;
 			$(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
