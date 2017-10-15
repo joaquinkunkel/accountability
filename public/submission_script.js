@@ -127,6 +127,7 @@ function readGPSdata(){
 	$.getJSON('data/campus_locations.json', function(data) {
 	    console.log('gps data file loaded!');
 	    gps_data = data;
+			console.log(gps_data);
 	    gpsTrack();
 	});
 };
@@ -137,25 +138,7 @@ function makeOptionList(){
   });
 };
 
-function isValidGPS(location){
-  gps_data.forEach(function(e,i){
-    var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
-    if(computed_dist < distThreshold){
-      //console.log(`You seem to be close to: ${e.name}`);
-      if(e.name.length > 1){
-        e.name.forEach(function(el){
-          eligible_gps_array.push(el);
-        });
-      }else{
-        eligible_gps_array.push(e.name);
-      };
-    };
-  });
-
-  console.log(eligible_gps_array);
-}
-
-var optionList = ["Library (general)", "Library Cafe", "Campus Center lobby", "Marketplace", "Convenience Store", "Fitness Center", "Swimming pool", "Arts Center (general)", "Arts Center IM Lab", "D2 Dining Hall", "D1 Dining Hall", "A2 classrooms", "A3 classrooms", "A4 classrooms", "A5 classrooms", "A5 Engineering Design Studio", "A6 classrooms"];
+var optionList = ["Art Gallery", "Experimental Research Building (ERB)", "Arts Center Sculpture Studio", "UNIX Lab", "Arts Center Piano Room", "Career Development Center (CDC)", "Library (general)", "Library Cafe", "Campus Center lobby", "Marketplace", "Convenience Store", "Fitness Center", "Swimming pool", "Arts Center (general)", "Arts Center IM Lab", "D2 Dining Hall", "D1 Dining Hall", "A2 classrooms", "A3 classrooms", "A4 classrooms", "A5 classrooms", "A5 Engineering Design Studio", "A6 classrooms"];
 
 function isInList(location){
 	for(var i = 0; i < optionList.length; i++){

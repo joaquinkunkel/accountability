@@ -25,6 +25,7 @@ function visualize(data){
 				daysLogs[Math.ceil(l.temp)-1][1] = daysLogs[Math.ceil(l.temp) - 1][1] + 1;
 			}
 		}
+		console.log(daysLogs);
 		return daysLogs;
 	};
 
@@ -329,7 +330,7 @@ function visualize(data){
 	$("#daily").css("color", "white");
 	$("#daily").css("background", "black");
 	$(".vis_options").css("visibility", "visible");
-	$(".vis_options").append("<p style='padding: 10px 4px 0 0'>Visualize:</p><button class='choosegraph' id='daily'>Day</button><button class='choosegraph' id='weekly'>Week</button>");
+	$(".vis_options").append("<button class='choosegraph' id='daily'>Day</button><button class='choosegraph' id='weekly'>Week</button>");
 	$("#weekly").click(function(){
 		$("#weekly").css("color", "white");
 		$("#weekly").css("background", "black");
