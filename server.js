@@ -105,14 +105,14 @@ app.get("/check-dataset/:dataset",function(req,res,err){
                       SUBMITTED REPORTS
 -------------------------------------------------------------------*/
 app.post("/submit", function (request, response, error){
-
+  request.setTimeout(0);
   //set up variables
   var user = request.body;
   var user_location = user.user_location_report;
   var location_match = false;
 
   var date = new Date();
-  var today = String(date.getMonth() + "_" + (date.getDate() + 1));
+  var today = String(date.getMonth() + "_" + (date.getDate()));
 
   var new_log = {};
   new_log.date = today;
@@ -179,7 +179,7 @@ app.post("/submit", function (request, response, error){
 
 
   });
- 
+
 
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
 
@@ -230,8 +230,8 @@ app.post("/submit", function (request, response, error){
     var api_key = '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';
     var recipient = 'mk4908@nyu.edu';
     var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
-    var email_body = 'Dear Madam or Sir,<br /><br />a student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
-    email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental pollution.</i>';
+    var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
+    email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i>';
 
     sgMail.setApiKey(api_key);
     var  msg = {

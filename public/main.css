@@ -8,8 +8,14 @@ body {
 }
 
 .form-content{
-  background: rgba(255, 255, 255, 0.9);
+  padding-top: 40px;
+  background: rgba(250, 250, 250, 0.9);
   height: 100vh;
+}
+
+.before-visualization{
+  visibility: hidden; display: none;
+
 }
 
 .sub-body{
@@ -17,6 +23,16 @@ body {
   margin-right: auto;
   width: 80%;
   max-width: 800px;
+}
+
+#logo_text{
+  font-size: 2.5rem !important;
+  margin: 10px 50px;
+}
+
+#aboutlink{
+  color: black !important;
+  padding-top: 8px;
 }
 
 #background {
@@ -42,7 +58,8 @@ header {
   justify-content: center;
   text-align: center;
   background: white;
-  margin: 0 auto 40px auto;
+  margin: 0 auto 0 auto;
+  box-shadow: 0 2px 4px black;
 }
 
 header .row{
@@ -109,42 +126,45 @@ h1 {
   opacity: 0;
 }
 
-.submitbutton, .yesbutton, .yescampus, .skipbutton {
+.submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit {
   color: black;
   font-weight: bold;
   background: transparent;
   margin:0.2em;
   border: 2px solid black;
 
-  padding: 5px;
+  padding: 3px 5px;
   border-radius: 10px;
   transition: all 0.1s;
 }
 
-.submitbutton:hover, .yesbutton:hover, .skipbutton:hover{
+.submitbutton:hover, .yesbutton:hover, .skipbutton:hover, #daily:hover, #weekly:hover, .gotit:hover{
   color: white;
   background: black;
 }
+.gotit{
+  margin: 10px auto;
+}
 
-#infobutton{
-  color: #1098b7;
+.infobutton{
+  width: 30px;
+  color: #2b72e5;
   font-weight: bold;
   background: transparent;
-  padding: 5px;
-  border: 2px solid #1098b7;
-  border-radius: 10px;
+  padding: 5px 5px 7px 5px;
+  border: 1.5px solid #2b72e5;
+  border-radius: 30px;
   transition: all 0.1s;
-
   margin: 28px 10px 0 10px;
   font-size: 1.5rem;
-  height: 35px;
+  height: 30px;
   opacity: 0.8;
   cursor: pointer;
 }
 
-#infobutton:hover{
+.infobutton:hover{
   color: white;
-  background: #1098b7;
+  background: #2b72e5;
 }
 
 #heading{
@@ -161,7 +181,7 @@ h1 {
 }
 
 form{
-  visibility: hidden;
+  visibility: hidden; display: none;
   width: 90%;
   max-width: 800px;
   margin: 0.5rem auto;
@@ -176,16 +196,15 @@ form{
 input{
   background: none;
   color: black;
-  padding: 20px 10px;
-  margin: -10px auto 10px auto !important;
-  text-align: center;
+  padding: 16px 10px;
+  margin: 0 !important;
   height: 20px;
   width: 90%;
-  max-width: 200px;
-  border: none;
+  max-width: 250px;
   outline:none;
   transition: all 0.2s;
-  border-bottom: solid black 2px;
+  border: solid black 2px;
+  border-radius: 10px
 }
 
 input:focus{
@@ -205,6 +224,12 @@ form select{
   width: 90%;
   max-width: 200px;
   text-align: center;
+  transition: all 0.2s;
+}
+
+select:hover{
+  color: white;
+  background: black;
 }
 
 form label{
@@ -219,8 +244,8 @@ form label{
 
 #invalid_location_message{
   margin-top: -15px;
-  color: red;
-  visibility: hidden;
+  color: red !important;
+  visibility: hidden; display: none;
 }
 
 datalist{
@@ -228,8 +253,15 @@ datalist{
 }
 
 .vis_options{
+  visibility: hidden; display: none;
+  border-top: 1px solid black;
+  padding-top: 10px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 @media screen and (max-width: 768px){
@@ -266,15 +298,11 @@ datalist{
     background: white;
   }
 
-  header{
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-  }
-
   body{
     background: #effcfb;
   }
 
   #background{
-    visibility: hidden;
+    visibility: hidden; display: none;
   }
 }
