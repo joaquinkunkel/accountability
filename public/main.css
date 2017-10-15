@@ -19,6 +19,15 @@ body {
   max-width: 800px;
 }
 
+#logo_text{
+  margin: 10px 50px;
+}
+
+#aboutlink{
+  color: black !important;
+  padding-top: 8px;
+}
+
 #background {
   position: fixed;
   top: 50%;
@@ -175,16 +184,15 @@ form{
 input{
   background: none;
   color: black;
-  padding: 20px 10px;
-  margin: -10px auto 10px auto !important;
-  text-align: center;
+  padding: 16px 10px;
+  margin: 0 !important;
   height: 20px;
   width: 90%;
-  max-width: 200px;
-  border: none;
+  max-width: 250px;
   outline:none;
   transition: all 0.2s;
-  border-bottom: solid black 2px;
+  border: solid black 2px;
+  border-radius: 10px
 }
 
 input:focus{
@@ -224,7 +232,7 @@ form label{
 
 #invalid_location_message{
   margin-top: -15px;
-  color: red;
+  color: red !important;
   visibility: hidden;
 }
 
@@ -233,6 +241,10 @@ datalist{
 }
 
 .vis_options{
+  visibility: hidden;
+  border-top: 1px solid black;
+  padding-top: 10px;
+  margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
   display: flex;

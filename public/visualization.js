@@ -3,7 +3,6 @@ function preparePage(){
 };
 
 function visualize(data){
-
 	function createDaysLogs(a){
 		//Create an array of today's logs.
 	 //The array stores subarrays of the form [temperature, count],
@@ -86,14 +85,19 @@ function visualize(data){
 	};
 
 	function visualizeWeek(logs){
-
+		display.select(".caption").remove();
+		display.append("p")
+			.classed("caption", true)
+			.text("Here are the average daily temperatures we've registered the past week.")
+			.style("padding-top", "15px");
 		//D3 initialization
 		//If there is already a visualization there, remove it to replace with new one.
 		display.selectAll("svg").remove();
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
-											.style("margin-top", "30px");
+											.style("margin-left", "auto")
+											.style("margin-right", "auto");
 		svg.selectAll("rect")
 				.data(logs)
 				.enter()
@@ -102,10 +106,14 @@ function visualize(data){
 					return (logs.length-i-1) * (w / logs.length);
 				})
 				.attr("y", function(d, i){
-					return h-(Math.ceil(d.temp))*30 -25;
+					return h - 25;
 				})
 				.attr("width", function(d, i){
 					return (w / logs.length) - barPadding;
+				})
+				.transition().duration(800)
+				.attr("y", function(d, i){
+					return h-(Math.ceil(d.temp))*30 -25;
 				})
 				.attr("height", function(d, i){
 					return (Math.ceil(d.temp)) *30;
@@ -137,11 +145,15 @@ function visualize(data){
 					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
 				})
 				.attr("y", function(d){
-					return h - (Math.ceil(d.temp))*30 - 35;
+					return h - 35;
 				})
 				.style("font-weight", "normal")
 				.style("font-size", "1.2rem")
-				.style("opacity", "0.6");;
+				.style("opacity", "0.6")
+				.transition().duration(800)
+				.attr("y", function(d){
+					return h - (Math.ceil(d.temp))*30 - 35;
+				});
 	};
 
 	function visualizeDay(){
@@ -150,6 +162,11 @@ function visualize(data){
 		var yScale = d3.scaleLinear()
                      .domain([0, d3.max(day_data, function(d) { return d[1]; })])
                      .range([0, h - 45]);
+		display.select(".caption").remove();
+		display.append("p")
+			.classed("caption", true)
+			.text("Here are the reports we have received from our users today.")
+			.style("padding-top", "15px");
 
 		display.selectAll("svg").remove();
 		var svg = display.append("svg")
@@ -161,16 +178,20 @@ function visualize(data){
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i){
-					return (day_data.length-i-1) * (w / day_data.length);
+					return (i) * (w / day_data.length);
 				})
 				.attr("y", function(d, i){
-					return h - yScale(d[1]) - 25;
+					return h - 25;
 				})
 				.attr("width", function(d, i){
 					return (w / day_data.length) - barPadding;
 				})
+				.transition().duration(800)
 				.attr("height", function(d, i){
 					return yScale(d[1]);
+				})
+				.attr("y", function(d, i){
+					return h - yScale(d[1]) - 25;
 				})
 				.attr("fill", function(d, i){
 					return colors[i+1];
@@ -196,14 +217,18 @@ function visualize(data){
 					return d[1] == 1 ? d[1] + " report" : d[1] + " reports";
 				})
 				.attr("x", function(d, i){
-					return (day_data.length-i-1) * (w / day_data.length) + (w / day_data.length)/2 -30;
+					return (i) * (w / day_data.length) + (w / day_data.length)/2 -30;
 				})
 				.attr("y", function(d){
-					return h - yScale(d[1]) - 31;
+					return h - 31;
 				})
 				.style("font-weight", "normal")
 				.style("font-size", "1.2rem")
-				.style("opacity", "0.6");
+				.style("opacity", "0.6")
+				.transition().duration(800)
+				.attr("y", function(d){
+					return h - yScale(d[1]) - 31;
+				});
 
 	};
 
@@ -222,12 +247,12 @@ function visualize(data){
 	var current_date = new Date();
 	var todays_month = current_date.getMonth();
 	var todays_day = current_date.getDate();
-	var temps = ["", "freezing", "cold", "cool", "just right", "warm", "hot"];
+	var temps = ["", "freezing", "cold", "cool", "nice", "warm", "hot"];
 	var colors = ["",
 		"#356fc6", //freezing
 		"#3598c6", //cold
 		"#35c6b5", //cool
-		"#50ef3b", //just right
+		"#50ef3b", //nice
 		"#f9d13e", //warm
 		"#d66836"  //hot
 	];
@@ -244,32 +269,82 @@ function visualize(data){
 	temp_avg = temp_avg/logs.length;
 
 	//Variables for visualization
-	var w = $(window).width() <= 500 ? $(window).width() * 0.9 : 500;
+	if($(window).width() <= 550) var w = $(window).width() * 0.8;
+	else var w = 500;
 	var h = 250;
 	var barPadding = 1;
 	var display = d3.select("body").select(".sub-body").select(".data_display");
 
+	//If the thank you message is necessary i.e. if the user just posted some info.
+	if(thank_you){
+		display.select(".data_heading").append("h3")
+			.text("Thank you for your contribution!")
+			.style("font-weight", "normal")
+			.style("margin", "10px auto")
+			.style("font-size", "1.8rem");
+	}
 	//Title, e.g. "Baraha is cold today."
+	$(".data_heading").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Visualize another location...'><datalist id='locations'></datalist></input>");
+	makeOptionList();
+	$("input").on("input", function(){
+		if(isInList($(this).val())){
+			$(this).css("border", "2px solid #50ef3b");
+			var location_input = $('input').val();
+			$(".data_display").html("<div class='data_heading'></div><div class='vis_options'></div>");
+			thank_you = 0;
+			ajaxCall(location_input);
+			console.log(location_input);
+		}
+		else{
+			$(this).css("border", "2px solid red");
+		}
+	});
+
 	display.select(".data_heading").append("h2")
 		.text(function(d){
+			var verb =  place_name.endsWith("s") ? " are " : " is ";
 			if(todays_avg()){
-				return(place_name + " is " + temps[Math.ceil(todays_avg())] + " today.");
+				return("The " + place_name + verb + temps[Math.ceil(todays_avg())] + " today.");
 			}
 			else{
 				return(place_name);
 			}
 		})
-		.style("margin-top", "50px")
+		.style("margin-top", "20px");
 
 	//Subtitle ("Over the past...")
+
 	display.select(".data_heading").append("p")
 		.text(function(d){
-			return("Over the past week, the temperature at "+ place_name + " has been reported to be " + temps[Math.ceil(temp_avg)] + " on average. Data for the past 7 days:");
-		})
-	$(".vis_options").append("<button class='choosegraph' id='daily'>Daily</button><button class='choosegraph' id='weekly'>Weekly</button>");
-	$("#weekly").click(function(){visualizeWeek(logs)});
-	$("#daily").click(function(){visualizeDay()});
+			var text_string = "";
+			if(!thank_you && place_name == "Arts Center (general)"){
+				text_string+="The Arts Center has the reputation of being the coldest place on this campus due to unnecessary levels of air conditioning. ";
+			}
+			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.ceil(temp_avg)] + "' on average."
+			return(text_string);
+		});
+
+
+	visualizeDay();
+	$("#daily").css("color", "white");
+	$("#daily").css("background", "black");
+	$(".vis_options").css("visibility", "visible");
+	$(".vis_options").append("<p style='padding: 10px 4px 0 0'>Visualize:</p><button class='choosegraph' id='daily'>Day</button><button class='choosegraph' id='weekly'>Week</button>");
+	$("#weekly").click(function(){
+		$("#weekly").css("color", "white");
+		$("#weekly").css("background", "black");
+		$("#daily").css("color", "black");
+		$("#daily").css("background", "transparent");
+		visualizeWeek(logs);
+	});
+	$("#daily").click(function(){
+		visualizeDay();
+		$("#daily").css("color", "white");
+		$("#daily").css("background", "black");
+		$("#weekly").css("color", "black");
+		$("#weekly").css("background", "transparent");
+	});
 	//Graph
-	//TODO: Add options to switch from weekly, monthly or yearly graphs.
+	//TODO: Add options to switch from weekly, monthly.
 
 };
