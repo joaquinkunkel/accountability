@@ -8,7 +8,7 @@ body {
 }
 
 .form-content{
-  padding-top: 40px;
+  padding-top: 50px;
   background: rgba(250, 250, 250, 0.9);
   height: 100vh;
 }
@@ -19,9 +19,10 @@ body {
 }
 
 .sub-body{
+  margin-top: calc(30vh - 100px);
   margin-left: auto;
   margin-right: auto;
-  width: 80%;
+  width: 95%;
   max-width: 800px;
 }
 
@@ -51,6 +52,9 @@ body {
 }
 
 header {
+  z-index: 1000;
+  position: fixed;
+  width: 100%;
   font-family: "Roboto", sans-serif;
   color: white;
   padding: 1rem auto;
@@ -59,7 +63,7 @@ header {
   text-align: center;
   background: white;
   margin: 0 auto 0 auto;
-  box-shadow: 0 2px 4px black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 header .row{
@@ -78,7 +82,7 @@ h1 {
 .description{
   text-align: left;
   width: 90%;
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto 10px auto;
   font-family: "Roboto", sans-serif;
 }
@@ -254,14 +258,24 @@ datalist{
 
 .vis_options{
   visibility: hidden; display: none;
-  border-top: 1px solid black;
-  padding-top: 10px;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.card{
+  position: absolute;
+  width: 90%;
+  padding: 2rem;
+  margin: 3rem 5% 1rem auto;
+  left: 0;
+  right: 0;
+  top: 100vh;
+  display: none;
+  background: white;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  transition: all 0.2s;
 }
 
 @media screen and (max-width: 768px){
@@ -304,5 +318,12 @@ datalist{
 
   #background{
     visibility: hidden; display: none;
+  }
+}
+
+@media only screen and (min-width: 900px){
+  .card{
+    margin-right: 20%;
+    width: 60%;
   }
 }

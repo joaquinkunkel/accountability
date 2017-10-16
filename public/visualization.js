@@ -3,6 +3,8 @@ function preparePage(){
 };
 
 function visualize(data){
+	$(".card").css("display", "block");
+	$(".card").animate({"top": "40px"}, {duration: 100});
 	console.log("visualize called");
 	function createDaysLogs(a){
 		//Create an array of today's logs.
@@ -22,8 +24,8 @@ function visualize(data){
 			var l = a[i];
 			var split_date = l.date.split("_");
 			if(todays_day == split_date[1] && todays_month == split_date[0]){ //Check if the date of l is within past week.
-				console.log("Adding to daysLogs, date: ", split_date[1], "\ntemperature: ", Math.floor(l.temp)-1);
-				daysLogs[Math.floor(l.temp)-1][1] = daysLogs[Math.floor(l.temp) - 1][1] + 1;
+				console.log("Adding to daysLogs, date: ", split_date[1], "\ntemperature: ", Math.round(l.temp)-1);
+				daysLogs[Math.round(l.temp)-1][1] = daysLogs[Math.round(l.temp) - 1][1] + 1;
 			}
 		}
 		console.log(daysLogs);
@@ -87,6 +89,12 @@ function visualize(data){
 	};
 
 	function visualizeWeek(logs){
+
+		//Width and height
+		if($(window).width() <= 550) var w = $(window).width() * 0.8;
+		else var w = 500;
+		var h = 250;
+
 		var padding = 25;
 		display.select(".caption").remove();
 		display.append("p")
@@ -116,13 +124,13 @@ function visualize(data){
 				})
 				.transition().duration(800)
 				.attr("y", function(d, i){
-					return h-(Math.floor(d.temp))*30 -padding;
+					return h-(Math.round(d.temp))*30 -padding;
 				})
 				.attr("height", function(d, i){
-					return (Math.floor(d.temp)) *30;
+					return (Math.round(d.temp)) *30;
 				})
 				.attr("fill", function(d){
-					return colors[Math.floor(d.temp)];
+					return colors[Math.round(d.temp)];
 				});
 
 		var texts = svg.selectAll("text")
@@ -142,7 +150,7 @@ function visualize(data){
 
 		texts.append("text")
 				.text(function(d, i){
-					return temps[(Math.floor(d.temp))];
+					return temps[(Math.round(d.temp))];
 				})
 				.attr("x", function(d, i){
 					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
@@ -155,13 +163,19 @@ function visualize(data){
 				.style("opacity", "0.6")
 				.transition().duration(800)
 				.attr("y", function(d){
-					return h - (Math.floor(d.temp))*30 - 35;
+					return h - (Math.round(d.temp))*30 - 35;
 				});
 	};
 
 	function visualizeDay(){
+
+		//Width and height
+		if($(window).width() <= 550) var w = $(window).width() * 0.8;
+		else var w = 500;
+		var h = 250;
+
 		var yPadding = 25;
-		var xPadding = 15;
+		var xPadding = 25;
 		var day_data = createDaysLogs(all_logs);
 
 
@@ -173,10 +187,10 @@ function visualize(data){
 	                   .range([h - 2*yPadding, 0]);
 		var xScale = d3.scaleLinear()
 										.domain([0, 6])
-										.range([0, w]);
+										.range([xPadding, w-xPadding]);
 		var xAxisScale = d3.scaleLinear()
 										.domain([0, 6])
-										.range([0, w]);
+										.range([xPadding, w-xPadding]);
 
 		display.select(".caption").remove();
 		display.append("p")
@@ -200,32 +214,37 @@ function visualize(data){
 		console.log(day_data);
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate(" + (xPadding) + "," + yPadding + ")")
-		    .call(yAxis);
+				.attr("transform", "translate(" + 2*xPadding + "," + yPadding + ")") //to revert to proper translate: change 2*xPadding to xPadding.
+		    .call(yAxis)
+				.select(".domain")
+				.attr("stroke", "none");
 
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate(" + (-((w -xPadding)/day_data.length - barPadding)/2 + xPadding/2) + "," + (h - yPadding) + ")")
-		    .call(xAxis);
+				.attr("transform", "translate("+ 0 + "," + (h - yPadding) + ")")
+		    .call(xAxis)
+				.select(".domain")
+				.attr("stroke", "none");
 
 		svg.selectAll(".tick")
 				.each(function(d){
 					if(d==0){
 						this.remove();
 					}
-				})
+				});
+
 		svg.selectAll("rect")
 				.data(day_data)
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i){
-					return (i) * (w / day_data.length) + xPadding + barPadding;
+					return xScale(i) + xScale(0);
 				})
 				.attr("y", function(d, i){
 					return h - yPadding;
 				})
 				.attr("width", function(d, i){
-					return (w -xPadding)/day_data.length - barPadding;
+					return (w - 2*xPadding)/day_data.length - barPadding;
 				})
 				.transition().duration(800)
 				.attr("height", function(d, i){
@@ -235,7 +254,7 @@ function visualize(data){
 					return h - yScale(d[1]) - yPadding;
 				})
 				.attr("fill", function(d, i){
-					return colors[i+1];
+					return colors[i];
 				});
 
 
@@ -246,7 +265,7 @@ function visualize(data){
 			split_date = logs[i].date.split("_");
 			// console.log(logs[i]);
 			if(split_date[1] == todays_day){
-				return logs[i].temp;
+				return logs[i].temp - 1;
 			}
 		}
 		return 0;
@@ -278,10 +297,7 @@ function visualize(data){
 	temp_avg = temp_avg/logs.length;
 
 	//Variables for visualization
-	if($(window).width() <= 550) var w = $(window).width() * 0.8;
-	else var w = 500;
-	var h = 250;
-	var barPadding = 3;
+	var barPadding = 1;
 	var display = d3.select("body").select(".sub-body").select(".data_display");
 
 	//If we didn't receive the user's location, display a message explaining why they're here.
@@ -304,10 +320,13 @@ function visualize(data){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$(".data_display").html("<div class='data_heading'></div><div class='vis_options'></div>");
-			thank_you = 0;
-			ajaxCall(location_input);
-			console.log(location_input);
+			$(".card").animate({"margin-right": "100%"}, 500, "linear", function(){
+				$(".card").remove();
+				$(".sub-body").append("<div class='card' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
+				thank_you = 0;
+				ajaxCall(location_input);
+				console.log(location_input);
+			});
 		}
 		else{
 			$(this).css("border", "2px solid red");
@@ -318,7 +337,7 @@ function visualize(data){
 		.text(function(d){
 			var verb =  place_name.endsWith("s") ? " are " : " is ";
 			if(todays_avg()){
-				return("The " + place_name + verb + temps[Math.floor(todays_avg())] + " today.");
+				return("The " + place_name + verb + temps[Math.round(todays_avg())] + " today.");
 			}
 			else{
 				return(place_name);
@@ -328,22 +347,23 @@ function visualize(data){
 
 	//Subtitle ("Over the past...")
 
-	display.select(".data_heading").append("p")
+	display.select(".data_heading").append("p").classed(".description", "true")
 		.text(function(d){
 			var text_string = "";
 			if(!thank_you && place_name == "Arts Center (general)"){
 				text_string+="The Arts Center has the reputation of being the coldest place on this campus due to unnecessary levels of air conditioning. ";
 			}
-			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.floor(temp_avg)] + "' on average."
+			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.round(temp_avg)] + "' on average."
 			return(text_string);
 		});
 
 
 	visualizeDay();
-	$("#daily").css("color", "white");
-	$("#daily").css("background", "black");
+	$(".data_heading").append("<div class='vis_options'></div>");
 	$(".vis_options").css("visibility", "visible");
 	$(".vis_options").append("<button class='choosegraph' id='daily'>Day</button><button class='choosegraph' id='weekly'>Week</button>");
+	$("#daily").css("color", "white");
+	$("#daily").css("background", "black");
 	$("#weekly").click(function(){
 		$("#weekly").css("color", "white");
 		$("#weekly").css("background", "black");
