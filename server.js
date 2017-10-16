@@ -27,7 +27,7 @@ var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
-      fs.writeFile(facilities_reports_daily,JSON.stringify(data), function(error){
+      fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(data), function(error){
         console.log('we are ready to collect reports for a new day!');
       });
   });
@@ -50,7 +50,7 @@ app.use(bp.json());
 
 //route for user queries
 app.get("/place-query", function (request, response, error){
-
+  console.log('we have received a request');
   //console.log('user queried ', request.query.user_location_query);
   var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
   user.place = request.query.user_location_query;
