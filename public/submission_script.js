@@ -209,6 +209,7 @@ function homeScreen() {
 		console.log("calling ajax on arts center lobby");
 		ajaxCall("Arts Center (general)");
 	});
+
 	$("#locationinfo").click(function(){
 		if(info_active == 0){
 			info_active = 1;
@@ -242,5 +243,6 @@ function welcomeScreen(){
 $(window).on('load',function(){
   //console.log('hello there');
 	//console.log('submission is good!');
-	welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
+	//welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
+	homeScreen();
 });
