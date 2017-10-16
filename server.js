@@ -48,12 +48,15 @@ app.use(bp.urlencoded({ extended: true }));
 app.use(bp.json());
 
 
-//route for user queries
+/*-----------------------------------------------------------------
+          DELETE COOKIES ROUTE (debugging purposes only)
+-------------------------------------------------------------------*/
 app.get("/place-query", function (request, response, error){
   console.log('we have received a request');
   //console.log('user queried ', request.query.user_location_query);
   var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
   user.place = request.query.user_location_query;
+  console.log('our user location is: ',user.place);
 
   //load in the database
   fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
@@ -64,6 +67,7 @@ app.get("/place-query", function (request, response, error){
     //match the queried location with the location in the database
     for(i = 0; i < array.length; i++){
       if(array[i].name == user.place){
+
         user.logs = array[i].logs; //array of temperature logs, starting with the most recent one
         response.send(JSON.stringify(user)); //send the full array of logs corresponding to the queried location to the user
       }
@@ -81,7 +85,31 @@ app.get("/delete-cookies",function(req,res,err){
   res.send('thanks for deleting cookie!');
 });
 
+/*-----------------------------------------------------------------
+          AJAX POST REQUEST TEST ROUTE
+-------------------------------------------------------------------*/
+app.post("/testing-ajax",function(req,res,err){
+  var user = {};
+  user.place = req.body.report_location;
+  //console.log('our user location is: ',user_location);
+  //res.send('helllo');
 
+  //load in the database
+  fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
+    if(error){throw error};
+    var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
+    var array = whole_file.all_places; //array of all campus locations and corresponding logs
+
+    //match the queried location with the location in the database
+    for(i = 0; i < array.length; i++){
+      if(array[i].name == user.place){
+        console.log('we have a match, about to send a response to the client side11');
+        user.logs = array[i].logs; //array of temperature logs, starting with the most recent one
+        res.send(JSON.stringify(user)); //send the full array of logs corresponding to the queried location to the user
+      }
+    }
+  });
+});
 /*-----------------------------------------------------------------
                           API ROUTE
 -------------------------------------------------------------------*/
@@ -110,6 +138,8 @@ app.post("/submit", function (request, response, error){
   var user = request.body;
   var user_location = user.user_location_report;
   var location_match = false;
+  var res_obj = {};
+  res_obj.place = user_location;
 
   var date = new Date();
   var today = String(date.getMonth() + "_" + (date.getDate()));
@@ -193,8 +223,12 @@ app.post("/submit", function (request, response, error){
       if(array[i].name == user.user_location_report){ //find the location in the array for which the user wants to make a temperature report
         //Saving today's date into a variable
         location_match = true; //we have a match, used later to update the database
-
-        array[i].logs.unshift(new_log);//push the new log to the beginning of the log array
+        if(new_log.temp){
+          array[i].logs.unshift(new_log);
+        };
+        //push the new log to the beginning of the log array
+        res_obj.logs = array[i].logs; //array of temperature logs, starting with the most recent one
+        response.send(JSON.stringify(res_obj)); //send the full array of logs corresponding to the queried location to the user
         //console.log(current_logs);
         break;
       }
@@ -208,6 +242,7 @@ app.post("/submit", function (request, response, error){
 
         }else{//success message!
           console.log('success! written new report',user);
+          res_obj.logs 
           //response.redirect('after_valid_submission.html');
         //  if(user.user_temperature < 3){
             //sendMail();

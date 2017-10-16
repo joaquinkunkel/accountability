@@ -13,6 +13,7 @@ function itFailed(data){
 
 //A "success" or "done" function
 function itWorked(data){
+	console.log('it worked!');
 	var temp_info = JSON.parse(data);
 	console.log('here is our data \n');
 	console.log(temp_info);
@@ -21,14 +22,16 @@ function itWorked(data){
 }
 
 
-function ajaxCall(query){
+function ajaxCall(location,temperature){
 	console.log('sending ajax call to the server');
+	console.log('our temperature is: ', temperature);
 	$.ajax({
-	url: '/place-query',
+	url: '/submit',
 	data: {
-		user_location_query: query
+		user_location_report: location,
+		user_temperature: temperature
 	},
-	type: 'GET',
+	type: 'POST',
 	//dataType: 'jsonp',
 	error: itFailed,
 	success: itWorked
@@ -187,11 +190,12 @@ function showForm(){
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(){
 			var location_input = $('select[name="user_location_report"]').val();
+			var temperature_input = $('select[name="user_temperature"]').val();
 			//console.log("Submit button clicked");
 			//console.log(location_input);
 				//getJSON();
 				thank_you = 1;
-				ajaxCall(location_input);
+				ajaxCall(location_input,temperature_input);
 		});
 		});
 

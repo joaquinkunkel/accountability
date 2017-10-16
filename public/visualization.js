@@ -6,6 +6,7 @@ function visualize(data){
 	$(".card").css("display", "block");
 	$(".card").animate({"top": "40px"}, {duration: 100});
 	console.log("visualize called");
+	console.log(data);
 	function createDaysLogs(a){
 		//Create an array of today's logs.
 	 //The array stores subarrays of the form [temperature, count],
