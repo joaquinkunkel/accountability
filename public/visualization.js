@@ -95,75 +95,101 @@ function visualize(data){
 		else var w = 500;
 		var h = 250;
 
-		var padding = 25;
+		//Padding for axes and labels
+		var yPadding = 25;
+		var xPadding = 30;
+
+		//Scales for axes and bar dimensions
+		var yScale = d3.scaleLinear()
+										 .domain([1, 6])
+										 .range([5, h - 2*yPadding]);
+		var yAxisScale = d3.scaleLinear()
+										 .domain([1, 6])
+										 .range([h - 2*yPadding, 5]);
+		var xScale = d3.scaleLinear()
+										.domain([0, logs.length])
+										.range([xPadding, w-xPadding]);
+		var xAxisScale = d3.scaleLinear()
+										.domain([0, logs.length])
+										.range([w-xPadding, xPadding]);
+
+
 		display.select(".caption").remove();
 		display.append("p")
 			.classed("caption", true)
 			.text("Here are the average daily temperatures we've registered the past week.")
 			.style("padding-top", "15px");
+
 		//D3 initialization
 		//If there is already a visualization there, remove it to replace with new one.
 		display.selectAll("svg").remove();
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
-											.style("margin-left", "auto")
-											.style("margin-right", "auto");
+											.style("margin-top", "15px");
+
+		var yAxis = d3.axisLeft(yAxisScale)
+									.tickValues([1, 2, 3, 4, 5, 6])
+	                .tickFormat(function(d, i){ return temps[d-1]} );
+		var xTicks = []
+		for(var i = 0; i < logs.length; i++){
+			xTicks.push(i);
+		}
+
+	  var xAxis = d3.axisBottom(xAxisScale)
+									.tickValues(xTicks)
+	                .tickFormat(function(d){ return logs[d].date });
+
+		svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(" + 2*xPadding + "," + (yPadding) + ")") //to revert to proper translate: change 2*xPadding to xPadding.
+				.call(yAxis)
+				.select(".domain")
+				.attr("stroke", "none");
+
+		svg.append('text')
+				.attr('class', 'yLabel')
+				.attr('text-anchor', 'middle')
+				.attr('x', -h/2)
+				.attr('y', xPadding/2)
+				.attr('transform', 'rotate(-90)')
+				.text('Temperature');
+
+		svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(" + (-xScale(0)/2) +  "," + (h - yPadding) + ")")
+				.call(xAxis)
+				.select(".domain")
+				.attr("stroke", "none");
+
+		svg.selectAll(".tick")
+				.select("line")
+				.attr("stroke", "none");
+
 		svg.selectAll("rect")
 				.data(logs)
 				.enter()
 				.append("rect")
 				.attr("x", function(d, i){
-					return (logs.length-i-1) * (w / logs.length);
+					return xScale(logs.length-i-1) + xScale(0);
 				})
 				.attr("y", function(d, i){
-					return h - padding;
+					return h - yPadding;
 				})
 				.attr("width", function(d, i){
-					return (w / logs.length) - barPadding;
+					return (w - 2*xPadding)/logs.length - barPadding;
 				})
-				.transition().duration(800)
-				.attr("y", function(d, i){
-					return h-(Math.round(d.temp))*30 -padding;
-				})
+				.transition().duration(function(d, i){
+	        return 800 + (logs.length-i)*140;
+	      })
 				.attr("height", function(d, i){
-					return (Math.round(d.temp)) *30;
+					return yScale(d.temp);
 				})
-				.attr("fill", function(d){
-					return colors[Math.round(d.temp)];
-				});
-
-		var texts = svg.selectAll("text")
-					.data(logs)
-					.enter();
-
-		texts.append("text")
-				.text(function(d, i){
-					return months[d.date.split("_")[0]] + " " + d.date.split("_")[1];
+				.attr("y", function(d, i){
+					return h - yScale(d.temp) - yPadding;
 				})
-				.attr("x", function(d, i){
-					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
-				})
-				.attr("y", function(d){
-					return h - 8;
-				});
-
-		texts.append("text")
-				.text(function(d, i){
-					return temps[(Math.round(d.temp))];
-				})
-				.attr("x", function(d, i){
-					return (logs.length-i-1) * w/logs.length + w/logs.length/2 - 30;
-				})
-				.attr("y", function(d){
-					return h - 35;
-				})
-				.style("font-weight", "normal")
-				.style("font-size", "1.2rem")
-				.style("opacity", "0.6")
-				.transition().duration(800)
-				.attr("y", function(d){
-					return h - (Math.round(d.temp))*30 - 35;
+				.attr("fill", function(d, i){
+					return colors[Math.round(d.temp)-1];
 				});
 	};
 
@@ -202,7 +228,7 @@ function visualize(data){
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
-											.style("margin-top", "30px");
+											.style("margin-top", "15px");
 
 		var yAxis = d3.axisLeft(yAxisScale)
                   .ticks(d3.max(day_data, function(d) { return d[1]; }));
@@ -219,19 +245,24 @@ function visualize(data){
 				.select(".domain")
 				.attr("stroke", "none");
 
+		svg.append('text')
+		    .attr('class', 'yLabel')
+		    .attr('text-anchor', 'middle')
+				.attr('x', -h/2)
+		    .attr('y', xPadding/2)
+		    .attr('transform', 'rotate(-90)')
+		    .text('Number of reports');
+
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate("+ 0 + "," + (h - yPadding) + ")")
+				.attr("transform", "translate("+ (-xScale(0)/2) + "," + (h - yPadding) + ")")
 		    .call(xAxis)
 				.select(".domain")
 				.attr("stroke", "none");
 
 		svg.selectAll(".tick")
-				.each(function(d){
-					if(d==0){
-						this.remove();
-					}
-				});
+				.select("line")
+				.attr("stroke", "none");
 
 		svg.selectAll("rect")
 				.data(day_data)
@@ -246,7 +277,9 @@ function visualize(data){
 				.attr("width", function(d, i){
 					return (w - 2*xPadding)/day_data.length - barPadding;
 				})
-				.transition().duration(800)
+				.transition().duration(function(d, i){
+					return 800 + i*140;
+				})
 				.attr("height", function(d, i){
 					return yScale(d[1]);
 				})
@@ -320,7 +353,7 @@ function visualize(data){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$(".card").animate({"margin-right": "100%"}, 500, "linear", function(){
+			$(".card").animate({"margin-right": "200%"}, 200, "linear", function(){
 				$(".card").remove();
 				$(".sub-body").append("<div class='card' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
 				thank_you = 0;
