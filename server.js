@@ -51,65 +51,12 @@ app.use(bp.json());
 /*-----------------------------------------------------------------
           DELETE COOKIES ROUTE (debugging purposes only)
 -------------------------------------------------------------------*/
-app.get("/place-query", function (request, response, error){
-  console.log('we have received a request');
-  //console.log('user queried ', request.query.user_location_query);
-  var user = {}; //make an empty user object, define it here so you can add to it from different codeblocks
-  user.place = request.query.user_location_query;
-  console.log('our user location is: ',user.place);
-
-  //load in the database
-  fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
-    if(error){throw error};
-    var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
-    var array = whole_file.all_places; //array of all campus locations and corresponding logs
-
-    //match the queried location with the location in the database
-    for(i = 0; i < array.length; i++){
-      if(array[i].name == user.place){
-
-        user.logs = array[i].logs; //array of temperature logs, starting with the most recent one
-        response.send(JSON.stringify(user)); //send the full array of logs corresponding to the queried location to the user
-      }
-    }
-  });
-
-});
-
-/*-----------------------------------------------------------------
-          DELETE COOKIES ROUTE (debugging purposes only)
--------------------------------------------------------------------*/
 app.get("/delete-cookies",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
 });
 
-/*-----------------------------------------------------------------
-          AJAX POST REQUEST TEST ROUTE
--------------------------------------------------------------------*/
-app.post("/testing-ajax",function(req,res,err){
-  var user = {};
-  user.place = req.body.report_location;
-  //console.log('our user location is: ',user_location);
-  //res.send('helllo');
-
-  //load in the database
-  fs.readFile(TEMPERATURE_LOGS_PATH, function(error, data){
-    if(error){throw error};
-    var whole_file = JSON.parse(data); //once we have the data, we parse it as JSON
-    var array = whole_file.all_places; //array of all campus locations and corresponding logs
-
-    //match the queried location with the location in the database
-    for(i = 0; i < array.length; i++){
-      if(array[i].name == user.place){
-        console.log('we have a match, about to send a response to the client side11');
-        user.logs = array[i].logs; //array of temperature logs, starting with the most recent one
-        res.send(JSON.stringify(user)); //send the full array of logs corresponding to the queried location to the user
-      }
-    }
-  });
-});
 /*-----------------------------------------------------------------
                           API ROUTE
 -------------------------------------------------------------------*/
