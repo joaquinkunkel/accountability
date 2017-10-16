@@ -7,6 +7,7 @@ var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
+var mongoose = require('mongoose');
   /*-----------------------------------------------------------------
                             SET UP VARIABLES
   -------------------------------------------------------------------*/
@@ -23,7 +24,20 @@ var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 });
 */
 
+mongoose.connect('mongodb://127.0.0.1/test');
 
+var my_database = mongoose.connection;
+
+//we can attach "listeners" to our database connection.
+//which means that we attach a callback function to an event
+//and that function is called whenever the event happens
+
+//in case there's an 'error' event, we log it to the console
+my_database.on('error', console.error.bind(console, 'connection error:'));
+
+my_database.on('open', function(){
+  console.log("connections to the database successful!");
+}
 
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
@@ -172,7 +186,7 @@ app.post("/submit", function (request, response, error){
         location_match = true; //we have a match, used later to update the database
         if(new_log.temp){
           array[i].logs.unshift(new_log);
-          
+
         }else{
           console.log('we have caught a null value!');
         };
@@ -191,7 +205,7 @@ app.post("/submit", function (request, response, error){
 
         }else{//success message!
           console.log('success! written new report',user);
-          res_obj.logs 
+          res_obj.logs
           //response.redirect('after_valid_submission.html');
         //  if(user.user_temperature < 3){
             //sendMail();
