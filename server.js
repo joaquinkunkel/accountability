@@ -225,11 +225,13 @@ app.post("/submit", function (request, response, error){
         location_match = true; //we have a match, used later to update the database
         if(new_log.temp){
           array[i].logs.unshift(new_log);
+          
+        }else{
+          console.log('we have caught a null value!');
         };
         //push the new log to the beginning of the log array
         res_obj.logs = array[i].logs; //array of temperature logs, starting with the most recent one
         response.send(JSON.stringify(res_obj)); //send the full array of logs corresponding to the queried location to the user
-        //console.log(current_logs);
         break;
       }
     };
