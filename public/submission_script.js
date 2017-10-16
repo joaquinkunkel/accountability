@@ -13,6 +13,7 @@ function itFailed(data){
 
 //A "success" or "done" function
 function itWorked(data){
+	console.log('it worked!');
 	var temp_info = JSON.parse(data);
 	console.log('here is our data \n');
 	console.log(temp_info);
@@ -21,19 +22,21 @@ function itWorked(data){
 }
 
 
-function ajaxCall(query){
+function ajaxCall(location,temperature){
 	console.log('sending ajax call to the server');
+	console.log('our temperature is: ', temperature);
 	$.ajax({
-	url: '/place-query',
-	data: {
-		user_location_query: query
-	},
-	type: 'GET',
-	//dataType: 'jsonp',
-	error: itFailed,
-	success: itWorked
-});
-
+		url: '/submit',
+		data: {
+			user_location_report: location,
+			user_temperature: temperature
+		},
+		type: 'POST',
+		//dataType: 'jsonp',
+		error: itFailed,
+		success: itWorked
+	});
+	return false;
 };
 
 //GPS
@@ -185,13 +188,15 @@ function showForm(){
 			.html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='yesbutton' disabled>Notify facilities (coming soon)</button><button class='submitbutton'>No, just submit</button>");
 		}
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
-		$(".submitbutton").click(function(){
+		$(".submitbutton").click(function(e){
+			e.preventDefault();
 			var location_input = $('select[name="user_location_report"]').val();
+			var temperature_input = $('select[name="user_temperature"]').val();
 			//console.log("Submit button clicked");
 			//console.log(location_input);
 				//getJSON();
 				thank_you = 1;
-				ajaxCall(location_input);
+				ajaxCall(location_input,temperature_input);
 		});
 		});
 
