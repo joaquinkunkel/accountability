@@ -37,7 +37,7 @@ my_database.on('error', console.error.bind(console, 'connection error:'));
 
 my_database.on('open', function(){
   console.log("connections to the database successful!");
-}
+});
 
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){

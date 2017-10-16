@@ -28,9 +28,20 @@ body {
 
 #logo_text{
   color: black !important;
-  font-size: 2.5rem !important;
-  margin: 10px 50px 0 50px;
-  
+  font-size: 3rem !important;
+  margin: 10px 50px 10px 50px;
+
+}
+
+.subtitle{
+  display: flex;
+}
+
+#tagline{
+  color: gray;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin: auto 10px;
 }
 
 #logo_text > a{
@@ -45,12 +56,6 @@ body {
 
 #tagline{
   color: black;
-}
-
-#aboutlink{
-  color: black !important;
-  padding-top: 8px;
-  display: none;
 }
 
 #background {
@@ -127,10 +132,9 @@ h1 {
   color: black;
   font-weight: bold;
   background: transparent;
-  margin-top: 0.67em;
   border: 2px solid black;
   width: 80px;
-  margin-left: auto;
+  margin-left: 10px;
   margin-right: auto;
   padding: 5px;
   border-radius: 10px;
@@ -147,7 +151,8 @@ h1 {
   opacity: 0;
 }
 
-.submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit {
+.submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit, #aboutlink {
+  height: 30px;
   color: black;
   font-weight: bold;
   background: transparent;
@@ -159,7 +164,7 @@ h1 {
   transition: all 0.1s;
 }
 
-.submitbutton:hover, .yesbutton:hover, .skipbutton:hover, #daily:hover, #weekly:hover, .gotit:hover{
+.submitbutton:hover, .yesbutton:hover, .skipbutton:hover, #daily:hover, #weekly:hover, .gotit:hover, #aboutlink:hover{
   color: white;
   background: black;
 }
@@ -218,8 +223,8 @@ input{
   background: none;
   color: black;
   padding: 16px 10px;
-  margin: 0 !important;
-  height: 20px;
+  margin: 0 10px !important;
+  height: 10px !important;
   width: 90%;
   max-width: 250px;
   outline:none;
@@ -244,7 +249,6 @@ form select{
   border: solid black 2px;
   width: 90%;
   max-width: 200px;
-  text-align: center;
   transition: all 0.2s;
 }
 
@@ -260,6 +264,7 @@ form label{
 }
 
 #how{
+  display: none;
   opacity: 0;
 }
 
@@ -291,8 +296,21 @@ datalist{
   display: none;
   background: white;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+  border-radius: 5px;
   transition: all 0.2s;
+}
+
+#searchcard{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 490px){
+  #tagline{
+    letter-spacing: normal;
+    font-size: 1rem;
+  }
 }
 
 @media screen and (max-width: 768px){
@@ -309,32 +327,33 @@ datalist{
   }
 }
 
+h4{
+  font-size: 1.4rem !important;
+}
+
 @media screen and (max-width: 550px){
-  .backbutton {
-    color: white;
-    font-weight: bold;
-    background: transparent;
-    margin-top: 0.67em;
-    border: 2px solid white;
-    width: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 5px;
-    border-radius: 10px;
-    transition: all 0.1s;
-  }
-
-  .backbutton:hover{
-    color: black;
-    background: white;
-  }
-
   body{
     background: #effcfb;
+  }
+  h3{
+    font-size: 1.8rem !important;
   }
 
   #background{
     visibility: hidden; display: none;
+  }
+}
+
+@media screen and (max-width: 790px){
+  #logo-text{
+    margin-bottom: 5px !important;
+  }
+  #aboutlink{
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+  #tagline{
+    margin-top: 0;
   }
 }
 

@@ -3,8 +3,12 @@ function preparePage(){
 };
 
 function visualize(data){
-	$(".card").css("display", "block");
-	$(".card").animate({"top": "40px"}, {duration: 100});
+	if(!$("#searchcard").length){
+		searchCard();
+	}
+	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
+	$("#displaycard").css("display", "block");
+	$("#displaycard").animate({"top": "158px"}, {duration: 400});
 	console.log("visualize called");
 	console.log(data);
 	function createDaysLogs(a){
@@ -94,7 +98,7 @@ function visualize(data){
 		//Width and height
 		if($(window).width() <= 550) var w = $(window).width() * 0.8;
 		else var w = 500;
-		var h = 250;
+		var h = 200;
 
 		//Padding for axes and labels
 		var yPadding = 25;
@@ -119,7 +123,8 @@ function visualize(data){
 		display.append("p")
 			.classed("caption", true)
 			.text("Here are the average daily temperatures we've registered the past week.")
-			.style("padding-top", "15px");
+			.style("padding-top", "15px")
+			.style("font-weight", "bold");
 
 		//D3 initialization
 		//If there is already a visualization there, remove it to replace with new one.
@@ -127,7 +132,7 @@ function visualize(data){
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
-											.style("margin-top", "15px");
+											.style("margin-top", "10px");
 
 		var yAxis = d3.axisLeft(yAxisScale)
 									.tickValues([1, 2, 3, 4, 5, 6])
@@ -139,7 +144,7 @@ function visualize(data){
 
 	  var xAxis = d3.axisBottom(xAxisScale)
 									.tickValues(xTicks)
-	                .tickFormat(function(d){ return logs[d].date });
+	                .tickFormat(function(d){ return months[logs[d].date.split("_")[0]] + " " + logs[d].date.split("_")[1] });
 
 		svg.append("g")
 				.attr("class", "axis")
@@ -199,7 +204,7 @@ function visualize(data){
 		//Width and height
 		if($(window).width() <= 550) var w = $(window).width() * 0.8;
 		else var w = 500;
-		var h = 250;
+		var h = 200;
 
 		var yPadding = 25;
 		var xPadding = 25;
@@ -223,13 +228,14 @@ function visualize(data){
 		display.append("p")
 			.classed("caption", true)
 			.text("Here are the reports we have received from our users today.")
-			.style("padding-top", "15px");
+			.style("padding-top", "15px")
+			.style("font-weight", "bold");
 
 		display.selectAll("svg").remove();
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
-											.style("margin-top", "15px");
+											.style("margin-top", "10px");
 
 		var yAxis = d3.axisLeft(yAxisScale)
                   .ticks(d3.max(day_data, function(d) { return d[1]; }));
@@ -332,7 +338,7 @@ function visualize(data){
 
 	//Variables for visualization
 	var barPadding = 1;
-	var display = d3.select("body").select(".sub-body").select(".data_display");
+	var display = d3.select("body").select(".sub-body").select("#displaycard");
 
 	//If we didn't receive the user's location, display a message explaining why they're here.
 	if(skipped == 1){
@@ -348,15 +354,14 @@ function visualize(data){
 			.style("font-size", "1.8rem");
 	}
 	//Title, e.g. "Baraha is cold today."
-	$(".data_heading").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Visualize another location...'><datalist id='locations'></datalist></input>");
-	makeOptionList();
 	$("input").on("input", function(){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$(".card").animate({"margin-right": "200%"}, 200, "linear", function(){
-				$(".card").remove();
-				$(".sub-body").append("<div class='card' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
+			$("#displaycard").animate({"margin-right": "200%"}, 200, "linear", function(){
+				$("#displaycard").remove();
+				$(".vis_options").remove();
+				$(".sub-body").append("<div class='card' id='displaycard' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
 				thank_you = 0;
 				ajaxCall(location_input);
 				console.log(location_input);
@@ -367,7 +372,7 @@ function visualize(data){
 		}
 	});
 
-	display.select(".data_heading").append("h2")
+	display.select(".data_heading").append("h3")
 		.text(function(d){
 			var verb =  place_name.endsWith("s") ? " are " : " is ";
 			if(todays_avg()){
@@ -377,16 +382,13 @@ function visualize(data){
 				return(place_name);
 			}
 		})
-		.style("margin-top", "20px");
+		.style("margin-top", "10px");
 
 	//Subtitle ("Over the past...")
 
 	display.select(".data_heading").append("p").classed(".description", "true")
 		.text(function(d){
 			var text_string = "";
-			if(!thank_you && place_name == "Arts Center (general)"){
-				text_string+="The Arts Center has the reputation of being the coldest place on this campus due to unnecessary levels of air conditioning. ";
-			}
 			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.round(temp_avg)] + "' on average."
 			return(text_string);
 		});
