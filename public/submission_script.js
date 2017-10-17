@@ -5,6 +5,7 @@ var eligible_gps_array = [];
 var thank_you = 0;
 var info_active = 0;
 var skipped = 0;
+var bodyClone = $(".form-content").clone();
 
 function itFailed(data){
 	console.log("Failed");
@@ -101,7 +102,7 @@ function success(pos) {
 			showForm();
 		} else {
 			skipped = 1;
-			ajaxCall("Arts Center (general)");
+			emptyCard();
 		}
 	}
 
@@ -122,7 +123,7 @@ function success(pos) {
 
 	function error(err) {
 		skipped = 1;
-		ajaxCall("Arts Center (general)");
+		emptyCard();
 		console.warn(`ERROR(${err.code}): ${err.message}`);
 	};
 
@@ -177,7 +178,11 @@ function showForm(){
 	$("form").css("display", "block");
 	$("form").animate({"opacity": "1"}, {duration: 500});
 	$(".user_location_report").on("change", function(){
-			$("#how").animate({"opacity": "1"}, {duration: 1000});
+			$(".skipbutton").animate({"opacity": "0"}, 200, "linear", function(){
+				$(this).remove();
+				$("#how").css("display", "block");
+				$("#how").animate({"opacity": "1"}, {duration: 1000});
+			});
 	});
 
 	$(".selector").on('change', function(){
@@ -202,12 +207,42 @@ function showForm(){
 
 };
 
+function searchCard(){
+	$(".before-visualization").html("");
+	$(".sub-body").append("<div class='card' id='searchcard'></div>");
+	$("#searchcard").append("<button class='backbutton'>back</button>");
+	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Search for a place...'><datalist id='locations'></datalist></input>");
+	$("#searchcard").css("display", "flex");
+	$("#searchcard").animate({"top": "75px"}, {duration: 200});
+	makeOptionList();
+	$("input").on("input", function(){
+		if(isInList($(this).val())){
+			$(this).css("border", "2px solid #50ef3b");
+			var location_input = $('input').val();
+			$("#displaycard").animate({"margin-right": "200%"}, 200, "linear", function(){
+				$("#displaycard").remove();
+				$(".vis_options").remove();
+				thank_you = 0;
+				console.log(location_input);
+				ajaxCall(location_input);
+			});
+		}
+		else{
+			$(this).css("border", "2px solid red");
+		}
+	});
+	$(".backbutton").click(function(){
+		$(".card").animate({"margin-right": "100%"}, 200, "linear", function(){
+			location.reload();
+		});
+	});
+}
 
 function homeScreen() {
 	//Display and define home screen interface.//
+
 	$(".skipbutton").click(function(){
-		console.log("calling ajax on arts center lobby");
-		ajaxCall("Arts Center (general)");
+		searchCard();
 	});
 
 	$("#locationinfo").click(function(){

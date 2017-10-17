@@ -7,6 +7,7 @@
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://d3js.org/d3.v4.js"></script>
@@ -16,9 +17,11 @@
       <div class="row">
         <div class="project_title">
           <h1 id="logo_text"><a href="index.html"><span style="font-weight:bold">ac</span><span style="opacity: 0.5">countability</span></a></h1>
-          <p id="tagline"> Tackling unsustainable A/C usage at NYU Abu Dhabi</p>
         </div>
-        <a href="about.html" id="aboutlink"><p>About</p></a>
+        <div class="subtitle">
+          <p id="tagline">TACKLING UNSUSTAINABLE A/C USAGE AT NYU ABU DHABI</p>
+          <a href="about.html" id="aboutlink"><p>About</p></a>
+        </div>
       </div>
     </header>
     <div class="form-content">
@@ -31,7 +34,7 @@
           </div>
           <p class="description"></p>
           <div class="post-description"></div>
-          
+
           <!--<form class="submission" action="/submit" method="POST">-->
           <form class="submission" action="">
             <!--<input name="user_location" placeholder="Where are you right now?">-->
@@ -60,7 +63,7 @@
           </form>
           <button class="skipbutton">Skip and see current data</button>
         </div>
-        <div class="card">
+        <div class="card" id="displaycard">
         <div class="data_display">
           <div class="data_heading">
           </div>
