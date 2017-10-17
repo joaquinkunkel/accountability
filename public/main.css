@@ -26,6 +26,11 @@ body {
   max-width: 800px;
 }
 
+.description-first-line{
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
 #logo_text{
   color: black !important;
   font-size: 3rem !important;
@@ -102,11 +107,16 @@ h1 {
 }
 
 .description{
-  text-align: left;
+  font-size: 1.2em;
+  text-align: center;
   width: 90%;
   max-width: 600px;
   margin: 0 auto 10px auto;
   font-family: "Roboto", sans-serif;
+}
+
+.form-prompt{
+  color: black;
 }
 
 .makesubmissionbutton {
@@ -154,11 +164,10 @@ h1 {
 .submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit, #aboutlink {
   height: 30px;
   color: black;
-  font-weight: bold;
+  /*font-weight: bold;*/
   background: transparent;
   margin:0.2em;
-  border: 2px solid black;
-
+  border: 2px solid rgba(0,0,0,0.8);
   padding: 3px 5px;
   border-radius: 10px;
   transition: all 0.1s;

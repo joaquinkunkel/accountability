@@ -108,7 +108,7 @@ function success(pos) {
 
 	gps_working = 1;
 	console.log("gps working!");
-	var htmlString = '<option disabled selected value><p>Select a place</p></option>';
+	var htmlString = '<option disabled selected value><p>Location</p></option>';
 	/*console.log('Your current position is:');
 	console.log(`Latitude : ${crd.latitude}`);
 	console.log(`Longitude: ${crd.longitude}`);
@@ -171,7 +171,7 @@ function showForm(){
 	$("#heading").html("<h1 id='help_us'>Are you cold?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
-		if($(".description").html() == " ") $(".description").html("By filling out this two-step form, you are contributing to estimated temperature data to make sure people around NYUAD receive updated, more accurate information about locations on campus. Alternately, you can go directly to see the data others have submitted.");
+		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we\'ll notify the facilities if the A/C is making you think twice about your clothing choices.');
 		else $(".description").html(" ");
 	})
 	$("form").css("visibility", "visible");
@@ -191,7 +191,7 @@ function showForm(){
 		}else{
 			$(".submitfield")
 			.html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='yesbutton' disabled>Notify facilities (coming soon)</button><button class='submitbutton'>No, just submit</button>");
-		}
+		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){
 			e.preventDefault();
