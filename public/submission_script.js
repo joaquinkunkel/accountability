@@ -171,7 +171,7 @@ function showForm(){
 	$("#heading").html("<h1 id='help_us'>Are you cold?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
-		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we\'ll notify the facilities if the A/C is making you think twice about your clothing choices.');
+		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
 		else $(".description").html(" ");
 	})
 	$("form").css("visibility", "visible");
