@@ -7,7 +7,7 @@ var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
   /*-----------------------------------------------------------------
                             SET UP VARIABLES
   -------------------------------------------------------------------*/
@@ -24,20 +24,58 @@ var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 });
 */
 
-mongoose.connect('mongodb://127.0.0.1/test');
-
+/*mongoose.connect('mongodb://127.0.0.1/test');
 var my_database = mongoose.connection;
-
-//we can attach "listeners" to our database connection.
-//which means that we attach a callback function to an event
-//and that function is called whenever the event happens
-
-//in case there's an 'error' event, we log it to the console
 my_database.on('error', console.error.bind(console, 'connection error:'));
-
 my_database.on('open', function(){
   console.log("connections to the database successful!");
-}
+};*/
+
+
+
+function collect_daily_reports(){
+
+  var email_string = '';
+  email_string += 'Dear Madam or Sir, \n here are the reports by NYUAD community members about A/C temperature in campus spaces for today: \n';
+    fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
+        console.log('we are ready to collect reports for a new day!');
+        function getSum(total, num) {
+          return total + num;
+        };
+        var reports = JSON.parse(data);
+        var places_array = reports.all_places;
+        for(var i = 0; i< places_array.length; i++){
+          if(places_array[i].logs.length > 3){
+            var counter_low_temp = 0;
+            var counter_high_temp = 0;
+            var high_temp_array = [];
+            var low_temp_array = [];
+            for(var j = 0; j < places_array[i].logs.length; j++){
+              if(places_array[i].logs[j] < 3){
+                counter_low_temp++;
+                low_temp_array.push(places_array[i].logs[j]);
+              }else if(places_array[i].logs[j] > 4){
+                counter_high_temp++;
+                high_temp_array.push(places_array[i].logs[j]);
+              };
+            };
+            
+            var ht_avg = high_temp_array.length === 0 ? undefined : Math.round(high_temp_array.reduce(getSum) / counter_high_temp) ;
+            var lt_avg = low_temp_array.length === 0 ? undefined : Math.round(low_temp_array.reduce(getSum) / counter_low_temp) ;
+            if(counter_high_temp && counter_low_temp){
+              if(counter_high_temp > counter_low_temp){
+                email_string += '--' + counter_high_temp + ' users have said that ' + places_array[i].name + ' is ' +  ht_avg + ' on average \n';
+              }else{
+                email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' is ' +  lt_avg + ' on average \n';
+              }
+              
+            }
+            console.log('in ',places_array[i].name, ' the average high temperature is: ', ht_avg, ' and the avarage low temp is: ', lt_avg);
+          };
+        };
+        console.log(email_string);
+  });
+};
 
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
@@ -47,7 +85,7 @@ function reset_daily_reports(){
   });
 };
 
-var j = schedule.scheduleJob('5 23 * * *', function(){
+var j = schedule.scheduleJob('58 23 * * *', function(){
   //console.log('every day at this time, we will check our daily database and write an email to the facilities');
 
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
@@ -69,6 +107,14 @@ app.get("/delete-cookies",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
+});
+
+/*-----------------------------------------------------------------
+          COLLECT DAILY REPORTS DATA
+-------------------------------------------------------------------*/
+app.get("/collect-daily-report",function(req,res,err){
+  console.log('collecting daily reports');
+  collect_daily_reports();
 });
 
 /*-----------------------------------------------------------------
