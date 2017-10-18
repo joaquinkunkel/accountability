@@ -67,6 +67,24 @@ my_database.on('open', function(){
   console.log("connections to the database successful!");
 };*/
 
+///////////////////////////////////////////////////////////
+////// POST TO DAILY REPORTS DATABASE
+///////////////////////////////////////////////////////////
+function submit_facilities_report(){
+  fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
+    var reports = JSON.parse(data);
+    var places_array = reports.all_places;
+    for(var i = 0; i< places_array.length; i++){
+      if(places_array[i].name === user_location){
+        places_array[i].logs.push(new_log.temp);
+      };
+    };
+    fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(reports),function(error){
+      if(error) throw error;
+      console.log('we have updated the facilities report database!');
+    });
+  });
+};
 
 ///////////////////////////////////////////////////////////
 ////// COLELCT DAILY REPORTS
@@ -118,6 +136,9 @@ function collect_daily_reports(){
   });
 };
 
+///////////////////////////////////////////////////////////
+////// RESET DAILY REPORTS
+///////////////////////////////////////////////////////////
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
       var my_data = JSON.parse(data);
@@ -127,9 +148,10 @@ function reset_daily_reports(){
   });
 };
 
+///////////////////////////////////////////////////////////
+////// COLLECT DAILY RESPONSES EVERY DAY RIGHT BEFORE MIDNIGHT
+///////////////////////////////////////////////////////////
 var j = schedule.scheduleJob('58 23 * * *', function(){
-  //console.log('every day at this time, we will check our daily database and write an email to the facilities');
-
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
   collect_daily_reports();
 });
@@ -169,7 +191,7 @@ app.get("/reset-daily-report",function(req,res,err){
 });
 
 ///////////////////////////////////////////////////////////
-////// INTERNAL API ROUTE
+////// INTERNAL API ROUTE -to check dataset
 ///////////////////////////////////////////////////////////
 app.get("/check-dataset/:dataset",function(req,res,err){
   var query = req.params.dataset;
@@ -248,28 +270,7 @@ app.post("/submit", function (request, response, error){
   console.log('////////////////////////////////////////////// \n');
 
 
-  /*-----------------------------------FACILITIES REQUESTS DATABASE-------------------------------------*/
 
-  /*fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
-
-
-    var reports = JSON.parse(data);
-    var places_array = reports.all_places;
-    for(var i = 0; i< places_array.length; i++){
-
-      if(places_array[i].name === user_location){
-        places_array[i].logs.push(new_log.temp);
-      };
-
-    };
-
-    fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(reports),function(error){
-      if(error) throw error;
-      console.log('we have updated the facilities report database!');
-    });
-
-
-  });*/
 
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
 
