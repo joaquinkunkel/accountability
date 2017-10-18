@@ -115,7 +115,7 @@ function collect_daily_reports(){
                 high_temp_array.push(places_array[i].logs[j]);
               };
             };
-            
+
             var ht_avg = high_temp_array.length === 0 ? undefined : temp_map(Math.round(high_temp_array.reduce(getSum) / counter_high_temp)) ;
             var lt_avg = low_temp_array.length === 0 ? undefined : temp_map(Math.round(low_temp_array.reduce(getSum) / counter_low_temp)) ;
             var is_are = places_array[i].name.slice(-1) === 's' ? 'are' : 'is';

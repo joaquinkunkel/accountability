@@ -164,7 +164,7 @@ function visualize(data){
 
 		svg.append("g")
 				.attr("class", "axis")
-				.attr("transform", "translate(" + (-xPadding/4) +  "," + (h - yPadding) + ")")
+				.attr("transform", "translate(" + (-w/logs.length/2 + xPadding) +  "," + (h - yPadding) + ")")
 				.call(xAxis)
 				.select(".domain")
 				.attr("stroke", "none");
@@ -248,7 +248,7 @@ function visualize(data){
 		console.log(day_data);
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate(" + 2*xPadding + "," + yPadding + ")") //to revert to proper translate: change 2*xPadding to xPadding.
+				.attr("transform", "translate(" + 2*xPadding +  "," + yPadding + ")")
 		    .call(yAxis)
 				.select(".domain")
 				.attr("stroke", "none");
@@ -263,7 +263,7 @@ function visualize(data){
 
 		svg.append("g")
 		    .attr("class", "axis")
-				.attr("transform", "translate("+ (-xScale(0)/2) + "," + (h - yPadding) + ")")
+				.attr("transform", "translate("+ (-w/day_data.length/2 + xPadding) + "," + (h - yPadding) + ")")
 		    .call(xAxis)
 				.select(".domain")
 				.attr("stroke", "none");
@@ -368,6 +368,7 @@ function visualize(data){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
 				ajaxCall(location_input);
+				$(this).css("border", "2px solid black");
 			})
 			thank_you = 0;
 			console.log(location_input);

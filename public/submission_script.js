@@ -5,7 +5,8 @@ var eligible_gps_array = [];
 var thank_you = 0;
 var info_active = 0;
 var skipped = 0;
-var bodyClone = $(".form-content").clone();
+var bodyClone = $(".form-content").html();
+var locationInfoString = "Our form uses your coordinates to give you options that are close to you.";
 
 function itFailed(data){
 	console.log("Failed");
@@ -159,7 +160,8 @@ function isInList(location){
 }
 
 function waitForUser(){
-	$("#heading").html("<h1 id='help_us'>Location received.</h1>");
+	$("#loadingfan").remove();
+	$("#help_us").html("Location received.");
 	$(".post-description").html("<button class='gotit'>Contribute to data</button>");
 	$(".gotit").click(function(){
 		$(this).remove();
@@ -168,7 +170,8 @@ function waitForUser(){
 }
 function showForm(){
 	//makeOptionList();
-	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
+	$("#loadingfan").remove();
+	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><div id='buttondiv'><span class='infobutton' id='areyoucoldinfo'>?</span></div>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
 		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
@@ -238,14 +241,17 @@ function searchCard(){
 	$(".backbutton").click(function(){
 		$(".card").animate({opacity: '0'}, {duration: 150});
 		$(".card").animate({"margin-right": "60%"}, 200, "linear", function(){
-			location.reload();
+			homeScreen();
 		});
 	});
 }
 
 function homeScreen() {
 	//Display and define home screen interface.//
-
+	$(".form-content").html(bodyClone);
+	$("#more").on("click", function(){
+		$("#locationdisclaimer").html(locationInfoString);
+	});
 	$(".skipbutton").click(function(){
 		searchCard();
 	});
@@ -253,7 +259,7 @@ function homeScreen() {
 	$("#locationinfo").click(function(){
 		if(info_active == 0){
 			info_active = 1;
-			$(".description").html("If you wish to contribute temperature data to us, we'll appreciate you allowing your location on your browser or device for reliability reasons. We do not track our users -- geolocation is only used to make sure we receive information on the correct places. <br/> If you do not wish to share your location or help us out with your input, you can go directly to our data visualizations.");
+			$(".description").html(locationInfoString);
 		}else{
 			info_active = 0;
 		$(".description").html("");
@@ -267,18 +273,20 @@ function homeScreen() {
 };
 
 function welcomeScreen(){
-	//Enter button --> on click:
-	$(".sub-body").append("<button class='skipbutton' id='enterbutton'>How's the weather in there?</button><p id='locationdisclaimer'>We use geolocation for reliablity. <span id='more'> Learn more</span></p>");
+	$(".sub-body").append("<div id='welcome'><h1 id='firstheading'>Is it cold in there?</h1><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p id='locationdisclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
+	$("#more").on("click", function(){
+		$("#locationdisclaimer").html("Upon entering, you'll have the option to fill out a form with your location and its temperature. " + locationInfoString);
+	});
 	$("#enterbutton").click(function(){
+		$("#locationdisclaimer").html("We use geolocation for reliablity.<span id='more'>more</span>");
 		$('#welcome').remove();
 		$('#enterbutton').remove();
 		$('#calltoaction').remove();
 		homeScreen();
 	})
-	//homeScreen();
 }
 
-$(window).on('load',function(){
+$(window).on('load', function(){
   //console.log('hello there');
 	//console.log('submission is good!');
 	welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
