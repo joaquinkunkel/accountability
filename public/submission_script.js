@@ -1,12 +1,14 @@
 var gps_data;
-var distThreshold = 0.08; // in km
+var distThreshold = 0.0; // in km
 var gps_working;
 var eligible_gps_array = [];
 var thank_you = 0;
 var info_active = 0;
 var skipped = 0;
 var bodyClone = $(".form-content").html();
+var blankDisplayCard = $("#displaycard").html();
 var locationInfoString = "Our form uses your coordinates to give you options that are close to you.";
+var gps_case = 0;
 
 $(window).resize(function(){
 	if($(window).width() <= 900){
@@ -119,7 +121,8 @@ function success(pos) {
 			showForm();
 		} else {
 			skipped = 1;
-			searchCard();
+			gps_case = 2;
+			nextStep();
 		}
 	}
 
@@ -140,8 +143,9 @@ function success(pos) {
 
 	function error(err) {
 		skipped = 1;
-		searchCard();
+		gps_case = 3;
 		console.warn(`ERROR(${err.code}): ${err.message}`);
+		nextStep();
 	};
 
 	if (navigator.geolocation) {
@@ -184,14 +188,87 @@ function waitForUser(){
 		showForm();
 	});
 }
+
+function searchCard(){
+	$("#locationdisclaimer").html("");
+	$(".before-visualization").html("");
+	$(".sub-body").append("<div class='card' id='searchcard'></div>");
+	$("#searchcard").append("<button class='backbutton'>back</button>");
+	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='See reports for another place...'><datalist id='locations'></datalist></input>");
+	$("#searchcard").css("display", "flex");
+	$("#searchcard").animate({opacity: '1'}, {queue: false, duration: 150});
+	if($(window).width() <= 900){var marginRight = "5%";}
+	else{var marginRight = "20%";}
+	$("#searchcard").animate({"margin-right": marginRight}, {queue: false, duration: 200});
+	makeOptionList();
+
+	spawnDisplayCard();
+
+
+	if(skipped == 1){
+		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+	}
+
+	$("input").on("input", function(){
+		$("#emptycardp").remove();
+		if(skipped == 1){
+			if($(this).val()){
+				$(".emptycardheading").html($(this).val());
+			} else {
+				$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+			}
+		}
+
+		if(isInList($(this).val())){
+			$(this).css("border", "2px solid #50ef3b");
+			var location_input = $('input').val();
+			$("#displaycard").animate({opacity: '0'}, {duration: 150});
+			$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+				$("#displaycard").remove();
+				$(".emptycardheading").remove();
+				$(".emptycardp").remove();
+				$(".vis_options").remove();
+				thank_you = 0;
+				console.log(location_input);
+				skipped = 0;
+				ajaxCall(location_input, );
+			});
+		}
+		else{
+			$(this).css("border", "2px solid red");
+		}
+	});
+	$(".backbutton").click(function(){
+		$(".card").animate({opacity: '0'}, {duration: 150});
+		$(".card").animate({"margin-right": "60%"}, 200, "linear", function(){
+			homeScreen();
+		});
+	});
+}
+
+function spawnDisplayCard(){
+	$("#displaycard").html(blankDisplayCard);
+	$("#displaycard").css("background", "white");
+	$("#displaycard").css("display", "block");
+	if($(window).width() <= 900){
+		var marginRight = "5%";
+	}
+	else var marginRight = "20%";
+	$("#displaycard").animate({"margin-right": marginRight}, {queue: false, duration: 150});
+	$("#displaycard").animate({opacity: 1}, {queue: false, duration: 200});
+}
+
 function showForm(){
 	//makeOptionList();
 	$("#loadingfan").remove();
 	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><div id='buttondiv'><span class='infobutton' id='areyoucoldinfo'>?</span></div>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
-		if($(".description").html() == " ") $(".description").html('It can get quite cold in spaces around NYUAD campus. <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
+		if($(".description").html() == " ") $(".description").html('It can get quite cold in spaces around NYUAD campus. <br>Fill out the form below and we can notify facilities if the A/C is making you think twice about your clothing choices.<span id="more" style="font-weight: bold">more</span><p id="aboutfacilities"></p>');
 		else $(".description").html(" ");
+		$("#more").click(function(){
+			$("#aboutfacilities").html("<br/>Every day at midnight, we look at our submissions for that day, and e-mail a list to Facilities containing the locations described as <strong>freezing, cold, warm,</strong> or <strong>hot</strong>.<br/><br/>Your submissions are not linked in any way to your name, e-mail or any other personal information.");
+		});
 	})
 	$("form").css("visibility", "visible");
 	$("form").css("display", "block");
@@ -209,7 +286,7 @@ function showForm(){
 			$(".submitfield").html("<button class='submitbutton'>Submit</button>");
 		}else{
 			$(".submitfield")
-			.html("<p class='disclaimer'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
+			.html("<p'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
 		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){
@@ -234,7 +311,8 @@ function homeScreen() {
 	});
 	$(".skipbutton").click(function(){
 		skipped = 1;
-		searchCard();
+		gps_case = 1;
+		nextStep();
 	});
 
 	$("#locationinfo").click(function(){
@@ -253,8 +331,40 @@ function homeScreen() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 };
 
+function nextStep(){
+	$(".before-visualization").html("");
+	if(gps_case == 1){
+		spawnDisplayCard();
+		$(".data_heading").append("<h1>Uh oh!</h1>");
+		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
+		$("#displaycard").css("background", "#f4e4a4");
+	}
+	else if(gps_case == 2){
+		spawnDisplayCard();
+		$(".data_heading").append("<h1>Uh oh!</h1>");
+		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
+		$("#displaycard").css("background", "#f4e4a4");
+	}
+	else if(gps_case == 3){
+		spawnDisplayCard();
+		$(".data_heading").append("<h1>Uh oh!</h1>");
+		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
+		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Okay</button>")
+		$("#displaycard").css("background", "#f4e4a4");
+	}
+
+	$(".data_heading").append("<button class='skipbutton' id='oklocation'>Okay</button>");
+	$("#oklocation").click(function(){
+		$("#displaycard").animate({"margin-right": "-1000px"}, 200);
+		$("#displaycard").animate({opacity: '0'}, {duration: 150});
+		$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+			searchCard();
+		});
+	});
+}
+
 function welcomeScreen(){
-	$(".sub-body").append("<div id='welcome'><div id='firstheading'><h1>Is it cold in there?</h1><p class='description'>It can get quite cold in spaces around NYUAD's campus.<br/>Fill out our form and we can notify the facilities if the A/C is making you think twice about your clothing choices.</p></div><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p class='disclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
+	$(".sub-body").append("<div id='welcome'><div id='firstheading'><h1>Is it cold in there?</h1><p class='description'>It can get quite cold in spaces around NYUAD's campus.<br/>Fill out our form and we can notify Facilities if the A/C is making you think twice about your clothing choices.</p></div><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p class='disclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
 	$("#more").on("click", function(){
 		$(".disclaimer").html("We use geolocation for reliablity." + locationInfoString);
 	});
