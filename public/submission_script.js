@@ -1,5 +1,5 @@
 var gps_data;
-var distThreshold = 0.0; // in km
+var distThreshold = 0.08; // in km
 var gps_working;
 var eligible_gps_array = [];
 var thank_you = 0;
@@ -121,8 +121,10 @@ function success(pos) {
 			showForm();
 		} else {
 			skipped = 1;
-			gps_case = 2;
-			nextStep();
+			if(gps_case == 0){
+				gps_case = 2;
+				nextStep();
+			}
 		}
 	}
 
@@ -143,9 +145,11 @@ function success(pos) {
 
 	function error(err) {
 		skipped = 1;
-		gps_case = 3;
-		console.warn(`ERROR(${err.code}): ${err.message}`);
-		nextStep();
+		if(gps_case == 0){
+			gps_case = 3;
+			console.warn(`ERROR(${err.code}): ${err.message}`);
+			nextStep();
+		}
 	};
 
 	if (navigator.geolocation) {
@@ -207,6 +211,7 @@ function searchCard(){
 
 	if(skipped == 1){
 		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+		$("#displaycard").css("background", "#9dceea");
 	}
 
 	$("input").on("input", function(){
@@ -261,15 +266,7 @@ function spawnDisplayCard(){
 function showForm(){
 	//makeOptionList();
 	$("#loadingfan").remove();
-	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><div id='buttondiv'><span class='infobutton' id='areyoucoldinfo'>?</span></div>");
 	$(".description").html(" ");
-	$("#areyoucoldinfo").click(function(){
-		if($(".description").html() == " ") $(".description").html('It can get quite cold in spaces around NYUAD campus. <br>Fill out the form below and we can notify facilities if the A/C is making you think twice about your clothing choices.<span id="more" style="font-weight: bold">more</span><p id="aboutfacilities"></p>');
-		else $(".description").html(" ");
-		$("#more").click(function(){
-			$("#aboutfacilities").html("<br/>Every day at midnight, we look at our submissions for that day, and e-mail a list to Facilities containing the locations described as <strong>freezing, cold, warm,</strong> or <strong>hot</strong>.<br/><br/>Your submissions are not linked in any way to your name, e-mail or any other personal information.");
-		});
-	})
 	$("form").css("visibility", "visible");
 	$("form").css("display", "block");
 	$("form").animate({"opacity": "1"}, {duration: 500});
@@ -311,8 +308,10 @@ function homeScreen() {
 	});
 	$(".skipbutton").click(function(){
 		skipped = 1;
-		gps_case = 1;
-		nextStep();
+		if(gps_case == 0){
+			gps_case = 1;
+			nextStep();
+		}
 	});
 
 	$("#locationinfo").click(function(){
@@ -333,27 +332,25 @@ function homeScreen() {
 
 function nextStep(){
 	$(".before-visualization").html("");
-	if(gps_case == 1){
-		spawnDisplayCard();
-		$(".data_heading").append("<h1>Uh oh!</h1>");
-		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
-		$("#displaycard").css("background", "#f4e4a4");
+	if(gps_case == 1){ //user clicked skip button
+		searchCard();
 	}
-	else if(gps_case == 2){
+	else if(gps_case == 2){ //user is not close to any place
 		spawnDisplayCard();
-		$(".data_heading").append("<h1>Uh oh!</h1>");
+		$(".data_heading").append("<h1 class='emptycardheading'>Uh oh!</h1>");
 		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
-		$("#displaycard").css("background", "#f4e4a4");
-	}
-	else if(gps_case == 3){
-		spawnDisplayCard();
-		$(".data_heading").append("<h1>Uh oh!</h1>");
-		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
-		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Okay</button>")
-		$("#displaycard").css("background", "#f4e4a4");
-	}
+		$("#displaycard").css("background", "#f4f1d9");
+		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Continue</button>");
 
-	$(".data_heading").append("<button class='skipbutton' id='oklocation'>Okay</button>");
+	}
+	else if(gps_case == 3){ //user denied or browser blocked
+		spawnDisplayCard();
+		$(".data_heading").append("<h1 class='emptycardheading'>Brrr!</h1>");
+		$(".data_heading").append("<p>You can only submit a report if you allow us to track your location on NYUAD campus. If you want to submit a temperature report, please change your settings, reload the page, and allow us to track your location.</p>")
+		$("#displaycard").css("background", "#fc9785");
+		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Continue</button>");
+
+	}
 	$("#oklocation").click(function(){
 		$("#displaycard").animate({"margin-right": "-1000px"}, 200);
 		$("#displaycard").animate({opacity: '0'}, {duration: 150});
@@ -364,7 +361,7 @@ function nextStep(){
 }
 
 function welcomeScreen(){
-	$(".sub-body").append("<div id='welcome'><div id='firstheading'><h1>Is it cold in there?</h1><p class='description'>It can get quite cold in spaces around NYUAD's campus.<br/>Fill out our form and we can notify Facilities if the A/C is making you think twice about your clothing choices.</p></div><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p class='disclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
+	$(".sub-body").append("<div id='welcome'><div id='firstheading'><h1>Is it cold in there?</h1><p class='description'>It can get quite cold in spaces around NYUAD's campus.<br/>Enter our form and we can notify Facilities if the A/C is making you think twice about your clothing choices.</p></div><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p class='disclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
 	$("#more").on("click", function(){
 		$(".disclaimer").html("We use geolocation for reliablity." + locationInfoString);
 	});
@@ -377,7 +374,7 @@ function welcomeScreen(){
 	})
 }
 
-$(window).on('load', function(){
+$(window).on('load', function(e){
   //console.log('hello there');
 	//console.log('submission is good!');
 	welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();

@@ -12,6 +12,19 @@ h1, h2, h3{
   font-weight: bold;
 }
 
+h3, .confirmation{
+  color: #28cc67 !important;
+  font-size: 1.6rem;
+}
+
+h3{
+  font-size: 3rem !important;
+}
+
+.heading-name{
+  font-size: 3rem;
+}
+
 .form-content{
   padding-top: 50px;
   background: rgba(250, 250, 250, 0.9);
@@ -165,7 +178,8 @@ h1 {
 }
 
 .emptycardheading{
-  color: rgba(0, 0, 0, 0.5) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-family: "Avenir", "Roboto", sans-serif !important;
 }
 
 .submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit, #aboutlink {
@@ -351,7 +365,7 @@ form label{
 
 #welcome{
   display: table;
-  margin-top: calc(20vh + 70px);
+  margin-top: calc(15vh + 70px);
 }
 
 datalist{
@@ -467,5 +481,17 @@ datalist{
   .card{
     margin-right: 20%;
     width: 60%;
+  }
+}
+
+@media only screen and (max-width: 500px){
+  #logo_text{
+    font-size: 2rem !important;
+  }
+  #welcome {
+    margin-top: 60px;
+  }
+  .sub-body{
+    margin-top: 20px;
   }
 }

@@ -342,12 +342,41 @@ function visualize(data){
 
 	//If the thank you message is necessary i.e. if the user just posted some info.
 	if(thank_you){
-		display.select(".data_heading").append("h3")
-			.attr("class", "heading_name")
-			.text("Thank you for your contribution!")
-			.style("font-weight", "normal")
-			.style("margin", "10px auto")
-			.style("font-size", "1.8rem");
+
+		if(data.logs[0].temp < 5 && data.logs[0].temp > 2){
+			// display.select(".data_heading").append("h3")
+			// 	.attr("class", "heading_name")
+			// 	.text("Great news!")
+			// 	.style("font-weight", "normal")
+			// 	.style("margin", "10px auto")
+			// 	.style("font-size", "1.8rem");
+
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.text("Great news! Seems like we don't need to notify NYUAD Facilities this time.");
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.style("margin-top", "-10px")
+				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
+		}
+	 else {
+			// display.select(".data_heading").append("h3")
+			// 	.attr("class", "heading_name")
+			// 	.text("Thank you!")
+			// 	.style("font-weight", "normal")
+			// 	.style("margin", "10px auto")
+			// 	.style("font-size", "1.8rem");
+
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.text("Thank you! We'll notify Facilities about the temperature in "+place_name+ " at the end of today.");
+
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.style("margin-top", "-10px")
+				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
+
+		}
 	}
 	//Title, e.g. "Baraha is cold today."
 	$('input:text').focus(
