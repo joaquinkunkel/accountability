@@ -1,4 +1,6 @@
-//dependencies
+///////////////////////////////////////////////////////////
+////// DEPENDENCIES
+///////////////////////////////////////////////////////////
 var express = require('express');
 var app = express();
 var bp = require('body-parser');
@@ -8,22 +10,56 @@ var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
 //var mongoose = require('mongoose');
-  /*-----------------------------------------------------------------
-                            SET UP VARIABLES
-  -------------------------------------------------------------------*/
+
+///////////////////////////////////////////////////////////
+////// GLOBAL VARIABLES
+///////////////////////////////////////////////////////////
 var port = 8000;
 var API_KEY;
 var TEMPERATURE_LOGS_PATH = 'data/places_data.json';
 var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
 var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
+var TEMP_CODED_ARRAY = [{string:"freezing",num:1}, {string:"cold",num:2}, {string:"cool",num:3}, {string:"nice",num:4}, {string:"warm",num:5}, {string:"hot",num:6}];
 
-//load in SendGrid API_KEY
+
+///// UTIL FUNCTION FOR MAPPING REPORTED TEMPERATURE VALUES FROM NUMBER TO STRING
+function temp_map(number){
+  //console.log('temp map is called!');
+  for(var i = 0; i < TEMP_CODED_ARRAY.length;i++){
+    if(TEMP_CODED_ARRAY[i].num === number){
+      //console.log('we have a match!');
+      return TEMP_CODED_ARRAY[i].string;
+    };
+  };
+};
+
+///// SEND AN EMAIL FUNCTION
+function sendMail(){
+  //console.log('sending an email!');
+  var api_key = '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';
+  var recipient = 'mk4908@nyu.edu';
+  var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
+  var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
+  email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i>';
+
+  sgMail.setApiKey(api_key);
+  var  msg = {
+  to: recipient, //recipient, which is the nyuad.facilities
+  from: 'NYUAD ACcountability <mk4908@nyu.edu>',
+  subject: 'Facilities request: AC temperature',
+  html: email_body
+  };
+  sgMail.send(msg);
+}
+
+///// LOAD IN THE API KEY
 /*fs.readFile('API_KEY.txt','utf-8',function(err,data){
   if (err) throw err;
   API_KEY = data.toString();
 });
 */
 
+///// CONNECT TO MONGOOSE
 /*mongoose.connect('mongodb://127.0.0.1/test');
 var my_database = mongoose.connection;
 my_database.on('error', console.error.bind(console, 'connection error:'));
@@ -32,7 +68,9 @@ my_database.on('open', function(){
 };*/
 
 
-
+///////////////////////////////////////////////////////////
+////// COLELCT DAILY REPORTS
+///////////////////////////////////////////////////////////
 function collect_daily_reports(){
 
   var email_string = '';
@@ -60,13 +98,16 @@ function collect_daily_reports(){
               };
             };
             
-            var ht_avg = high_temp_array.length === 0 ? undefined : Math.round(high_temp_array.reduce(getSum) / counter_high_temp) ;
-            var lt_avg = low_temp_array.length === 0 ? undefined : Math.round(low_temp_array.reduce(getSum) / counter_low_temp) ;
-            if(counter_high_temp && counter_low_temp){
+            var ht_avg = high_temp_array.length === 0 ? undefined : temp_map(Math.round(high_temp_array.reduce(getSum) / counter_high_temp)) ;
+            var lt_avg = low_temp_array.length === 0 ? undefined : temp_map(Math.round(low_temp_array.reduce(getSum) / counter_low_temp)) ;
+            var is_are = places_array[i].name.slice(-1) === 's' ? 'are' : 'is';
+            //console.log(places_array[i].name);
+
+            if(ht_avg && lt_avg){
               if(counter_high_temp > counter_low_temp){
-                email_string += '--' + counter_high_temp + ' users have said that ' + places_array[i].name + ' is ' +  ht_avg + ' on average \n';
+                email_string += '--' + counter_high_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + ht_avg + ' on average \n';
               }else{
-                email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' is ' +  lt_avg + ' on average \n';
+                email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + lt_avg + ' on average \n';
               }
               
             }
@@ -79,7 +120,8 @@ function collect_daily_reports(){
 
 function reset_daily_reports(){
     fs.readFile(FACILITIES_REPORTS_EMPTY_PATH,function(error,data){
-      fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(data), function(error){
+      var my_data = JSON.parse(data);
+      fs.writeFile(FACILITIES_REPORTS_PATH,JSON.stringify(my_data), function(error){
         console.log('we are ready to collect reports for a new day!');
       });
   });
@@ -100,26 +142,35 @@ app.use(bp.urlencoded({ extended: true }));
 app.use(bp.json());
 
 
-/*-----------------------------------------------------------------
-          DELETE COOKIES ROUTE (debugging purposes only)
--------------------------------------------------------------------*/
+///////////////////////////////////////////////////////////
+////// DELETE COOKIES ROUTE (ONLY FOR DEBUGGING)
+///////////////////////////////////////////////////////////
 app.get("/delete-cookies",function(req,res,err){
   console.log('deleting cookie');
   res.clearCookie('reported_locations');
   res.send('thanks for deleting cookie!');
 });
 
-/*-----------------------------------------------------------------
-          COLLECT DAILY REPORTS DATA
--------------------------------------------------------------------*/
+///////////////////////////////////////////////////////////
+////// COLLECT DAILY REPORTS
+///////////////////////////////////////////////////////////
 app.get("/collect-daily-report",function(req,res,err){
   console.log('collecting daily reports');
   collect_daily_reports();
 });
 
-/*-----------------------------------------------------------------
-                          API ROUTE
--------------------------------------------------------------------*/
+///////////////////////////////////////////////////////////
+////// RESET DAILY REPORTS
+///////////////////////////////////////////////////////////
+app.get("/reset-daily-report",function(req,res,err){
+  console.log('resetting daily reports');
+  reset_daily_reports();
+  res.send('thanks for resetting daily reports!');
+});
+
+///////////////////////////////////////////////////////////
+////// INTERNAL API ROUTE
+///////////////////////////////////////////////////////////
 app.get("/check-dataset/:dataset",function(req,res,err){
   var query = req.params.dataset;
   var dataset_path;
@@ -136,9 +187,9 @@ app.get("/check-dataset/:dataset",function(req,res,err){
 
 });
 
-/*-----------------------------------------------------------------
-                      SUBMITTED REPORTS
--------------------------------------------------------------------*/
+///////////////////////////////////////////////////////////
+////// REPORTS SUBMIT ROUTE
+///////////////////////////////////////////////////////////
 app.post("/submit", function (request, response, error){
   request.setTimeout(0);
   //set up variables
@@ -197,7 +248,7 @@ app.post("/submit", function (request, response, error){
   console.log('////////////////////////////////////////////// \n');
 
   /*-----------------------------------FACILITIES REQUESTS DATABASE-------------------------------------*/
-  fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
+  /*fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
 
     var reports = JSON.parse(data);
     var places_array = reports.all_places;
@@ -215,7 +266,7 @@ app.post("/submit", function (request, response, error){
     });
 
 
-  });
+  });*/
 
 
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
@@ -252,45 +303,20 @@ app.post("/submit", function (request, response, error){
         }else{//success message!
           console.log('success! written new report',user);
           res_obj.logs
-          //response.redirect('after_valid_submission.html');
-        //  if(user.user_temperature < 3){
-            //sendMail();
-            //response.redirect('after_submission.html');
-          //}else{
-            //response.redirect('after_valid_submission.html');
-          //}
         }
       });
     }else{
       console.log('nothing written to the database!');
-      //response.redirect('after_invalid_submission.html');
     }
 
   }); //end of read file
 
-  //set up a threshold - if the temperature is below the threshold (i.e. the user says the space is being either freezing or cold) - send an email
-  function sendMail(){
-    //console.log('sending an email!');
-    var api_key = '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';
-    var recipient = 'mk4908@nyu.edu';
-    var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
-    var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
-    email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i>';
-
-    sgMail.setApiKey(api_key);
-    var  msg = {
-    to: recipient, //recipient, which is the nyuad.facilities
-    from: 'NYUAD ACcountability <mk4908@nyu.edu>',
-    subject: 'Facilities request: AC temperature',
-    html: email_body
-    };
-    sgMail.send(msg);
-  }
-
    //redirect to after-submission page
 });
 
-//start listening on a port
+///////////////////////////////////////////////////////////
+////// START A SERVER
+///////////////////////////////////////////////////////////
 app.listen(port, function(){
   console.log('server started on port',port);
 });
