@@ -22,6 +22,13 @@ var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 var TEMP_CODED_ARRAY = [{string:"freezing",num:1}, {string:"cold",num:2}, {string:"cool",num:3}, {string:"nice",num:4}, {string:"warm",num:5}, {string:"hot",num:6}];
 
 
+///// LOAD IN THE API KEY
+fs.readFile('API_KEY.txt','utf-8',function(err,data){
+  if (err) throw err;
+  API_KEY = data.toString();
+  console.log('we have successfully read and stored our mailgun api key');
+});
+
 ///// UTIL FUNCTION FOR MAPPING REPORTED TEMPERATURE VALUES FROM NUMBER TO STRING
 function temp_map(number){
   //console.log('temp map is called!');
@@ -34,30 +41,25 @@ function temp_map(number){
 };
 
 ///// SEND AN EMAIL FUNCTION
-function sendMail(){
+function sendMail(mail_recipient){
   //console.log('sending an email!');
-  var api_key = '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';
-  var recipient = 'mk4908@nyu.edu';
+  //var api_key = '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';
+  var recipient = mail_recipient;
   var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
-  var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the ' + user.user_location_report + 'and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
+  var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the x location and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
   email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i>';
 
-  sgMail.setApiKey(api_key);
+  sgMail.setApiKey(API_KEY);
   var  msg = {
   to: recipient, //recipient, which is the nyuad.facilities
-  from: 'NYUAD ACcountability <mk4908@nyu.edu>',
+  from: 'NYUAD ACcountability <miha.klasinc@gmail.com>',
   subject: 'Facilities request: AC temperature',
   html: email_body
   };
   sgMail.send(msg);
 }
 
-///// LOAD IN THE API KEY
-/*fs.readFile('API_KEY.txt','utf-8',function(err,data){
-  if (err) throw err;
-  API_KEY = data.toString();
-});
-*/
+
 
 ///// CONNECT TO MONGOOSE
 /*mongoose.connect('mongodb://127.0.0.1/test');
@@ -66,6 +68,16 @@ my_database.on('error', console.error.bind(console, 'connection error:'));
 my_database.on('open', function(){
   console.log("connections to the database successful!");
 };*/
+
+///////////////////////////////////////////////////////////
+////// SEND TEST EMAIL
+///////////////////////////////////////////////////////////
+app.get("/send-test-mail",function(req,res,err){
+  console.log("we are sending a test email to ourselves");
+  var test_recipient = 'mk4908@nyu.edu';
+  sendMail(test_recipient);
+  res.send("thanks! we're sending a test mail to mk4908@nyu.edu");
+});
 
 ///////////////////////////////////////////////////////////
 ////// POST TO DAILY REPORTS DATABASE
@@ -90,7 +102,7 @@ function submit_facilities_report(){
 ////// COLELCT DAILY REPORTS
 ///////////////////////////////////////////////////////////
 function collect_daily_reports(){
-
+  var report_recipient = 'nyuad.facilities@nyu.edu';
   var email_string = '';
   email_string += 'Dear Madam or Sir, \n here are the reports by NYUAD community members about A/C temperature in campus spaces for today: \n';
     fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
@@ -100,6 +112,7 @@ function collect_daily_reports(){
         };
         var reports = JSON.parse(data);
         var places_array = reports.all_places;
+        var facilities_report_counter = 0;
         for(var i = 0; i< places_array.length; i++){
           if(places_array[i].logs.length > 3){
             var counter_low_temp = 0;
@@ -124,8 +137,10 @@ function collect_daily_reports(){
             if(ht_avg && lt_avg){
               if(counter_high_temp > counter_low_temp){
                 email_string += '--' + counter_high_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + ht_avg + ' on average \n';
+                facilities_report_counter++;
               }else{
                 email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + lt_avg + ' on average \n';
+                facilities_report_counter++;
               }
 
             }
@@ -133,6 +148,12 @@ function collect_daily_reports(){
           };
         };
         console.log(email_string);
+        if(facilities_report_counter > 0){
+          console.log('we are going to notify facilities!');
+          sendMail(report_recipient);
+        }else{
+          console.log('we are not going to notify facilities');
+        }
   });
 };
 
@@ -266,7 +287,7 @@ app.post("/submit", function (request, response, error){
   };
 
   response.cookie('reported_locations',new_cookie_value_obj);
-  console.log(new_cookie_value_obj);
+  //console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
 
@@ -300,12 +321,12 @@ app.post("/submit", function (request, response, error){
     //then we write ALL of our data (in the variable 'whole_file')
     if(location_match){
       fs.writeFile(TEMPERATURE_LOGS_PATH, JSON.stringify(whole_file), function(error){
-        if(error){ //hopefully no error?
+        if(error){ //hopeully no error?
           console.log(error);
 
         }else{//success message!
           console.log('success! written new report',user);
-          res_obj.logs
+          //res_obj.logs
         }
       });
     }else{
