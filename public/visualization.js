@@ -367,10 +367,9 @@ function visualize(data){
 			$("#displaycard").animate({"margin-right": "200%"}, 300, "linear", function(){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
-				$(".sub-body").append("<div class='card' id='displaycard' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
+				ajaxCall(location_input);
 			})
 			thank_you = 0;
-			ajaxCall(location_input, );
 			console.log(location_input);
 		}
 		else{

@@ -168,7 +168,7 @@ function waitForUser(){
 }
 function showForm(){
 	//makeOptionList();
-	$("#heading").html("<h1 id='help_us'>Are you cold?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
+	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><span class='infobutton' id='areyoucoldinfo'>?</span>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
 		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
@@ -190,7 +190,7 @@ function showForm(){
 			$(".submitfield").html("<button class='submitbutton'>Submit</button>");
 		}else{
 			$(".submitfield")
-			.html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='yesbutton' disabled>Notify facilities (coming soon)</button><button class='submitbutton'>No, just submit</button>");
+			.html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='submitbutton'>Submit</button>");
 		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){
@@ -208,6 +208,7 @@ function showForm(){
 };
 
 function searchCard(){
+	$("#locationdisclaimer").html("");
 	$(".before-visualization").html("");
 	$(".sub-body").append("<div class='card' id='searchcard'></div>");
 	$("#searchcard").append("<button class='backbutton'>back</button>");
@@ -222,7 +223,7 @@ function searchCard(){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
 			$("#displaycard").animate({opacity: '0'}, {duration: 150});
-			$("#displaycard").animate({"margin-right": "200%"}, 200, "linear", function(){
+			$("#displaycard").animate({"margin-right": "60%"}, 200, "linear", function(){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
 				thank_you = 0;
@@ -235,7 +236,8 @@ function searchCard(){
 		}
 	});
 	$(".backbutton").click(function(){
-		$(".card").animate({"margin-right": "100%"}, 200, "linear", function(){
+		$(".card").animate({opacity: '0'}, {duration: 150});
+		$(".card").animate({"margin-right": "60%"}, 200, "linear", function(){
 			location.reload();
 		});
 	});
@@ -266,7 +268,7 @@ function homeScreen() {
 
 function welcomeScreen(){
 	//Enter button --> on click:
-	$(".sub-body").append("<button class='skipbutton' id='enterbutton'>How's the weather in there?</button>");
+	$(".sub-body").append("<button class='skipbutton' id='enterbutton'>How's the weather in there?</button><p id='locationdisclaimer'>We use geolocation for reliablity. <span id='more'> Learn more</span></p>");
 	$("#enterbutton").click(function(){
 		$('#welcome').remove();
 		$('#enterbutton').remove();

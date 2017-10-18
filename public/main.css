@@ -283,6 +283,20 @@ form label{
   visibility: hidden; display: none;
 }
 
+#locationdisclaimer{
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#more{
+  color: rgba(0, 0, 0, 0.8);
+}
+
+#enterbutton{
+  margin-top: 20vh;
+}
+
 datalist{
   border-radius: 10px;
 }
