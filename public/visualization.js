@@ -8,7 +8,8 @@ function visualize(data){
 	}
 	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
 	$("#displaycard").css("display", "block");
-	$("#displaycard").animate({"top": "158px"}, {duration: 400});
+	$("#displaycard").animate({"top": "158px"}, {queue: false, duration: 300});
+	$("#displaycard").animate({opacity: 1}, {queue: false, duration: 200});
 	console.log("visualize called");
 	console.log(data);
 	function createDaysLogs(a){
@@ -163,7 +164,7 @@ function visualize(data){
 
 		svg.append("g")
 				.attr("class", "axis")
-				.attr("transform", "translate(" + (-xScale(0)/2) +  "," + (h - yPadding) + ")")
+				.attr("transform", "translate(" + (-xPadding/4) +  "," + (h - yPadding) + ")")
 				.call(xAxis)
 				.select(".domain")
 				.attr("stroke", "none");
@@ -354,18 +355,23 @@ function visualize(data){
 			.style("font-size", "1.8rem");
 	}
 	//Title, e.g. "Baraha is cold today."
+	$('input:text').focus(
+    function(){
+        $(this).val('');
+    });
+
 	$("input").on("input", function(){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$("#displaycard").animate({"margin-right": "200%"}, 200, "linear", function(){
+			$("#displaycard").animate({"margin-right": "200%"}, 300, "linear", function(){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
 				$(".sub-body").append("<div class='card' id='displaycard' style='display: none; top: 100vh'><div class='data_display'><div class='data_heading'></div></div></div>");
-				thank_you = 0;
-				ajaxCall(location_input);
-				console.log(location_input);
-			});
+			})
+			thank_you = 0;
+			ajaxCall(location_input, );
+			console.log(location_input);
 		}
 		else{
 			$(this).css("border", "2px solid red");

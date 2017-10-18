@@ -59,7 +59,7 @@ function collect_daily_reports(){
                 high_temp_array.push(places_array[i].logs[j]);
               };
             };
-            
+
             var ht_avg = high_temp_array.length === 0 ? undefined : Math.round(high_temp_array.reduce(getSum) / counter_high_temp) ;
             var lt_avg = low_temp_array.length === 0 ? undefined : Math.round(low_temp_array.reduce(getSum) / counter_low_temp) ;
             if(counter_high_temp && counter_low_temp){
@@ -68,7 +68,7 @@ function collect_daily_reports(){
               }else{
                 email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' is ' +  lt_avg + ' on average \n';
               }
-              
+
             }
             console.log('in ',places_array[i].name, ' the average high temperature is: ', ht_avg, ' and the avarage low temp is: ', lt_avg);
           };
@@ -196,7 +196,8 @@ app.post("/submit", function (request, response, error){
   console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
-  /*-----------------------------------FACILITIES REQUESTS DATABASE-------------------------------------*/
+  /*-----------------------------------FACILITIES REQUESTS DATABASE-------------------------------------
+
   fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
 
     var reports = JSON.parse(data);
@@ -217,7 +218,7 @@ app.post("/submit", function (request, response, error){
 
   });
 
-
+*/
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
 
   //read in the whole database
@@ -234,7 +235,7 @@ app.post("/submit", function (request, response, error){
           array[i].logs.unshift(new_log);
 
         }else{
-          console.log('we have caught a null value!');
+          console.log('we have caught a null value! : ', new_log);
         };
         //push the new log to the beginning of the log array
         res_obj.logs = array[i].logs; //array of temperature logs, starting with the most recent one

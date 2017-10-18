@@ -102,7 +102,7 @@ function success(pos) {
 			showForm();
 		} else {
 			skipped = 1;
-			emptyCard();
+			searchCard();
 		}
 	}
 
@@ -123,7 +123,7 @@ function success(pos) {
 
 	function error(err) {
 		skipped = 1;
-		emptyCard();
+		searchCard();
 		console.warn(`ERROR(${err.code}): ${err.message}`);
 	};
 
@@ -213,18 +213,21 @@ function searchCard(){
 	$("#searchcard").append("<button class='backbutton'>back</button>");
 	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Search for a place...'><datalist id='locations'></datalist></input>");
 	$("#searchcard").css("display", "flex");
-	$("#searchcard").animate({"top": "75px"}, {duration: 200});
+	$("#searchcard").animate({opacity: '1'}, {duration: 150});
+	$("#searchcard").animate({top: "75px"}, 200, "linear");
 	makeOptionList();
+
 	$("input").on("input", function(){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
+			$("#displaycard").animate({opacity: '0'}, {duration: 150});
 			$("#displaycard").animate({"margin-right": "200%"}, 200, "linear", function(){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
 				thank_you = 0;
 				console.log(location_input);
-				ajaxCall(location_input);
+				ajaxCall(location_input, );
 			});
 		}
 		else{
@@ -263,9 +266,7 @@ function homeScreen() {
 
 function welcomeScreen(){
 	//Enter button --> on click:
-	$(".sub-body").append("<h1 id='welcome'>Welcome.</h1>");
-	$(".sub-body").append("<p id='calltoaction'>Call to action</p>");
-	$(".sub-body").append("<button class='skipbutton' id='enterbutton'>Enter</button>");
+	$(".sub-body").append("<button class='skipbutton' id='enterbutton'>How's the weather in there?</button>");
 	$("#enterbutton").click(function(){
 		$('#welcome').remove();
 		$('#enterbutton').remove();
@@ -278,6 +279,6 @@ function welcomeScreen(){
 $(window).on('load',function(){
   //console.log('hello there');
 	//console.log('submission is good!');
-	//welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
-	homeScreen();
+	welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
+	//homeScreen();
 });
