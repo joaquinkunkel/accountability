@@ -164,6 +164,10 @@ h1 {
   opacity: 0;
 }
 
+.emptycardheading{
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
 .submitbutton, .yesbutton, .yescampus, .skipbutton, #daily, #weekly, .gotit, #aboutlink {
   height: 30px;
   color: black;
@@ -297,13 +301,13 @@ form label{
   visibility: hidden; display: none;
 }
 
-#locationdisclaimer{
+.disclaimer{
   width: 300px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1rem;
-  font-size: 1.2rem;
-  color: rgba(0, 0, 0, 0.5);
+  font-size: 1.2rem !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 
 #more{
@@ -326,6 +330,17 @@ form label{
   text-align: right;
   border-right: 1px solid rgba(0, 0, 0, 0.5);
   width: 500px;
+}
+
+#firstheading .description{
+  margin-right: 0;
+  text-align: right;
+  font-size: 1.5rem;
+}
+
+#firstheading h1{
+  font-size: 4rem !important;
+  text-align: right;
 }
 
 #enterbutton{
@@ -354,10 +369,9 @@ datalist{
   position: absolute;
   width: 90%;
   padding: 2rem;
-  margin: 3rem 5% 1rem auto;
+  margin: 3rem 50% 1rem auto;
   left: 0;
   right: 0;
-  top: 100vh;
   display: none;
   background: white;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
@@ -366,10 +380,15 @@ datalist{
 }
 
 #searchcard{
+  top: 55px;
   opacity: 0;
   display: flex !important;
   align-items: center;
   justify-content: center;
+}
+
+#displaycard{
+  top: 138px;
 }
 
 @media screen and (max-width: 490px){
@@ -382,7 +401,7 @@ datalist{
 
 @media screen and (max-width: 550px){
   h1{
-    font-size: 2.5rem !important;
+    font-size: 3rem !important;
   }
   body{
     background: #effcfb;
@@ -412,18 +431,29 @@ datalist{
   }
 
   #firstheading{
+    align-items: center;
+    justify-content: center;
     display: block;
     border: none;
     margin-left: auto;
     margin-right: auto;
     padding-right: 0;
     text-align: center;
+    width: 80%;
+    max-width: 500px;
   }
 
-  #firstheading{
-    width: 50vw;
-
+  #firstheading h1{
+    text-align: center;
+    font-size: 3rem !important;
   }
+
+  #firstheading .description{
+    margin-right: auto;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
 }
 
 @media only screen and (max-width: 705px){
