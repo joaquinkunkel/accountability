@@ -41,19 +41,23 @@ function temp_map(number){
 };
 
 ///// SEND AN EMAIL FUNCTION
-function sendMail(mail_recipient){
-  //console.log('sending an email!');
-  //var api_key = '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';
+function sendMail(mail_recipient,report_string){
+  console.log('sending an email!');
   var recipient = mail_recipient;
+  var accountability_about_page = 'https://politicsofcode.biz:8016/about';
   var sender = 'NYUAD ACcountability <mk4908@nyu.edu>';
-  var email_body = 'Dear Madam or Sir,<br /><br />A student has reported excessively low temperatures at the x location and would like to file a request for the air conditioning in the space to be checked and adjusted.</br /><br /><br />';
-  email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i>';
-
+  var email_body = 'Dear Madam or Sir,<br /><br />NYUAD community members have reported excessive temperatures in spaces around campus today and would like to see the air conditioning in spaces listed below checked and adjusted.</br /><br /><br />';
+  email_body += report_string;
+  email_body += '<i>This email was generated through the ACcountability project by Miha Klasinc and Joaquin Kunkel. ';
+  //email_body +=' Our project serves as a reminder that exceedingly low AC temperatures not only have a negative impact of students\' well-being, but also result in economic loss and environmental damage.</i><br />';
+  email_body += 'Find out more about the project at ' + accountability_about_page + '. ';
+  email_body += 'If you have any questions or concerns, feel free to contact Miha or Joaquin at mk4908@nyu.edu or jek537@nyu.edu, respectively.</i><br /><br />';
+  email_body += 'Kind regards,<br />ACcountability team';
   sgMail.setApiKey(API_KEY);
   var  msg = {
   to: recipient, //recipient, which is the nyuad.facilities
   from: 'NYUAD ACcountability <miha.klasinc@gmail.com>',
-  subject: 'Facilities request: AC temperature',
+  subject: 'Facilities request: A/C temperature',
   html: email_body
   };
   sgMail.send(msg);
@@ -73,16 +77,18 @@ my_database.on('open', function(){
 ////// SEND TEST EMAIL
 ///////////////////////////////////////////////////////////
 app.get("/send-test-mail",function(req,res,err){
-  console.log("we are sending a test email to ourselves");
-  var test_recipient = 'mk4908@nyu.edu';
-  sendMail(test_recipient);
+  //console.log("we are sending a test email to ourselves");
+  var test_recipient = 'miha.klasinc@gmail.com';
+  //collect_daily_reports(test_recipient);
+  collect_daily_reports();
+  //sendMail(test_recipient);
   res.send("thanks! we're sending a test mail to mk4908@nyu.edu");
 });
 
 ///////////////////////////////////////////////////////////
 ////// POST TO DAILY REPORTS DATABASE
 ///////////////////////////////////////////////////////////
-function submit_facilities_report(){
+function submit_facilities_report(log_obj){
   fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
     var reports = JSON.parse(data);
     var places_array = reports.all_places;
@@ -101,10 +107,10 @@ function submit_facilities_report(){
 ///////////////////////////////////////////////////////////
 ////// COLELCT DAILY REPORTS
 ///////////////////////////////////////////////////////////
-function collect_daily_reports(){
-  var report_recipient = 'nyuad.facilities@nyu.edu';
+function collect_daily_reports(recipient){
+  var report_recipient = recipient || 'mk4908@nyu.edu';
   var email_string = '';
-  email_string += 'Dear Madam or Sir, \n here are the reports by NYUAD community members about A/C temperature in campus spaces for today: \n';
+  email_string += '<ul>';
     fs.readFile(FACILITIES_REPORTS_PATH,function(error,data){
         console.log('we are ready to collect reports for a new day!');
         function getSum(total, num) {
@@ -136,23 +142,25 @@ function collect_daily_reports(){
 
             if(ht_avg && lt_avg){
               if(counter_high_temp > counter_low_temp){
-                email_string += '--' + counter_high_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + ht_avg + ' on average \n';
+                email_string += '<li>' + counter_high_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + ht_avg + ' on average </li><br />';
                 facilities_report_counter++;
               }else{
-                email_string += '--' + counter_low_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + lt_avg + ' on average \n';
+                email_string += '<li>' + counter_low_temp + ' users have said that ' + places_array[i].name + ' ' + is_are + ' ' + lt_avg + ' on average </li><br />';
                 facilities_report_counter++;
               }
 
             }
-            console.log('in ',places_array[i].name, ' the average high temperature is: ', ht_avg, ' and the avarage low temp is: ', lt_avg);
+            //console.log('in ',places_array[i].name, ' the average high temperature is: ', ht_avg, ' and the avarage low temp is: ', lt_avg);
           };
         };
+        email_string += '</ul>';
         console.log(email_string);
         if(facilities_report_counter > 0){
           console.log('we are going to notify facilities!');
-          sendMail(report_recipient);
+          sendMail(report_recipient,email_string);
         }else{
           console.log('we are not going to notify facilities');
+          sendMail(report_recipient,email_string);
         }
   });
 };
@@ -237,6 +245,7 @@ app.post("/submit", function (request, response, error){
   request.setTimeout(0);
   //set up variables
   var user = request.body;
+  var user_can_post = true;
   var user_location = user.user_location_report;
   var location_match = false;
   var res_obj = {};
@@ -276,6 +285,7 @@ app.post("/submit", function (request, response, error){
       }else{
         //same day, but you already posted posted the place, you cannot do it again, no need to rewrite the cookie
         console.log('the user has already reported about the location today, try again tomorrow');
+        user_can_post = false;
       }
       new_cookie_value_obj.locations = prev_cookie_places;
 
@@ -290,7 +300,11 @@ app.post("/submit", function (request, response, error){
   //console.log(new_cookie_value_obj);
   console.log('////////////////////////////////////////////// \n');
 
+  if(user_can_post){
+    console.log();
+  }else{
 
+  };
 
 
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
