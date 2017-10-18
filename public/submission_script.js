@@ -8,6 +8,21 @@ var skipped = 0;
 var bodyClone = $(".form-content").html();
 var locationInfoString = "Our form uses your coordinates to give you options that are close to you.";
 
+$(window).resize(function(){
+	if($(window).width() <= 900){
+		if(Math.abs(parseInt($("#displaycard").css("margin-right")) - Math.round($(window).width() * 0.2)) < 5){
+			$("#displaycard").css("margin-right", "5%");
+			$("#searchcard").css("margin-right", "5%");
+		}
+	}
+	else{
+		if(Math.abs(parseInt($("#displaycard").css("margin-right")) - Math.round($(window).width() * 0.05)) < 5){
+			$("#displaycard").css("margin-right", "20%");
+			$("#searchcard").css("margin-right", "20%");
+		}
+	}
+});
+
 function itFailed(data){
 	console.log("Failed");
 	console.log(data);
@@ -75,6 +90,7 @@ function gpsTrack(){
 	};
 
 function makeEligiblePlaceArray(crd){
+	eligible_gps_array = [];
 	gps_data.forEach(function(e,i){
 		var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
 		if(computed_dist < distThreshold){
@@ -174,7 +190,7 @@ function showForm(){
 	$("#heading").html("<h1 id='help_us'>How's the weather in there?</h1><div id='buttondiv'><span class='infobutton' id='areyoucoldinfo'>?</span></div>");
 	$(".description").html(" ");
 	$("#areyoucoldinfo").click(function(){
-		if($(".description").html() == " ") $(".description").html('<span class="description-first-line">It can get quite cold in spaces around NYUAD campus.</span> <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
+		if($(".description").html() == " ") $(".description").html('It can get quite cold in spaces around NYUAD campus. <br>Fill out the form below and we can notify the facilities if the A/C is making you think twice about your clothing choices.');
 		else $(".description").html(" ");
 	})
 	$("form").css("visibility", "visible");
@@ -193,7 +209,7 @@ function showForm(){
 			$(".submitfield").html("<button class='submitbutton'>Submit</button>");
 		}else{
 			$(".submitfield")
-			.html("<p class='warningmessage'>Looks like the A/C there needs to be fixed! Do you want us to notify facilities for you?</p><br/><button class='submitbutton'>Submit</button>");
+			.html("<p class='disclaimer'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
 		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){
@@ -210,49 +226,14 @@ function showForm(){
 
 };
 
-function searchCard(){
-	$("#locationdisclaimer").html("");
-	$(".before-visualization").html("");
-	$(".sub-body").append("<div class='card' id='searchcard'></div>");
-	$("#searchcard").append("<button class='backbutton'>back</button>");
-	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Search for a place...'><datalist id='locations'></datalist></input>");
-	$("#searchcard").css("display", "flex");
-	$("#searchcard").animate({opacity: '1'}, {duration: 150});
-	$("#searchcard").animate({top: "75px"}, 200, "linear");
-	makeOptionList();
-
-	$("input").on("input", function(){
-		if(isInList($(this).val())){
-			$(this).css("border", "2px solid #50ef3b");
-			var location_input = $('input').val();
-			$("#displaycard").animate({opacity: '0'}, {duration: 150});
-			$("#displaycard").animate({"margin-right": "60%"}, 200, "linear", function(){
-				$("#displaycard").remove();
-				$(".vis_options").remove();
-				thank_you = 0;
-				console.log(location_input);
-				ajaxCall(location_input, );
-			});
-		}
-		else{
-			$(this).css("border", "2px solid red");
-		}
-	});
-	$(".backbutton").click(function(){
-		$(".card").animate({opacity: '0'}, {duration: 150});
-		$(".card").animate({"margin-right": "60%"}, 200, "linear", function(){
-			homeScreen();
-		});
-	});
-}
-
 function homeScreen() {
 	//Display and define home screen interface.//
 	$(".form-content").html(bodyClone);
 	$("#more").on("click", function(){
-		$("#locationdisclaimer").html(locationInfoString);
+		$(".disclaimer").html(locationInfoString);
 	});
 	$(".skipbutton").click(function(){
+		skipped = 1;
 		searchCard();
 	});
 
@@ -273,12 +254,12 @@ function homeScreen() {
 };
 
 function welcomeScreen(){
-	$(".sub-body").append("<div id='welcome'><h1 id='firstheading'>Is it cold in there?</h1><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p id='locationdisclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
+	$(".sub-body").append("<div id='welcome'><div id='firstheading'><h1>Is it cold in there?</h1><p class='description'>It can get quite cold in spaces around NYUAD's campus.<br/>Fill out our form and we can notify the facilities if the A/C is making you think twice about your clothing choices.</p></div><div id='enterdiv'><button class='skipbutton' id='enterbutton'>Enter</button></div></div><p class='disclaimer'>We use geolocation for reliablity.<span id='more'>more</span></p>");
 	$("#more").on("click", function(){
-		$("#locationdisclaimer").html("Upon entering, you'll have the option to fill out a form with your location and its temperature. " + locationInfoString);
+		$(".disclaimer").html("We use geolocation for reliablity." + locationInfoString);
 	});
 	$("#enterbutton").click(function(){
-		$("#locationdisclaimer").html("We use geolocation for reliablity.<span id='more'>more</span>");
+		$(".disclaimer").html("We use geolocation for reliablity.<span id='more'>more</span>");
 		$('#welcome').remove();
 		$('#enterbutton').remove();
 		$('#calltoaction').remove();

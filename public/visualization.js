@@ -2,14 +2,79 @@ function preparePage(){
 	d3.select(".before-visualization").remove();
 };
 
+function searchCard(){
+	$("#locationdisclaimer").html("");
+	$(".before-visualization").html("");
+	$(".sub-body").append("<div class='card' id='searchcard'></div>");
+	$("#searchcard").append("<button class='backbutton'>back</button>");
+	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Search for a place...'><datalist id='locations'></datalist></input>");
+	$("#searchcard").css("display", "flex");
+	$("#searchcard").animate({opacity: '1'}, {queue: false, duration: 150});
+	if($(window).width() <= 900){var marginRight = "5%";}
+	else{var marginRight = "20%";}
+	$("#searchcard").animate({"margin-right": marginRight}, {queue: false, duration: 200});
+	makeOptionList();
+
+	spawnDisplayCard();
+
+
+	if(skipped == 1){
+		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+	}
+
+	$("input").on("input", function(){
+		$("#emptycardp").remove();
+		if(skipped == 1){
+			if($(this).val()){
+				$(".emptycardheading").html($(this).val());
+			} else {
+				$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+			}
+		}
+
+		if(isInList($(this).val())){
+			$(this).css("border", "2px solid #50ef3b");
+			var location_input = $('input').val();
+			$("#displaycard").animate({opacity: '0'}, {duration: 150});
+			$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+				$("#displaycard").remove();
+				$(".emptycardheading").remove();
+				$(".emptycardp").remove();
+				$(".vis_options").remove();
+				thank_you = 0;
+				console.log(location_input);
+				skipped = 0;
+				ajaxCall(location_input, );
+			});
+		}
+		else{
+			$(this).css("border", "2px solid red");
+		}
+	});
+	$(".backbutton").click(function(){
+		$(".card").animate({opacity: '0'}, {duration: 150});
+		$(".card").animate({"margin-right": "60%"}, 200, "linear", function(){
+			homeScreen();
+		});
+	});
+}
+
+function spawnDisplayCard(){
+	$("#displaycard").css("display", "block");
+	if($(window).width() <= 900){
+		var marginRight = "5%";
+	}
+	else var marginRight = "20%";
+	$("#displaycard").animate({"margin-right": marginRight}, {queue: false, duration: 150});
+	$("#displaycard").animate({opacity: 1}, {queue: false, duration: 200});
+}
+
 function visualize(data){
 	if(!$("#searchcard").length){
 		searchCard();
 	}
 	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
-	$("#displaycard").css("display", "block");
-	$("#displaycard").animate({"top": "158px"}, {queue: false, duration: 300});
-	$("#displaycard").animate({opacity: 1}, {queue: false, duration: 200});
+	spawnDisplayCard();
 	console.log("visualize called");
 	console.log(data);
 	function createDaysLogs(a){
@@ -130,6 +195,7 @@ function visualize(data){
 		//D3 initialization
 		//If there is already a visualization there, remove it to replace with new one.
 		display.selectAll("svg").remove();
+
 		var svg = display.append("svg")
 											.attr("width", w)
 											.attr("height", h)
@@ -341,14 +407,10 @@ function visualize(data){
 	var barPadding = 1;
 	var display = d3.select("body").select(".sub-body").select("#displaycard");
 
-	//If we didn't receive the user's location, display a message explaining why they're here.
-	if(skipped == 1){
-		display.select(".data_heading").append("h5")
-			.text("Without your location, we have taken you directly to seeing other users' submissions.")
-		}
 	//If the thank you message is necessary i.e. if the user just posted some info.
 	if(thank_you){
 		display.select(".data_heading").append("h3")
+			.attr("class", "heading_name")
 			.text("Thank you for your contribution!")
 			.style("font-weight", "normal")
 			.style("margin", "10px auto")
@@ -364,7 +426,7 @@ function visualize(data){
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$("#displaycard").animate({"margin-right": "200%"}, 300, "linear", function(){
+			$("#displaycard").animate({"margin-right": "-1000px"}, 300, "linear", function(){
 				$("#displaycard").remove();
 				$(".vis_options").remove();
 				ajaxCall(location_input);
@@ -378,7 +440,8 @@ function visualize(data){
 		}
 	});
 
-	display.select(".data_heading").append("h3")
+	display.select(".data_heading").append("h1")
+		.attr("class", "heading_name")
 		.text(function(d){
 			var verb =  place_name.endsWith("s") ? " are " : " is ";
 			if(todays_avg()){
