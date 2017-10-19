@@ -176,7 +176,7 @@ h1 {
 }
 
 .emptycardheading{
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
   font-family: "Avenir", "Roboto", sans-serif !important;
 }
 
@@ -189,7 +189,7 @@ h1 {
   border: 2px solid rgba(0,0,0,0.8);
   padding: 3px 5px;
   border-radius: 10px;
-  transition: all 0.1s;
+  transition: all 0.2s;
 }
 
 .submitbutton:hover, .yesbutton:hover, .skipbutton:hover, #daily:hover, #weekly:hover, .gotit:hover, #aboutlink:hover{
@@ -363,7 +363,7 @@ form label{
 
 #welcome{
   display: table;
-  margin-top: calc(15vh + 70px);
+  margin-top: calc(25vh + 70px);
 }
 
 datalist{
@@ -389,7 +389,20 @@ datalist{
   background: white;
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
-  transition: all 0.2s;
+  transition: all 0.3s;
+}
+
+.option_match{
+  font-size: 2rem;
+  margin: 0;
+  padding: 5px 0;
+  transition: all 0.1s;
+}
+
+.option_match:hover{
+  cursor: pointer;
+  color: white;
+  opacity: 1;
 }
 
 #searchcard{
@@ -487,7 +500,7 @@ datalist{
     font-size: 2rem !important;
   }
   #welcome {
-    margin-top: 60px;
+    margin-top: calc(20vh + 30px);
   }
   .sub-body{
     margin-top: 20px;

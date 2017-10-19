@@ -165,14 +165,15 @@ function readGPSdata(){
 			gpsTrack();
 	});
 };
-
-function makeOptionList(){
-	optionList.forEach(function(option){
-		$("datalist").append("<option value='" + option + "'>");
-	});
-};
+//
+// function makeOptionList(){
+// 	optionList.forEach(function(option){
+// 		//$("datalist").append("<option value='" + option + "'>");
+// 	});
+// };
 
 var optionList = ["Art Gallery", "Experimental Research Building (ERB)", "Arts Center Sculpture Studio", "UNIX Lab", "Arts Center Piano Room", "Career Development Center (CDC)", "Library (general)", "Library Cafe", "Campus Center lobby", "Marketplace", "Convenience Store", "Fitness Center", "Swimming pool", "Arts Center (general)", "Arts Center IM Lab", "D2 Dining Hall", "D1 Dining Hall", "A2 classrooms", "A3 classrooms", "A4 classrooms", "A5 classrooms", "A5 Engineering Design Studio", "A6 classrooms"];
+optionList.sort();
 
 function isInList(location){
 	for(var i = 0; i < optionList.length; i++){
@@ -198,46 +199,71 @@ function searchCard(){
 	if(gps_case < 2){
 		$("#searchcard").append("<button class='backbutton'>back</button>");
 	}
-	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='See reports for another place...'><datalist id='locations'></datalist></input>");
+	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='Enter a location to visualize...'></input>");
 	$("#searchcard").css("display", "flex");
 	$("#searchcard").animate({opacity: '1'}, {queue: false, duration: 150});
 	if($(window).width() <= 900){var marginRight = "5%";}
 	else{var marginRight = "20%";}
 	$("#searchcard").animate({"margin-right": marginRight}, {queue: false, duration: 200});
-	makeOptionList();
+	//makeOptionList();
 	spawnDisplayCard();
-
+	$(".data_heading").html("<h1 class='emptycardheading'></h1><p id='emptycardp'></p>");
 
 	if(what == 1){
-		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
-		$("#displaycard").css("background", "none");
-		$("#displaycard").css("box-shadow", "none");
+		appendMatches("");
+		$("#displaycard").css("background", "#8ca5cc");
+		$(".emptycardheading").html("What place are you interested in?");
+		$("#emptycardp").html("Click an option or start typing");
+	}
+
+	function appendMatches(x){
+		for(var i = 0; i <= optionList.length; i++){
+			var the_string = String(optionList[i]);
+			var theIndex = the_string.indexOf(String(x));
+			if(theIndex != -1){
+				console.log(x);
+				$("#displaycard").append("<h2 class='option_match'>" + optionList[i] + "</h2>");
+				$(".option_match").on("click", function(){
+					prepareAndDisplay($(this).html());
+				});
+			}
+		}
+	};
+
+	function prepareAndDisplay(location_input){
+		$("#displaycard").animate({opacity: '0'}, {duration: 150});
+		$("#displaycard").animate({"margin-right": "0"}, 200, "linear", function(){
+			$("#displaycard").remove();
+			$(".emptycardheading").empty();
+			$(".emptycardp").empty();
+			$(".vis_options").remove();
+			thank_you = 0;
+			console.log(location_input);
+			what = 0;
+			$("#displaycard").css("background", "white");
+			$(".option_match").remove();
+			ajaxCall(location_input);
+		});
 	}
 
 	$("input").on("input", function(){
-		$("#emptycardp").remove();
-		if(what == 1){
+		$(".caption").remove();
+		$("svg").remove();
+		$(".option_match").remove();
+		appendMatches($(this).val());
+		$(".data_heading").html("<h1 class='emptycardheading'></h1><p id='emptycardp'></p>");
+		$("#displaycard").css("background", "#8ca5cc");
+		$("#emptycardp").empty();
 			if($(this).val()){
 				$(".emptycardheading").html($(this).val());
 			} else {
 				$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
 			}
-		}
 
 		if(isInList($(this).val())){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
-			$("#displaycard").animate({opacity: '0'}, {duration: 150});
-			$("#displaycard").animate({"margin-right": "0"}, 200, "linear", function(){
-				$("#displaycard").remove();
-				$(".emptycardheading").remove();
-				$(".emptycardp").remove();
-				$(".vis_options").remove();
-				thank_you = 0;
-				console.log(location_input);
-				what = 0;
-				ajaxCall(location_input);
-			});
+			prepareAndDisplay(location_input);
 		}
 
 		else{
