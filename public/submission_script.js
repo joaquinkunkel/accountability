@@ -9,6 +9,7 @@ var bodyClone = $(".form-content").html();
 var blankDisplayCard = $("#displaycard").html();
 var locationInfoString = "Our form uses your coordinates to give you options that are close to you.";
 var gps_case = 0;
+var what = 0;
 
 $(window).resize(function(){
 	if($(window).width() <= 900){
@@ -194,6 +195,7 @@ function waitForUser(){
 }
 
 function searchCard(){
+	what = 1;
 	$("#locationdisclaimer").html("");
 	$(".before-visualization").html("");
 	$(".sub-body").append("<div class='card' id='searchcard'></div>");
@@ -209,14 +211,15 @@ function searchCard(){
 	spawnDisplayCard();
 
 
-	if(skipped == 1){
+	if(what == 1){
 		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
-		$("#displaycard").css("background", "#9dceea");
+		$("#displaycard").css("background", "none");
+		$("#displaycard").css("box-shadow", "none")
 	}
 
 	$("input").on("input", function(){
 		$("#emptycardp").remove();
-		if(skipped == 1){
+		if(what == 1){
 			if($(this).val()){
 				$(".emptycardheading").html($(this).val());
 			} else {
@@ -235,7 +238,7 @@ function searchCard(){
 				$(".vis_options").remove();
 				thank_you = 0;
 				console.log(location_input);
-				skipped = 0;
+				what = 0;
 				ajaxCall(location_input, );
 			});
 		}
@@ -254,6 +257,7 @@ function searchCard(){
 function spawnDisplayCard(){
 	$("#displaycard").html(blankDisplayCard);
 	$("#displaycard").css("background", "white");
+	$("#displaycard").css("box-shadow", "box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1)");
 	$("#displaycard").css("display", "block");
 	if($(window).width() <= 900){
 		var marginRight = "5%";
@@ -302,17 +306,16 @@ function showForm(){
 
 function homeScreen() {
 	//Display and define home screen interface.//
+	what = 0;
 	$(".form-content").html(bodyClone);
 	$("#more").on("click", function(){
 		$(".disclaimer").html(locationInfoString);
 	});
 	$(".skipbutton").click(function(){
 		skipped = 1;
-		if(gps_case == 0){
-			gps_case = 1;
-			nextStep();
-		}
-	});
+		gps_case = 1;
+		nextStep();
+		});
 
 	$("#locationinfo").click(function(){
 		if(info_active == 0){
