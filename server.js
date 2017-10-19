@@ -257,6 +257,7 @@ app.post("/submit", function (request, response, error){
   var location_match = false;
   var res_obj = {};
   res_obj.place = user_location;
+  res_obj.can_post = true;
 
   var date = new Date();
   var today = String(date.getMonth() + "_" + (date.getDate()));
@@ -297,6 +298,7 @@ app.post("/submit", function (request, response, error){
         //same day, but you already posted posted the place, you cannot do it again, no need to rewrite the cookie
         console.log('the user has already reported about the location today, try again tomorrow');
         user_can_post = false;
+        res_obj.can_post = false;
       }
       new_cookie_value_obj.locations = prev_cookie_places;
 
@@ -338,6 +340,7 @@ app.post("/submit", function (request, response, error){
           };
           //push the new log to the beginning of the log array
           res_obj.logs = array[i].logs; //array of temperature logs, starting with the most recent one
+
           response.send(JSON.stringify(res_obj)); //send the full array of logs corresponding to the queried location to the user
           break;
         }

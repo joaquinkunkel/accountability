@@ -343,7 +343,7 @@ function visualize(data){
 	//If the thank you message is necessary i.e. if the user just posted some info.
 	if(thank_you){
 
-		if(data.logs[0].temp < 5 && data.logs[0].temp > 2){
+		if(data.logs[0].temp < 5 && data.logs[0].temp > 2 && data.can_post){
 			// display.select(".data_heading").append("h3")
 			// 	.attr("class", "heading_name")
 			// 	.text("Great news!")
@@ -359,7 +359,7 @@ function visualize(data){
 				.style("margin-top", "-10px")
 				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
 		}
-	 else {
+	 else if(data.can_post){
 			// display.select(".data_heading").append("h3")
 			// 	.attr("class", "heading_name")
 			// 	.text("Thank you!")
@@ -376,6 +376,15 @@ function visualize(data){
 				.style("margin-top", "-10px")
 				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
 
+		}else{
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.text("It looks like you've already posted about the temperature in "+place_name+ " today.");
+
+			display.select(".data_heading").append("p")
+				.classed("confirmation", "true")
+				.style("margin-top", "-10px")
+				.text("You can still post about other places on campus for today - or come back tomorrow!");
 		}
 	}
 	//Title, e.g. "Baraha is cold today."
