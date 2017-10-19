@@ -336,18 +336,18 @@ function nextStep(){
 		searchCard();
 	}
 	else if(gps_case == 2){ //user is not close to any place
+		$("#displaycard").css("top", "55px");
 		spawnDisplayCard();
-		$(".data_heading").append("<h1 class='emptycardheading'>Uh oh!</h1>");
+		$(".data_heading").append("<h1 class='emptycardheading' style='color: #f9aa0c !important'>Uh oh!</h1>");
 		$(".data_heading").append("<p>You don't seem to be close to any of the locations at NYU Abu Dhabi we have registered. No worries; we'll take you directly to look at temperature reports around campus instead.</p>")
-		$("#displaycard").css("background", "#f4f1d9");
 		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Continue</button>");
 
 	}
 	else if(gps_case == 3){ //user denied or browser blocked
+		$("#displaycard").css("top", "55px");
 		spawnDisplayCard();
-		$(".data_heading").append("<h1 class='emptycardheading'>Brrr!</h1>");
+		$(".data_heading").append("<h1 class='emptycardheading' style='color: #d63f1d !important'>Brrr!</h1>");
 		$(".data_heading").append("<p>You can only submit a report if you allow us to track your location on NYUAD campus. If you want to submit a temperature report, please change your settings, reload the page, and allow us to track your location.</p>")
-		$("#displaycard").css("background", "#fc9785");
 		$(".data_heading").append("<button class='skipbutton' id='oklocation'>Continue</button>");
 
 	}
@@ -355,6 +355,7 @@ function nextStep(){
 		$("#displaycard").animate({"margin-right": "-1000px"}, 200);
 		$("#displaycard").animate({opacity: '0'}, {duration: 150});
 		$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+			$("#displaycard").css("top", "138px");
 			searchCard();
 		});
 	});
