@@ -80,84 +80,80 @@ function distanceInKm(lat1, lon1, lat2, lon2) {
 	return earthRadiusKm * c;
 }
 
-
-
 function gpsTrack(){
 
 	var gps_dist_array = [];
 
 	var options = {
-		enableHighAccuracy: true,
-		timeout: 5000,
-		maximumAge: 0
+			enableHighAccuracy: true,
+			timeout: 5000,
+			maximumAge: 0
 	};
 
-function makeEligiblePlaceArray(crd){
-	eligible_gps_array = [];
-	gps_data.forEach(function(e,i){
-		var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
-		if(computed_dist < distThreshold){
-			//console.log(`You seem to be close to: ${e.name}`);
-			if(e.name.length > 1){
-				e.name.forEach(function(el){
-					eligible_gps_array.push(el);
-				});
-			}else{
-				eligible_gps_array.push(e.name[0]);
+	function makeEligiblePlaceArray(crd){
+		eligible_gps_array = [];
+		gps_data.forEach(function(e,i){
+			var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
+			if(computed_dist < distThreshold){
+				//console.log(`You seem to be close to: ${e.name}`);
+				if(e.name.length > 1){
+					e.name.forEach(function(el){
+						eligible_gps_array.push(el);
+					});
+				}else{
+					eligible_gps_array.push(e.name[0]);
+				};
 			};
-		};
-	});
+		});
 
-	console.log("Close to: " + eligible_gps_array);
-}
+		console.log("Close to: " + eligible_gps_array);
+	}
 
-function success(pos) {
-	var crd = pos.coords;
-	makeEligiblePlaceArray(crd);
-	console.log(eligible_gps_array);
+	function success(pos) {
+		var crd = pos.coords;
+		makeEligiblePlaceArray(crd);
+		console.log(eligible_gps_array);
 
-	if(info_active == 1) waitForUser();
-	else{
-		if(eligible_gps_array[0]){
-			showForm();
-		} else {
-			skipped = 1;
-			if(gps_case == 0){
-				gps_case = 2;
-				nextStep();
+		if(info_active == 1) waitForUser();
+		else{
+			if(eligible_gps_array[0]){
+				showForm();
+			} else {
+				skipped = 1;
+				if(gps_case == 0){
+					gps_case = 2;
+					nextStep();
+				}
 			}
 		}
-	}
 
-	gps_working = 1;
-	console.log("gps working!");
-	var htmlString = '<option disabled selected value><p>Location</p></option>';
-	/*console.log('Your current position is:');
-	console.log(`Latitude : ${crd.latitude}`);
-	console.log(`Longitude: ${crd.longitude}`);
-	console.log(`More or less ${crd.accuracy} meters.`);*/
-	eligible_gps_array.forEach(function(e){
-		htmlString  += '<option value="' + e +'">' + e + '</option>';
-	});
-	console.log(htmlString);
-	$('.user_location_report').html(htmlString);
+		gps_working = 1;
+		console.log("gps working!");
+		var htmlString = '<option disabled selected value><p>Location</p></option>';
 
-};
+		eligible_gps_array.forEach(function(e){
+			htmlString  += '<option value="' + e +'">' + e + '</option>';
+		});
+		console.log(htmlString);
+		$('.user_location_report').html(htmlString);
 
-	function error(err) {
-		skipped = 1;
-		if(gps_case == 0){
-			gps_case = 3;
-			console.warn(`ERROR(${err.code}): ${err.message}`);
-			nextStep();
-		}
 	};
 
-	if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(success, error, options);
-	} else {
-			console.log("Geolocation is not supported by this browser.");
-	}
+	function error(err) {
+			skipped = 1;
+			if(gps_case == 0){
+				gps_case = 3;
+				console.warn(`ERROR(${err.code}): ${err.message}`);
+				nextStep();
+			}
+		};
+
+		if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(success, error, options);
+		}
+		else {
+				console.log("Geolocation is not supported by this browser.");
+		}
 
 }
 
@@ -199,7 +195,9 @@ function searchCard(){
 	$("#locationdisclaimer").html("");
 	$(".before-visualization").html("");
 	$(".sub-body").append("<div class='card' id='searchcard'></div>");
-	if(gps_case < 2)$("#searchcard").append("<button class='backbutton'>back</button>");
+	if(gps_case < 2){
+		$("#searchcard").append("<button class='backbutton'>back</button>");
+	}
 	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='See reports for another place...'><datalist id='locations'></datalist></input>");
 	$("#searchcard").css("display", "flex");
 	$("#searchcard").animate({opacity: '1'}, {queue: false, duration: 150});
@@ -214,7 +212,7 @@ function searchCard(){
 	if(what == 1){
 		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
 		$("#displaycard").css("background", "none");
-		$("#displaycard").css("box-shadow", "none")
+		$("#displaycard").css("box-shadow", "none");
 	}
 
 	$("input").on("input", function(){
@@ -231,7 +229,7 @@ function searchCard(){
 			$(this).css("border", "2px solid #50ef3b");
 			var location_input = $('input').val();
 			$("#displaycard").animate({opacity: '0'}, {duration: 150});
-			$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+			$("#displaycard").animate({"margin-right": "0"}, 200, "linear", function(){
 				$("#displaycard").remove();
 				$(".emptycardheading").remove();
 				$(".emptycardp").remove();
@@ -239,9 +237,10 @@ function searchCard(){
 				thank_you = 0;
 				console.log(location_input);
 				what = 0;
-				ajaxCall(location_input, );
+				ajaxCall(location_input);
 			});
 		}
+
 		else{
 			$(this).css("border", "2px solid red");
 		}
@@ -355,9 +354,9 @@ function nextStep(){
 
 	}
 	$("#oklocation").click(function(){
-		$("#displaycard").animate({"margin-right": "-1000px"}, 200);
+		$("#displaycard").animate({"margin-right": "0"}, 200);
 		$("#displaycard").animate({opacity: '0'}, {duration: 150});
-		$("#displaycard").animate({"margin-right": "-1000px"}, 200, "linear", function(){
+		$("#displaycard").animate({"margin-right": "0"}, 200, "linear", function(){
 			$("#displaycard").css("top", "138px");
 			searchCard();
 		});
@@ -376,11 +375,11 @@ function welcomeScreen(){
 		$('#calltoaction').remove();
 		homeScreen();
 	})
-}
+};
+
 
 $(window).on('load', function(e){
   //console.log('hello there');
 	//console.log('submission is good!');
-	welcomeScreen();	//TODO: Only do this if it's the first time they visit. ELSE homeScreen();
-	//homeScreen();
+	welcomeScreen();
 });
