@@ -199,7 +199,7 @@ function searchCard(){
 	$("#locationdisclaimer").html("");
 	$(".before-visualization").html("");
 	$(".sub-body").append("<div class='card' id='searchcard'></div>");
-	$("#searchcard").append("<button class='backbutton'>back</button>");
+	if(gps_case < 2)$("#searchcard").append("<button class='backbutton'>back</button>");
 	$("#searchcard").append("<input name='user_location_query' class='user_location_query' list='locations' placeholder='See reports for another place...'><datalist id='locations'></datalist></input>");
 	$("#searchcard").css("display", "flex");
 	$("#searchcard").animate({opacity: '1'}, {queue: false, duration: 150});
