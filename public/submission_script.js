@@ -205,7 +205,6 @@ function searchCard(){
 	else{var marginRight = "20%";}
 	$("#searchcard").animate({"margin-right": marginRight}, {queue: false, duration: 200});
 	makeOptionList();
-
 	spawnDisplayCard();
 
 
@@ -254,6 +253,8 @@ function searchCard(){
 }
 
 function spawnDisplayCard(){
+	$("#displaycard").remove();
+	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
 	$("#displaycard").html(blankDisplayCard);
 	$("#displaycard").css("background", "white");
 	$("#displaycard").css("box-shadow", "box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1)");

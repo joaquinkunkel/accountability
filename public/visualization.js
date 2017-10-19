@@ -6,10 +6,7 @@ function visualize(data){
 	if(!$("#searchcard").length){
 		searchCard();
 	}
-	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
 	spawnDisplayCard();
-	console.log("visualize called");
-	console.log(data);
 	function createDaysLogs(a){
 		//Create an array of today's logs.
 	 //The array stores subarrays of the form [temperature, count],
