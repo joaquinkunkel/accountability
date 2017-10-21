@@ -2,6 +2,7 @@ var gps_data;
 var distThreshold = 0.08; // in km
 var gps_working;
 var eligible_gps_array = [];
+var optionList = [];
 var thank_you = 0;
 var info_active = 0;
 var skipped = 0;
@@ -81,33 +82,30 @@ function distanceInKm(lat1, lon1, lat2, lon2) {
 }
 
 function gpsTrack(){
-
-	var gps_dist_array = [];
-
 	var options = {
 			enableHighAccuracy: true,
 			timeout: 5000,
 			maximumAge: 0
 	};
 
-	function makeEligiblePlaceArray(crd){
-		eligible_gps_array = [];
-		gps_data.forEach(function(e,i){
-			var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
-			if(computed_dist < distThreshold){
-				//console.log(`You seem to be close to: ${e.name}`);
-				if(e.name.length > 1){
-					e.name.forEach(function(el){
-						eligible_gps_array.push(el);
-					});
-				}else{
-					eligible_gps_array.push(e.name[0]);
-				};
+function makeEligiblePlaceArray(crd){
+	eligible_gps_array = [];
+	gps_data.forEach(function(e,i){
+		var computed_dist = distanceInKm(crd.latitude,crd.longitude,e.lat,e.lon);
+		if(computed_dist < distThreshold){
+			//console.log(`You seem to be close to: ${e.name}`);
+			if(e.name.length > 1){
+				e.name.forEach(function(el){
+					eligible_gps_array.push(el);
+				});
+			}else{
+				eligible_gps_array.push(e.name[0]);
 			};
-		});
+		};
+	});
 
-		console.log("Close to: " + eligible_gps_array);
-	}
+	console.log("Close to: " + eligible_gps_array);
+}
 
 	function success(pos) {
 		var crd = pos.coords;
@@ -161,19 +159,18 @@ function readGPSdata(){
 	$.getJSON('data/campus_locations.json', function(data) {
 			console.log('gps data file loaded!');
 			gps_data = data;
-			console.log(gps_data);
+			optionList = [];
+			gps_data.forEach(function(e){
+				var cluster = e.name;
+				cluster.forEach(function(n){
+					optionList.push(n);
+				});
+			});
+			optionList.sort();
+			console.log(optionList);
 			gpsTrack();
 	});
 };
-//
-// function makeOptionList(){
-// 	optionList.forEach(function(option){
-// 		//$("datalist").append("<option value='" + option + "'>");
-// 	});
-// };
-
-var optionList = ["Art Gallery", "Experimental Research Building (ERB)", "Arts Center Sculpture Studio", "UNIX Lab", "Arts Center Piano Room", "Career Development Center (CDC)", "Library (general)", "Library Cafe", "Campus Center lobby", "Marketplace", "Convenience Store", "Fitness Center", "Swimming pool", "Arts Center (general)", "Arts Center IM Lab", "D2 Dining Hall", "D1 Dining Hall", "A2 classrooms", "A3 classrooms", "A4 classrooms", "A5 classrooms", "A5 Engineering Design Studio", "A6 classrooms"];
-optionList.sort();
 
 function isInList(location){
 	for(var i = 0; i < optionList.length; i++){
@@ -192,6 +189,8 @@ function waitForUser(){
 }
 
 function searchCard(){
+	$("body").css("background", "#edf5fc");
+	$("video").remove();
 	what = 1;
 	$("#locationdisclaimer").html("");
 	$(".before-visualization").html("");
@@ -217,10 +216,11 @@ function searchCard(){
 	}
 
 	function appendMatches(x){
+		$(".option_match").remove();
 		for(var i = 0; i <= optionList.length; i++){
-			var the_string = String(optionList[i]);
-			var theIndex = the_string.indexOf(String(x));
-			if(theIndex != -1){
+			var the_string = String(optionList[i]).toLowerCase();
+			var theIndex = the_string.indexOf(String(x).toLowerCase());
+			if(theIndex != -1 && the_string != "undefined"){
 				console.log(x);
 				$("#displaycard").append("<h2 class='option_match'>" + optionList[i] + "</h2>");
 				$(".option_match").on("click", function(){
@@ -231,6 +231,7 @@ function searchCard(){
 	};
 
 	function prepareAndDisplay(location_input){
+		$("input").css("border", "2px solid black");
 		$("#displaycard").animate({opacity: '0'}, {duration: 150});
 		$("#displaycard").animate({"margin-right": "0"}, 200, "linear", function(){
 			$("#displaycard").remove();
@@ -246,18 +247,23 @@ function searchCard(){
 		});
 	}
 
-	$("input").on("input", function(){
+	$("input").click(function(){
 		$(".caption").remove();
 		$("svg").remove();
 		$(".option_match").remove();
-		appendMatches($(this).val());
 		$(".data_heading").html("<h1 class='emptycardheading'></h1><p id='emptycardp'></p>");
 		$("#displaycard").css("background", "#8ca5cc");
+		$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Click an option or start typing</p>");
+		appendMatches($(this).val());
+	});
+
+	$("input").on("input", function(){
+		appendMatches($(this).val());
 		$("#emptycardp").empty();
 			if($(this).val()){
 				$(".emptycardheading").html($(this).val());
 			} else {
-				$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Start typing the name of a location on campus to see its temperature data...");
+				$(".data_heading").html("<h1 class='emptycardheading'>What place are you interested in?</h1><p id='emptycardp'>Click an option or start typing</p>");
 			}
 
 		if(isInList($(this).val())){
@@ -308,12 +314,17 @@ function showForm(){
 			});
 	});
 
+	$("#dontsee").click(function(){
+		$(this).css("cursor", "normal");
+		$(this).html("You can submit about public spaces on campus close to your current location.<br/>If you believe we've ommitted a place, please fill our <a href='https://docs.google.com/forms/d/e/1FAIpQLSewEI4cNMiTnzc-MjdARza71soV97PNKUMXcjs9NIPjm11pMA/viewform?usp=sf_link'>request form</a>.")
+	});
 	$(".selector").on('change', function(){
+		$("#dontsee").html("Don't see your location listed here?");
 		if($(this).val() >= 3 && $(this).val() <= 4){
 			$(".submitfield").html("<button class='submitbutton'>Submit</button>");
 		}else{
 			$(".submitfield")
-			.html("<p'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
+			.html("<p id='lookslike'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
 		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){
@@ -332,6 +343,8 @@ function showForm(){
 
 function homeScreen() {
 	//Display and define home screen interface.//
+	if(!($("video").length)) $("body").append('<video autoplay loop muted id="background"><source src="./backgroundvid.mp4" type="video/mp4"></video>');
+	$("body").css("background", "none");
 	what = 0;
 	$(".form-content").html(bodyClone);
 	$("#more").on("click", function(){

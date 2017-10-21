@@ -5,6 +5,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  transition: all 0.2s;
 }
 
 h1, h2, h3{
@@ -14,15 +15,28 @@ h1, h2, h3{
 
 h3, .confirmation{
   color: #28cc67 !important;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
+
+.confirmation-black{
+  color: black !important;
+  font-size: 1.4rem;
+}
+
 
 h3{
   font-size: 3rem !important;
 }
 
-.heading-name{
-  font-size: 3rem;
+#dontsee{
+  cursor: pointer;
+}
+
+.heading_name{
+  font-family: "Roboto", sans-serif;
+  font-size: 2.2rem;
+  font-weight: normal;
+  margin: 17px auto;
 }
 
 .form-content{
@@ -36,7 +50,7 @@ h3{
 }
 
 .sub-body{
-  margin-top: calc(30vh - 100px);
+  margin-top: calc(15vh + 30px);
   margin-left: auto;
   margin-right: auto;
   width: 95%;
@@ -234,6 +248,11 @@ h1 {
   text-align: center;
 }
 
+#lookslike{
+  margin-top: 0;
+  margin-bottom: -5px;
+}
+
 #help_us, #buttondiv{
   display: table-cell;
   vertical-align: middle;
@@ -305,6 +324,7 @@ form label{
 #how{
   display: none;
   opacity: 0;
+  margin-top: -20px;
 }
 
 #invalid_location_message{
@@ -363,7 +383,11 @@ form label{
 
 #welcome{
   display: table;
-  margin-top: calc(25vh + 70px);
+  margin-top: 25vh;
+}
+
+#dontsee{
+  margin: 0 auto -10px auto;
 }
 
 datalist{
@@ -387,8 +411,8 @@ datalist{
   right: 0;
   display: none;
   background: white;
-  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   transition: all 0.3s;
 }
 
@@ -503,6 +527,6 @@ datalist{
     margin-top: calc(20vh + 30px);
   }
   .sub-body{
-    margin-top: 20px;
+    margin-top: 30px;
   }
 }
