@@ -23,11 +23,11 @@ var TEMP_CODED_ARRAY = [{string:"freezing",num:1}, {string:"cold",num:2}, {strin
 var DAILY_REPORTS_RECIPIENT = 'mk4908@nyu.edu'; //change the address to 'nyuad.facilities@nyu.edu' if you want to send data to facilities
 
 ///// LOAD IN THE API KEY
-fs.readFile('API_KEY.txt','utf-8',function(err,data){
+/*fs.readFile('API_KEY.txt','utf-8',function(err,data){
   if (err) throw err;
   API_KEY = data.toString();
   //console.log('we have successfully read and stored our mailgun api key');
-});
+});*/
 
 ///// UTIL FUNCTION FOR MAPPING REPORTED TEMPERATURE VALUES FROM NUMBER TO STRING
 function temp_map(number){
