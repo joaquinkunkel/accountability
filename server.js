@@ -9,7 +9,7 @@ var sgMail = require('@sendgrid/mail');
 var path = require('path');
 var schedule = require('node-schedule');
 var cookieParser = require('cookie-parser');
-//var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
 ///////////////////////////////////////////////////////////
 ////// GLOBAL VARIABLES
@@ -20,7 +20,7 @@ var TEMPERATURE_LOGS_PATH = 'data/places_data.json';
 var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
 var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
 var TEMP_CODED_ARRAY = [{string:"freezing",num:1}, {string:"cold",num:2}, {string:"cool",num:3}, {string:"nice",num:4}, {string:"warm",num:5}, {string:"hot",num:6}];
-
+var DAILY_REPORTS_RECIPIENT = 'mk4908@nyu.edu'; //change the address to 'nyuad.facilities@nyu.edu' if you want to send data to facilities
 
 ///// LOAD IN THE API KEY
 fs.readFile('API_KEY.txt','utf-8',function(err,data){
@@ -69,9 +69,26 @@ function sendMail(mail_recipient,report_string){
 /*mongoose.connect('mongodb://127.0.0.1/test');
 var my_database = mongoose.connection;
 my_database.on('error', console.error.bind(console, 'connection error:'));
-my_database.on('open', function(){
-  console.log("connections to the database successful!");
-};*/
+my_database.on('openUri', function(){
+  console.log("connections to the database successful!////////////////////////////////////////////////");
+});
+
+/*var mongoDB = 
+    process.env.MONGOLAB_URI ||
+    process.env.MONGODB_URI ||
+    process.env.MONGOHQ_URL ||
+    'mongodb://localhost/my_database';
+
+mongoose.connect(mongoDB, {useMongoClient: true}, function(err){
+    if (err) {
+      console.log ('ERROR connecting' + err);
+    } else {
+      console.log ('Succeeded connected');
+    }
+});
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));*/
 
 ///////////////////////////////////////////////////////////
 ////// POST TO DAILY REPORTS DATABASE
@@ -184,7 +201,7 @@ app.use(bp.json());
 ///////////////////////////////////////////////////////////
 var j = schedule.scheduleJob('58 23 * * *', function(){
   //READ IN THE DAILY REPORTS, PROCESS THAT, THEN SEND A COLLECTIVE EMAIL TO FACILITIES
-  collect_daily_reports('nyuad.facilities@nyu.edu');
+  collect_daily_reports(DAILY_REPORTS_RECIPIENT);
 });
 
 ///////////////////////////////////////////////////////////
@@ -320,7 +337,7 @@ app.post("/submit", function (request, response, error){
   }else{
     console.log('we are not notifying facilities about the report');
   };
-
+  
 
   /*------------------------------TEMPERATURE DATABASE-----------------------------------*/
     //read in the whole database
