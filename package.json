@@ -1,0 +1,30 @@
+{
+  "name": "accountability",
+  "version": "1.0.0",
+  "description": "App that tackles excessive A/C use on NYU Abu Dhabi campus",
+  "main": "accountability_server.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.5",
+    "https": "^1.0.0",
+    "mongoose": "^4.12.2",
+    "node-schedule": "^1.2.5",
+    "sendgrid": "^5.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaquinkunkel/accountability.git"
+  },
+  "author": "Joaquin Kunkel, Miha Klasinc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joaquinkunkel/accountability/issues"
+  },
+  "homepage": "https://github.com/joaquinkunkel/accountability#readme"
+}
