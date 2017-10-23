@@ -6,10 +6,7 @@ function visualize(data){
 	if(!$("#searchcard").length){
 		searchCard();
 	}
-	$(".sub-body").append("<div class='card' id='displaycard'><div class='data-display'><div class='data_heading'></div></div></div>");
 	spawnDisplayCard();
-	console.log("visualize called");
-	console.log(data);
 	function createDaysLogs(a){
 		//Create an array of today's logs.
 	 //The array stores subarrays of the form [temperature, count],
@@ -324,6 +321,14 @@ function visualize(data){
 		"#f9d13e", //warm
 		"#d66836"  //hot
 	];
+	var backgrounds = [
+		"#edf0fc", //freezing
+		"#edf6fc", //cold
+		"#edfcfb", //cool
+		"#edfced", //nice
+		"#fcfbed", //warm
+		"#fcf1ed"  //hot
+	]
 	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	var place_name = data.place;
 	var all_logs = data.logs;
@@ -356,7 +361,7 @@ function visualize(data){
 				.text("Great news! Seems like we don't need to notify NYUAD Facilities this time.");
 			display.select(".data_heading").append("p")
 				.classed("confirmation", "true")
-				.style("margin-top", "-10px")
+				.style("margin-top", "-12px")
 				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
 		}
 	 else if(data.can_post){
@@ -369,11 +374,11 @@ function visualize(data){
 
 			display.select(".data_heading").append("p")
 				.classed("confirmation", "true")
-				.text("Thank you! We'll notify Facilities about the temperature in "+place_name+ " at the end of today.");
+				.text("Thank you! We'll notify Facilities about the temperature there at the end of today.");
 
 			display.select(".data_heading").append("p")
 				.classed("confirmation", "true")
-				.style("margin-top", "-10px")
+				.style("margin-top", "-12px")
 				.text("Let us know if the A/C is bothering you in the future - we'll let Facilities know about it.");
 
 		}else{
@@ -387,7 +392,6 @@ function visualize(data){
 				.text("You can still post about other places on campus for today - or come back tomorrow!");
 		}
 	}
-	//Title, e.g. "Baraha is cold today."
 	$('input:text').focus(
     function(){
         $(this).val('');
@@ -411,19 +415,13 @@ function visualize(data){
 		}
 	});
 
-	display.select(".data_heading").append("h1")
-		.attr("class", "heading_name")
-		.text(function(d){
-			var verb =  place_name.endsWith("s") ? " are " : " is ";
-			if(todays_avg()){
-				return("The " + place_name + verb + temps[Math.round(todays_avg())] + " today.");
-			}
-			else{
-				return(place_name);
-			}
-		})
-		.style("margin-top", "10px");
+	//Title, e.g. "Baraha is cold today."
+	var verb =  place_name.endsWith("s") ? " feel " : " feels ";
+	$(".data_heading").append("<h2 class='heading_name'></h2>");
+	if(todays_avg()) $(".heading_name").html("The <span clas='heading_name_title' style='font-weight: bold; font-size: 2.2rem;'>" + place_name + "</span>" + verb + " <span class='heading_name_temp' style='font-weight: bold; font-size: 2.2rem;'>" + temps[Math.round(todays_avg())] + "</span>  today.")
+	else $(".heading_name").html("<span class='heading_name_title'>" + place_name + "</span>");
 
+	$("body").css("background", backgrounds[Math.round(todays_avg())]);
 	//Subtitle ("Over the past...")
 
 	display.select(".data_heading").append("p").classed(".description", "true")
@@ -431,7 +429,9 @@ function visualize(data){
 			var text_string = "";
 			text_string+="Over the past week, users have reported its temperature as '" + temps[Math.round(temp_avg)] + "' on average."
 			return(text_string);
-		});
+		})
+		.style("margin-top", "-10px")
+		.style("opacity", "0.5");
 
 
 	visualizeDay();
