@@ -8,6 +8,10 @@ body {
   transition: all 0.2s;
 }
 
+a:hover {
+  text-decoration: none !important;
+}
+
 h1, h2, h3{
   font-family: "Avenir", "Roboto", sans-serif !important;
   font-weight: bold;
@@ -32,6 +36,12 @@ h3{
   cursor: pointer;
 }
 
+#requestbutton{
+  cursor: pointer;
+  color: black !important;
+  opacity: 1 !important;
+}
+
 .heading_name{
   font-family: "Roboto", sans-serif;
   font-size: 2.2rem;
@@ -42,6 +52,80 @@ h3{
 .form-content{
   padding-top: 50px;
   height: 100vh;
+}
+
+.about-nav{
+  padding-bottom: 0;
+}
+
+.about-nav a{
+  color: black;
+  padding: 5px;
+  border-radius: 10px;
+  margin: auto 2px;
+  transition: all 0.2s;
+}
+
+.about-nav a:hover{
+  color: white;
+  background: black;
+}
+
+#about-nav-large{
+  padding-top: 40vh;
+  display: block !important;
+  height: 100vh;
+  display: flex;
+}
+
+#about-nav-large h2{
+  font-weight: lighter;
+  color: black !important;
+  padding: 10px auto !important;
+  transition: all 0.1s;
+}
+
+.aboutsect{
+  padding-top: 70px;
+  padding-bottom: 70px;
+}
+
+#about-nav-large h2:hover{
+  font-size: 3.2rem;
+  color: #3683c5 !important;
+}
+
+.about-content h4{
+  font-weight: lighter;
+  color: #3683c5;
+  background: white;
+  padding: 2rem;
+  margin-bottom: 20px;
+  font-size: 3.5rem;
+  border-radius: 20px;
+  line-height: 4.5rem;
+}
+
+.factrow{
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ceilingfact{
+  padding: 10px;
+}
+
+.ceilingfact h1, .ceilingfact p{
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.ceilingfact h1{
+  color: #3683c5 !important;
+  font-size: 3rem !important;
 }
 
 .before-visualization{
@@ -107,6 +191,7 @@ h3{
 }
 
 header {
+  top: 0;
   z-index: 1000;
   position: fixed;
   width: 100%;
@@ -165,6 +250,22 @@ h1 {
   color: black;
   background: white;
 }
+
+
+.rotimg{
+  margin: 10px;
+    transform-origin:50% 50%;
+    animation:1s rotateRight infinite linear;
+}
+
+#slow{
+  animation: 2s rotateRight infinite linear;
+}
+
+@keyframes rotateRight{
+    100%{ transform:rotate(360deg); }
+}
+
 
 .backbutton {
   color: black;
@@ -334,7 +435,6 @@ form label{
 }
 
 .disclaimer{
-  width: 300px;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0;
@@ -383,7 +483,7 @@ form label{
 
 #welcome{
   display: table;
-  margin-top: 25vh;
+  margin-top: 30vh;
 }
 
 #dontsee{
@@ -468,7 +568,7 @@ datalist{
 
 @media screen and (max-width: 790px){
   h4{
-    font-size: 1.4rem !important;
+    font-size: 2rem !important;
   }
 
   #welcome{
@@ -528,5 +628,11 @@ datalist{
   }
   .sub-body{
     margin-top: 30px;
+  }
+}
+
+@media only screen and (max-width: 677px){
+  .about-nav{
+    padding-bottom: 10px;
   }
 }
