@@ -1,1 +1,6 @@
-# accountability
+# ACcountability
+ACcountability is a project by Miha Klasinc and Joaquin Kunkel. It is aimed for use by the NYU Abu Dhabi community. On a campus that has unpredictable low temperatures due to excessive air conditioning, the purpose of ACcountability is to provide a practical interactive tool for people to share and visualize these temperatures.
+
+The user first submits perceived temperature data about a location on campus (in the form of a keyword - "hot", "warm", "nice", "cool", "cold", and "freezing"). ACcountability analyzes the submission, stores the data, and determines whether to submit a facilities request reporting a need to revise the A/C at that location. Data visualizations for the current day and current week provide a deeper look into number of reports and temperatures over time.
+
+ACcountability was created with the goal of communicating two things. Primarily, we want to raise awareness of the fact that so many people at NYUAD often find themselves in unnecessary situations where the temperature is too hot outside but too cold inside. Second, we want to allow people to more actively relfect on the economic and environmental impacts that such commodities like A/C can have.
