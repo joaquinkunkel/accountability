@@ -213,7 +213,7 @@ function showForm(){
 			$(".submitfield").html("<button class='submitbutton'>Submit</button>");
 		}else{
 			$(".submitfield")
-			.html("<p id='lookslike'>Looks like the A/C there needs to be fixed. We will notify facilities about this.</p><br/><button class='submitbutton'>Submit</button>");
+			.html("<p id='lookslike'>Looks like the A/C there needs to be fixed. We will notify facilities about this. <a href='about.html#yoursubmissions'>more</a></p><br/><button class='submitbutton'>Submit</button>");
 		};
 		$(".submitfield").animate({"opacity": "1"}, {duration: 800});
 		$(".submitbutton").click(function(e){

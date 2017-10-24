@@ -550,6 +550,9 @@ datalist{
 
 
 @media screen and (max-width: 550px){
+  .about-nav a{
+    font-size: 1.2rem;
+  }
   h1{
     font-size: 3rem !important;
   }
