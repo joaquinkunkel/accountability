@@ -21,9 +21,9 @@ const ssl_options = {
 ///////////////////////////////////////////////////////////
 var port = 8016; //the number of your port, 801*
 var API_KEY;
-var TEMPERATURE_LOGS_PATH = 'data/places_data.json';
-var FACILITIES_REPORTS_EMPTY_PATH = 'data/facilities_reports_empty.json';
-var FACILITIES_REPORTS_PATH = 'data/facilities_reports_daily.json';
+var TEMPERATURE_LOGS_PATH = 'public/accountability/data/places_data.json';
+var FACILITIES_REPORTS_EMPTY_PATH = 'public/accountability/data/facilities_reports_empty.json';
+var FACILITIES_REPORTS_PATH = 'public/accountability/data/facilities_reports_daily.json';
 var TEMP_CODED_ARRAY = [{string:"freezing",num:1}, {string:"cold",num:2}, {string:"cool",num:3}, {string:"nice",num:4}, {string:"warm",num:5}, {string:"hot",num:6}];
 
 
